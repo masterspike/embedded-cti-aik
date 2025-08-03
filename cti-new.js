@@ -114,6 +114,21 @@ function acceptCall() {
     // Send to SAP Service Cloud
     sendToSAPServiceCloud(currentCall);
     
+    // Send via Socket.io
+    if (window.sendWebSocketMessage) {
+        window.sendWebSocketMessage({
+            type: 'CALL_ACCEPTED',
+            phoneNumber: currentCall.phoneNumber,
+            callId: currentCall.callId
+        });
+    }
+    
+    // Disable buttons
+    const acceptBtn = document.getElementById('acceptButton');
+    const declineBtn = document.getElementById('declineButton');
+    if (acceptBtn) acceptBtn.disabled = true;
+    if (declineBtn) declineBtn.disabled = true;
+    
     // Hide call notification after delay
     setTimeout(() => {
         document.getElementById('callNotification').classList.add('hidden');
@@ -139,6 +154,21 @@ function declineCall() {
     
     // Send SAP decline notification
     sendSAPDeclineNotification(currentCall);
+    
+    // Send via Socket.io
+    if (window.sendWebSocketMessage) {
+        window.sendWebSocketMessage({
+            type: 'CALL_DECLINED',
+            phoneNumber: currentCall.phoneNumber,
+            callId: currentCall.callId
+        });
+    }
+    
+    // Disable buttons
+    const acceptBtn = document.getElementById('acceptButton');
+    const declineBtn = document.getElementById('declineButton');
+    if (acceptBtn) acceptBtn.disabled = true;
+    if (declineBtn) declineBtn.disabled = true;
     
     // Show decline popup
     showDeclinePopup(currentCall);

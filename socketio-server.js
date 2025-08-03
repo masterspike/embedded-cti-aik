@@ -79,48 +79,99 @@ io.on('connection', (socket) => {
         timestamp: new Date().toISOString()
     });
     
-    // Handle incoming messages
-    socket.on('message', (data) => {
-        console.log('📨 Received message:', data);
-        
-        // Echo the message back to confirm receipt
-        socket.emit('MESSAGE_RECEIVED', {
-            originalMessage: data,
-            timestamp: new Date().toISOString()
+            // Handle incoming messages
+        socket.on('message', (data) => {
+            console.log('📨 Received message:', data);
+            
+            // Echo the message back to confirm receipt
+            socket.emit('MESSAGE_RECEIVED', {
+                originalMessage: data,
+                timestamp: new Date().toISOString()
+            });
+            
+            // If it's a call simulation, broadcast to all connected clients
+            if (data.type === 'CALL_SIMULATED') {
+                const broadcastMessage = {
+                    type: 'CALL_SIMULATED_BROADCAST',
+                    callData: data.callData,
+                    socketId: socket.id,
+                    timestamp: new Date().toISOString()
+                };
+                
+                io.emit('CALL_SIMULATED_BROADCAST', broadcastMessage);
+                console.log('📢 Broadcasted call simulation to all clients');
+            }
+            
+            // Handle call accept events
+            if (data.type === 'CALL_ACCEPTED') {
+                console.log('✅ Call accepted by agent:', data);
+                
+                const acceptMessage = {
+                    type: 'CALL_ACCEPTED',
+                    phoneNumber: data.phoneNumber,
+                    callId: data.callId,
+                    agentId: socket.id,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Broadcast to all clients
+                io.emit('CALL_ACCEPTED', acceptMessage);
+                console.log('📢 Broadcasted call accepted to all clients');
+            }
+            
+            // Handle call decline events
+            if (data.type === 'CALL_DECLINED') {
+                console.log('❌ Call declined by agent:', data);
+                
+                const declineMessage = {
+                    type: 'CALL_DECLINED',
+                    phoneNumber: data.phoneNumber,
+                    callId: data.callId,
+                    agentId: socket.id,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Broadcast to all clients
+                io.emit('CALL_DECLINED', declineMessage);
+                console.log('📢 Broadcasted call declined to all clients');
+            }
+            
+            // Handle call end events
+            if (data.type === 'CALL_ENDED') {
+                console.log('📞 Call ended:', data);
+                
+                const endMessage = {
+                    type: 'CALL_ENDED',
+                    phoneNumber: data.phoneNumber,
+                    callId: data.callId,
+                    agentId: socket.id,
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Broadcast to all clients
+                io.emit('CALL_ENDED', endMessage);
+                console.log('📢 Broadcasted call ended to all clients');
+            }
+            
+            // Handle SAP integration messages
+            if (data.type === 'SAP_INTEGRATION') {
+                console.log('🏢 SAP Integration message received:', data.data);
+                
+                // Broadcast SAP message to all connected clients
+                const sapBroadcastMessage = {
+                    type: 'SAP_INTEGRATION_BROADCAST',
+                    sapData: data.data,
+                    socketId: socket.id,
+                    timestamp: new Date().toISOString()
+                };
+                
+                io.emit('SAP_INTEGRATION_BROADCAST', sapBroadcastMessage);
+                console.log('📢 Broadcasted SAP integration message to all clients');
+                
+                // Log the SAP payload for debugging
+                console.log('📋 SAP Payload:', JSON.stringify(data.data, null, 2));
+            }
         });
-        
-        // If it's a call simulation, broadcast to all connected clients
-        if (data.type === 'CALL_SIMULATED') {
-            const broadcastMessage = {
-                type: 'CALL_SIMULATED_BROADCAST',
-                callData: data.callData,
-                socketId: socket.id,
-                timestamp: new Date().toISOString()
-            };
-            
-            io.emit('CALL_SIMULATED_BROADCAST', broadcastMessage);
-            console.log('📢 Broadcasted call simulation to all clients');
-        }
-        
-        // Handle SAP integration messages
-        if (data.type === 'SAP_INTEGRATION') {
-            console.log('🏢 SAP Integration message received:', data.data);
-            
-            // Broadcast SAP message to all connected clients
-            const sapBroadcastMessage = {
-                type: 'SAP_INTEGRATION_BROADCAST',
-                sapData: data.data,
-                socketId: socket.id,
-                timestamp: new Date().toISOString()
-            };
-            
-            io.emit('SAP_INTEGRATION_BROADCAST', sapBroadcastMessage);
-            console.log('📢 Broadcasted SAP integration message to all clients');
-            
-            // Log the SAP payload for debugging
-            console.log('📋 SAP Payload:', JSON.stringify(data.data, null, 2));
-        }
-    });
     
     // Handle call simulation
     socket.on('CALL_SIMULATED', (data) => {

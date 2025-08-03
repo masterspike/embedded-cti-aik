@@ -96,6 +96,21 @@ function initializeWebSocket() {
                 handleWebSocketMessage(data);
             });
             
+            socket.on('CALL_ACCEPTED', function(data) {
+                addLog('✅ Call geaccepteerd door agent');
+                handleCallAccepted(data);
+            });
+            
+            socket.on('CALL_DECLINED', function(data) {
+                addLog('❌ Call afgewezen door agent');
+                handleCallDeclined(data);
+            });
+            
+            socket.on('CALL_ENDED', function(data) {
+                addLog('📞 Call beëindigd');
+                handleCallEnded(data);
+            });
+            
             socket.on('MESSAGE_RECEIVED', function(data) {
                 addLog('📡 Bericht bevestiging ontvangen');
                 handleWebSocketMessage(data);
@@ -195,6 +210,64 @@ function handleWebSocketMessage(data) {
         default:
             addLog('📨 Onbekend bericht type: ' + (data.type || 'unknown'));
     }
+}
+
+// Handle call accepted event
+function handleCallAccepted(data) {
+    console.log('✅ Call accepted event:', data);
+    addLog('✅ Call geaccepteerd: ' + (data.phoneNumber || 'unknown'));
+    
+    // Update UI
+    document.getElementById('callStatus').textContent = 'Geaccepteerd';
+    document.getElementById('lastAction').textContent = 'Call geaccepteerd';
+    
+    // Send to SAP
+    if (window.sendCallAccept) {
+        window.sendCallAccept(data.phoneNumber, data.callId);
+    }
+    
+    // Disable accept/decline buttons
+    const acceptBtn = document.getElementById('acceptButton');
+    const declineBtn = document.getElementById('declineButton');
+    if (acceptBtn) acceptBtn.disabled = true;
+    if (declineBtn) declineBtn.disabled = true;
+}
+
+// Handle call declined event
+function handleCallDeclined(data) {
+    console.log('❌ Call declined event:', data);
+    addLog('❌ Call afgewezen: ' + (data.phoneNumber || 'unknown'));
+    
+    // Update UI
+    document.getElementById('callStatus').textContent = 'Afgewezen';
+    document.getElementById('lastAction').textContent = 'Call afgewezen';
+    
+    // Send to SAP
+    if (window.sendCallDecline) {
+        window.sendCallDecline(data.phoneNumber, data.callId);
+    }
+    
+    // Disable accept/decline buttons
+    const acceptBtn = document.getElementById('acceptButton');
+    const declineBtn = document.getElementById('declineButton');
+    if (acceptBtn) acceptBtn.disabled = true;
+    if (declineBtn) declineBtn.disabled = true;
+}
+
+// Handle call ended event
+function handleCallEnded(data) {
+    console.log('📞 Call ended event:', data);
+    addLog('📞 Call beëindigd: ' + (data.phoneNumber || 'unknown'));
+    
+    // Update UI
+    document.getElementById('callStatus').textContent = 'Beëindigd';
+    document.getElementById('lastAction').textContent = 'Call beëindigd';
+    
+    // Re-enable accept/decline buttons for next call
+    const acceptBtn = document.getElementById('acceptButton');
+    const declineBtn = document.getElementById('declineButton');
+    if (acceptBtn) acceptBtn.disabled = false;
+    if (declineBtn) declineBtn.disabled = false;
 }
 
 // Send message via Socket.io
