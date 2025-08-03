@@ -7,9 +7,26 @@ const app = express();
 
 // Add CORS headers for all routes
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    // Allow specific origins
+    const allowedOrigins = [
+        'https://glowing-frangollo-44ac94.netlify.app',
+        'https://glowing-frangollo-44ac94.netlify.app/',
+        'http://localhost:3000',
+        'http://localhost:8080',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:8080'
+    ];
+    
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin)) {
+        res.header('Access-Control-Allow-Origin', origin);
+    } else {
+        res.header('Access-Control-Allow-Origin', '*');
+    }
+    
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+    res.header('Access-Control-Allow-Credentials', 'true');
     
     if (req.method === 'OPTIONS') {
         res.sendStatus(200);
@@ -21,9 +38,17 @@ app.use((req, res, next) => {
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: "*",
-        methods: ["GET", "POST", "OPTIONS"],
-        credentials: false
+        origin: [
+            "https://glowing-frangollo-44ac94.netlify.app",
+            "https://glowing-frangollo-44ac94.netlify.app/",
+            "http://localhost:3000",
+            "http://localhost:8080",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:8080"
+        ],
+        methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+        credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
     },
     transports: ['polling'],
     allowEIO3: true,
