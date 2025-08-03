@@ -26,7 +26,7 @@ app.get('/', (req, res) => {
     res.send('Socket.io Server Running');
 });
 
-console.log('🚀 Socket.io Server Starting...');
+console.log('🚀 Socket.io Server Starting... (FORCED UPDATE)');
 console.log('📡 Listening on port', process.env.PORT || 8080);
 console.log('🌐 Environment:', process.env.PORT ? 'Railway Production' : 'Local Development');
 
