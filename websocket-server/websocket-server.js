@@ -19,8 +19,11 @@ const server = http.createServer((req, res) => {
     res.end('WebSocket Server Running');
 });
 
-// Create WebSocket server
-const wss = new WebSocket.Server({ server });
+// Create WebSocket server with proper upgrade handling
+const wss = new WebSocket.Server({ 
+    server,
+    path: '/ws' // Add specific path for WebSocket
+});
 
 console.log('🚀 WebSocket Server Starting...');
 console.log('📡 Listening on port', process.env.PORT || 3001);
