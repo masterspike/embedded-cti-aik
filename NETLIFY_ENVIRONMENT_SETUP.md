@@ -16,7 +16,7 @@ Klik op `Add a variable` en voeg de volgende variabelen toe:
 ```bash
 SAP_ENDPOINT=https://my1000354.de1.test.crm.cloud.sap/api/calls
 SAP_USERNAME=LEEMREIA
-SAP_PASSWORD=qwewero2u3i4oyfug2E!S_3groufgo2rgur32
+
 ```
 
 #### Socket.io Configuration
@@ -50,7 +50,7 @@ Na de deploy, open de applicatie en controleer:
 |----------|-------|---------|
 | `SAP_ENDPOINT` | `https://my1000354.de1.test.crm.cloud.sap/api/calls` | SAP Service Cloud API endpoint |
 | `SAP_USERNAME` | `LEEMREIA` | SAP Basic Auth username |
-| `SAP_PASSWORD` | `qwewero2u3i4oyfug2E!S_3groufgo2rgur32` | SAP Basic Auth password |
+
 | `SOCKET_URL` | `https://agent-buddy-socketio.onrender.com` | Socket.io server URL |
 | `DEFAULT_PHONE` | `+31651616126` | Default phone number for testing |
 | `DEBUG_MODE` | `true` | Enable debug logging |

@@ -376,7 +376,7 @@ async function testSapConnection() {
     
     addLog('🔗 SAP verbinding testen met Basic Auth...');
     
-    if (!endpoint || endpoint === 'https://your-sap-instance.service.cloud.sap') {
+    if (!endpoint || endpoint === 'https://my1000354.de1.test.crm.cloud.sap/') {
         document.getElementById('sapStatus').textContent = 'Fout';
         document.getElementById('lastSapAction').textContent = 'Endpoint niet geconfigureerd';
         addLog('❌ SAP endpoint niet geconfigureerd');
