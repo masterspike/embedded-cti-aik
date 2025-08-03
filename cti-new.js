@@ -513,25 +513,19 @@ function simulateIncomingCall() {
     handleIncomingCall(testCall);
 }
 
-// Helper function to send SAP payload to parent window
-// This now uses the enhanced PostMessage integration
-function sendSAPPayloadToParent(sapPayload) {
-    if (window.sendSAPPayloadToParent) {
-        return window.sendSAPPayloadToParent(sapPayload);
-    } else {
-        // Fallback to basic PostMessage
-        if (window.parent && window.parent !== window) {
-            try {
-                window.parent.postMessage(sapPayload, "*");
-                addLog('📤 SAP payload verzonden naar parent window: ' + sapPayload.Action);
-                return true;
-            } catch (error) {
-                addLog('❌ Fout bij postMessage naar parent: ' + error.message);
-                return false;
-            }
+// Direct PostMessage function (no recursion)
+function sendDirectPostMessage(sapPayload) {
+    if (window.parent && window.parent !== window) {
+        try {
+            window.parent.postMessage(sapPayload, "*");
+            addLog('📤 SAP payload verzonden naar parent window: ' + sapPayload.Action);
+            return true;
+        } catch (error) {
+            addLog('❌ Fout bij postMessage naar parent: ' + error.message);
+            return false;
         }
-        return false;
     }
+    return false;
 }
 
 // Send SAP payload to SAP Service Cloud via HTTP with Basic Auth
@@ -591,5 +585,4 @@ window.showDeclinePopup = showDeclinePopup;
 window.handleSAPMessage = handleSAPMessage;
 window.testSapConnection = testSapConnection;
 window.simulateIncomingCall = simulateIncomingCall;
-window.sendSAPPayloadToParent = sendSAPPayloadToParent;
 window.sendSAPPayloadToSAP = sendSAPPayloadToSAP; 
