@@ -99,6 +99,11 @@ function handleIncomingCall(callData) {
     // Send SAP NOTIFY for incoming call
     sendSAPIncomingNotification(callData);
     
+    // Send to SAP Service Cloud parent window
+    if (window.sendCallNotificationToSAP) {
+        window.sendCallNotificationToSAP(callData.phoneNumber, callData.callId);
+    }
+    
     // Also send via direct HTTP to SAP
     const sapNotifyPayload = {
         "Type": "CALL",
@@ -175,6 +180,11 @@ function acceptCall() {
     // Send to SAP Service Cloud
     sendToSAPServiceCloud(currentCall);
     
+    // Send to SAP Service Cloud parent window
+    if (window.sendCallAcceptToSAP) {
+        window.sendCallAcceptToSAP(currentCall.phoneNumber, currentCall.callId);
+    }
+    
     // Send via Socket.io
     if (window.sendWebSocketMessage) {
         window.sendWebSocketMessage({
@@ -233,6 +243,11 @@ function declineCall() {
     
     // Send SAP decline notification
     sendSAPDeclineNotification(currentCall);
+    
+    // Send to SAP Service Cloud parent window
+    if (window.sendCallDeclineToSAP) {
+        window.sendCallDeclineToSAP(currentCall.phoneNumber, currentCall.callId);
+    }
     
     // Send via Socket.io
     if (window.sendWebSocketMessage) {
@@ -348,6 +363,11 @@ function identifyCustomer(phoneNumber) {
     
     // Note: customerInfo and noCustomerMessage elements don't exist in new HTML structure
     // Customer info is now always visible in the SAP Fiori cards
+    
+    // Send customer identification to SAP Service Cloud
+    if (window.sendCustomerIdentificationToSAP) {
+        window.sendCustomerIdentificationToSAP(phoneNumber, customerData);
+    }
     
     addLog('✅ Klant geïdentificeerd: ' + customerData.name);
 }
