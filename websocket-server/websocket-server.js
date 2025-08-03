@@ -21,7 +21,8 @@ const server = http.createServer((req, res) => {
         res.end(JSON.stringify({
             status: 'healthy',
             timestamp: new Date().toISOString(),
-            websocket: 'running'
+            websocket: 'running',
+            port: process.env.PORT || 3001
         }));
         return;
     }
@@ -31,8 +32,18 @@ const server = http.createServer((req, res) => {
     res.end('WebSocket Server Running');
 });
 
-// Create WebSocket server
-const wss = new WebSocket.Server({ server });
+// Create WebSocket server with Railway compatibility
+const wss = new WebSocket.Server({ 
+    server,
+    // Handle Railway proxy headers
+    handleProtocols: () => 'websocket',
+    // Add headers for Railway
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+    }
+});
 
 console.log('🚀 WebSocket Server Starting...');
 console.log('📡 Listening on port', process.env.PORT || 3001);
