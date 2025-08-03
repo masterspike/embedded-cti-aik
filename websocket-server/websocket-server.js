@@ -1,93 +1,117 @@
-const express = require('express');
+const WebSocket = require('ws');
 const http = require('http');
-const socketIo = require('socket.io');
 
-const app = express();
-const server = http.createServer(app);
-const io = socketIo(server, {
-    cors: {
-        origin: "*",
-        methods: ["GET", "POST"]
+// Create HTTP server
+const server = http.createServer((req, res) => {
+    // Add CORS headers for Railway
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        res.writeHead(200);
+        res.end();
+        return;
+    }
+    
+    // Health check endpoint
+    if (req.url === '/health') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+            status: 'healthy',
+            timestamp: new Date().toISOString(),
+            websocket: 'running',
+            port: process.env.PORT || 8080
+        }));
+        return;
+    }
+    
+    // Default response
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('WebSocket Server Running');
+});
+
+// Create WebSocket server with Railway compatibility
+const wss = new WebSocket.Server({ 
+    server,
+    // Handle Railway proxy headers
+    handleProtocols: () => 'websocket',
+    // Add headers for Railway
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
     }
 });
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.json({
-        status: 'healthy',
-        timestamp: new Date().toISOString(),
-        websocket: 'running',
-        port: process.env.PORT || 8080
-    });
-});
-
-// Default response
-app.get('/', (req, res) => {
-    res.send('Socket.io Server Running');
-});
-
-console.log('🚀 Socket.io Server Starting... (FORCED UPDATE)');
+console.log('🚀 WebSocket Server Starting...');
 console.log('📡 Listening on port', process.env.PORT || 8080);
 console.log('🌐 Environment:', process.env.PORT ? 'Railway Production' : 'Local Development');
 
-// Handle Socket.io connections
-io.on('connection', (socket) => {
-    console.log('✅ New Socket.io connection established:', socket.id);
+// Handle WebSocket connections
+wss.on('connection', function connection(ws, req) {
+    console.log('✅ New WebSocket connection established');
     
     // Send welcome message
-    socket.emit('CONNECTION_ESTABLISHED', {
-        message: 'Socket.io server connected successfully',
-        socketId: socket.id,
+    ws.send(JSON.stringify({
+        type: 'CONNECTION_ESTABLISHED',
+        message: 'WebSocket server connected successfully',
         timestamp: new Date().toISOString()
-    });
+    }));
     
     // Handle incoming messages
-    socket.on('message', (data) => {
-        console.log('📨 Received message:', data);
-        
-        // Echo the message back to confirm receipt
-        socket.emit('MESSAGE_RECEIVED', {
-            originalMessage: data,
-            timestamp: new Date().toISOString()
-        });
-        
-        // If it's a call simulation, broadcast to all connected clients
-        if (data.type === 'CALL_SIMULATED') {
-            const broadcastMessage = {
-                type: 'CALL_SIMULATED_BROADCAST',
-                callData: data.callData,
-                socketId: socket.id,
+    ws.on('message', function incoming(message) {
+        try {
+            const data = JSON.parse(message);
+            console.log('📨 Received message:', data);
+            
+            // Echo the message back to confirm receipt
+            const response = {
+                type: 'MESSAGE_RECEIVED',
+                originalMessage: data,
                 timestamp: new Date().toISOString()
             };
             
-            io.emit('CALL_SIMULATED_BROADCAST', broadcastMessage);
-            console.log('📢 Broadcasted call simulation to all clients');
+            ws.send(JSON.stringify(response));
+            console.log('📤 Sent confirmation:', response);
+            
+            // If it's a call simulation, broadcast to all connected clients
+            if (data.type === 'CALL_SIMULATED') {
+                const broadcastMessage = {
+                    type: 'CALL_SIMULATED_BROADCAST',
+                    callData: data.callData,
+                    socketId: data.socketId,
+                    timestamp: new Date().toISOString()
+                };
+                
+                wss.clients.forEach(function each(client) {
+                    if (client.readyState === WebSocket.OPEN) {
+                        client.send(JSON.stringify(broadcastMessage));
+                    }
+                });
+                
+                console.log('📢 Broadcasted call simulation to all clients');
+            }
+            
+        } catch (error) {
+            console.log('❌ Error parsing message:', error);
+            ws.send(JSON.stringify({
+                type: 'ERROR',
+                message: 'Invalid JSON message',
+                timestamp: new Date().toISOString()
+            }));
         }
     });
     
-    // Handle call simulation
-    socket.on('CALL_SIMULATED', (data) => {
-        console.log('📞 Call simulation received:', data);
-        
-        const broadcastMessage = {
-            type: 'CALL_SIMULATED_BROADCAST',
-            callData: data,
-            socketId: socket.id,
-            timestamp: new Date().toISOString()
-        };
-        
-        io.emit('CALL_SIMULATED_BROADCAST', broadcastMessage);
-        console.log('📢 Broadcasted call simulation to all clients');
-    });
-    
-    // Handle connection disconnect
-    socket.on('disconnect', () => {
-        console.log('🔌 Socket.io connection closed:', socket.id);
+    // Handle connection close
+    ws.on('close', function close() {
+        console.log('🔌 WebSocket connection closed');
     });
     
     // Handle errors
-    socket.on('error', (err) => {
-        console.log('❌ Socket.io error:', err);
+    ws.on('error', function error(err) {
+        console.log('❌ WebSocket error:', err);
     });
 });
 
@@ -96,24 +120,24 @@ const PORT = process.env.PORT || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
 
 server.listen(PORT, HOST, () => {
-    console.log(`🎯 Socket.io server is running on ${HOST}:${PORT}`);
-    console.log(`🔗 Connect your widget to: ${process.env.PORT ? 'wss://embedd-cti-railway-production.up.railway.app' : 'ws://localhost:8080'}`);
+    console.log(`🎯 WebSocket server is running on ${HOST}:${PORT}`);
+    console.log(`🔗 Connect your widget to: ${process.env.PORT ? 'wss://embedd-cti-railway-production.up.railway.app' : 'ws://localhost:3001'}`);
 });
 
 // Graceful shutdown
 process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down Socket.io server...');
-    server.close(() => {
-        console.log('✅ Socket.io server closed');
+    console.log('\n🛑 Shutting down WebSocket server...');
+    wss.close(() => {
+        console.log('✅ WebSocket server closed');
         process.exit(0);
     });
 });
 
 // Handle SIGTERM for Railway
 process.on('SIGTERM', () => {
-    console.log('\n🛑 Railway shutting down Socket.io server...');
-    server.close(() => {
-        console.log('✅ Socket.io server closed');
+    console.log('\n🛑 Railway shutting down WebSocket server...');
+    wss.close(() => {
+        console.log('✅ WebSocket server closed');
         process.exit(0);
     });
 });

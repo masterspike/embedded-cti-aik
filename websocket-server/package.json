@@ -4,12 +4,11 @@
   "description": "WebSocket server for Embedded CTI widget testing",
   "main": "websocket-server.js",
   "scripts": {
-    "start": "node socketio-server.js",
-    "dev": "nodemon socketio-server.js"
+    "start": "node websocket-server.js",
+    "dev": "nodemon websocket-server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "socket.io": "^4.7.2"
+    "ws": "^8.14.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.1"
