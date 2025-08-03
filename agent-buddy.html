@@ -399,7 +399,7 @@
                         
                                 <div class="form-group">
             <label for="sapEndpoint">SAP Endpoint URL:</label>
-            <input type="text" id="sapEndpoint" value="https://your-sap-instance.service.cloud.sap" placeholder="SAP Service Cloud endpoint">
+            <input type="text" id="sapEndpoint" value="https://my1000354.de1.test.crm.cloud.sap" placeholder="SAP Service Cloud endpoint">
         </div>
         
         <div class="form-group">
@@ -426,6 +426,18 @@
         // Ensure config is loaded before other scripts
         console.log('📋 Config check:', window.CONFIG ? 'Loaded' : 'Not loaded');
         console.log('🔧 getConfig available:', typeof window.getConfig);
+        
+        // Test environment variables
+        setTimeout(() => {
+            if (window.getConfig) {
+                console.log('🔍 Environment Variables Check:');
+                console.log('  SAP_ENDPOINT:', getConfig('SAP_ENDPOINT'));
+                console.log('  SAP_USERNAME:', getConfig('SAP_USERNAME') ? 'Set' : 'Not set');
+                console.log('  SAP_PASSWORD:', getConfig('SAP_PASSWORD') ? 'Set' : 'Not set');
+                console.log('  SOCKET_URL:', getConfig('SOCKET_URL'));
+                console.log('  DEFAULT_PHONE:', getConfig('DEFAULT_PHONE'));
+            }
+        }, 1000);
     </script>
     <script src="socket-new.js"></script>
     <script src="cti-new.js"></script>
