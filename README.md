@@ -1,157 +1,216 @@
-# 📞 Embedded CTI - AIK
+# Agent Buddy - SAP C4C CTI Integration
 
-**Modern Customer Service Integration Platform for SAP Service Cloud v2**
+Een embedded widget voor SAP Cloud for Customer (C4C) die real-time call handling en customer identification ondersteunt.
 
-A lightweight, responsive widget that integrates seamlessly with SAP Service Cloud as a CTI embedded widget. Built with pure HTML, CSS, and JavaScript for maximum compatibility and performance.
+## 🚀 Live Demo
 
-## 🚀 **Live Demo**
+**Agent Buddy Widget:** https://glowing-frangollo-44ac94.netlify.app
 
-Visit the live widget: **[https://yourusername.github.io/embedded-cti-aik/](https://yourusername.github.io/embedded-cti-aik/)**
+## 📁 Project Structuur
 
-## ✨ **Features**
+### Core Files
+- `agent-buddy.html` - Main Agent Buddy widget interface
+- `app-new.js` - Main application logic
+- `cti-new.js` - CTI and SAP integration logic
+- `socket-new.js` - Socket.io client implementation
+- `config.js` - Environment configuration
 
-- **📞 Call Simulation** - Test incoming and outgoing calls
-- **💬 Real-time Chat** - Agent chat interface with quick actions
-- **📊 Data Export** - Export call data to CSV format
-- **🔌 Socket Integration** - Real-time communication capabilities
-- **📱 Mobile Responsive** - Works on all devices and screen sizes
-- **🎨 Modern UI** - Clean, professional design
-- **🔒 SAP Integration** - Full SAP Service Cloud v2 compatibility
+### SAP Integration
+- `sap-c4c-integration.js` - **Officiële SAP C4C integratie** (gebaseerd op SAP voorbeeld)
+- `sap-service-cloud-integration.js` - SAP Service Cloud communicatie
+- `postmessage-integration.js` - PostMessage API voor iframe communicatie
 
-## 🛠 **Technology Stack**
+### SAP UI5 Integration
+- `SocketView.controller.js` - SAP UI5 controller voor native integratie
+- `SocketView.view.xml` - SAP UI5 view definitie
+- `manifest.json` - SAP UI5 application descriptor
 
-- **Frontend**: Pure HTML5, CSS3, JavaScript (ES6+)
-- **No Dependencies**: Lightweight and fast
-- **HTTPS Ready**: Secure for production use
-- **Cross-browser**: Works in all modern browsers
+### Server
+- `socketio-server.js` - Socket.io server voor Render.com deployment
+- `package.json` - Node.js dependencies
 
-## 📋 **SAP Service Cloud v2 Integration**
+### Documentation
+- `SAP_C4C_INTEGRATION.md` - **Complete C4C integratie documentatie**
+- `SAP_UI5_INTEGRATION.md` - SAP UI5 integratie guide
+- `NETLIFY_ENVIRONMENT_SETUP.md` - Netlify deployment guide
+- `ENVIRONMENT_VARIABLES.md` - Environment variables guide
+- `RENDER_DEPLOYMENT.md` - Render.com server deployment
 
-### **Widget Configuration:**
+### Configuration
+- `netlify.toml` - Netlify deployment configuratie
+- `index.html` - Redirect naar agent-buddy.html
 
-1. **Log into SAP Service Cloud as Administrator**
-2. **Navigate to**: Administration → Live Activity Center → Widget Configuration
-3. **Create New Widget**:
-   - **Provider Type**: `External Provider`
-   - **Provider URL**: `https://yourusername.github.io/embedded-cti-aik/`
-   - **Widget Name**: `Embedded CTI - AIK`
-   - **Description**: `Modern Customer Service Integration Platform`
-   - **Enabled**: `Yes`
+## 🏗️ Architectuur
 
-### **User Assignment:**
-1. **Go to**: Administration → User Management → Users
-2. **Select user** who will use the widget
-3. **Assign**: Live Activity Center work center
-4. **Ensure widget is visible** in user role
-
-## 🔧 **Installation & Deployment**
-
-### **Option 1: GitHub Pages (Recommended)**
-
-1. **Fork this repository** or create a new one
-2. **Upload the `index.html` file** to your repository
-3. **Enable GitHub Pages**:
-   - Go to Settings → Pages
-   - Source: Deploy from a branch
-   - Branch: main
-   - Folder: / (root)
-4. **Your widget will be available at**: `https://yourusername.github.io/repository-name/`
-
-### **Option 2: Any Web Server**
-
-1. **Upload `index.html`** to any web server with HTTPS
-2. **Use the HTTPS URL** in SAP Service Cloud configuration
-
-## 🎯 **Usage**
-
-### **Call Simulation**
-- Enter phone number and customer name
-- Select call type (inbound/outbound/missed)
-- Click "Simulate Call" to test integration
-
-### **Chat Interface**
-- Real-time chat with customers
-- Quick action buttons for common responses
-- Export chat data to SAP Service Cloud
-
-### **Data Export**
-- Export call information to CSV
-- View detailed activity data
-- Refresh data from SAP Service Cloud
-
-## 🔌 **SAP Integration Features**
-
-### **Message Types Supported:**
-
-**From SAP Service Cloud to Widget:**
-```javascript
-{
-    type: 'ACTIVITY_LOADED',
-    activity: {
-        phoneNumber: '+1234567890',
-        businessPartnerId: 'BP001',
-        objectId: 'OBJ001',
-        // ... other activity data
-    }
-}
+```
+Agent Buddy Widget (Netlify)
+    ↓ Socket.io
+Socket.io Server (Render.com)
+    ↓ PostMessage
+SAP C4C Parent Window
+    ↓ Event Bus
+SAP C4C UI Components
 ```
 
-**From Widget to SAP Service Cloud:**
-```javascript
-{
-    type: 'CALL_SIMULATED',
-    callData: {
-        phoneNumber: '+1234567890',
-        callType: 'inbound',
-        customerName: 'John Doe',
-        timestamp: '2024-01-01T12:00:00Z'
-    }
-}
+## 🔧 Features
+
+### ✅ **Real-time Call Handling**
+- Incoming call notifications
+- Call accept/decline functionality
+- Call status management
+- Button reset functionality
+
+### ✅ **SAP C4C Integration**
+- **Officiële SAP C4C integratie** gebaseerd op SAP voorbeeld
+- PostMessage API voor iframe communicatie
+- JSON payload format
+- Bidirectional messaging
+
+### ✅ **Customer Identification**
+- Phone number lookup
+- Customer data display
+- SAP Service Cloud integration
+- Customer history loading
+
+### ✅ **SAP UI5 Integration**
+- Native SAP UI5 controller
+- SAP Fiori 3 styling
+- Event Bus integration
+- Customer screen updates
+
+### ✅ **Production Ready**
+- Netlify frontend deployment
+- Render.com backend deployment
+- Environment variable configuration
+- Error handling en logging
+
+## 🚀 Quick Start
+
+### 1. Clone Repository
+```bash
+git clone https://github.com/masterspike/embedded-cti-aik.git
+cd embedded-cti-deploy
 ```
 
-## 📱 **Mobile Compatibility**
+### 2. Local Development
+```bash
+# Start Socket.io server
+node socketio-server.js
 
-The widget is fully responsive and works on:
-- ✅ **Desktop browsers** (Chrome, Firefox, Safari, Edge)
-- ✅ **Mobile devices** (iOS Safari, Android Chrome)
-- ✅ **Tablets** (iPad, Android tablets)
-- ✅ **Embedded iframes** (SAP Service Cloud)
+# Open agent-buddy.html in browser
+# Or use live demo: https://glowing-frangollo-44ac94.netlify.app
+```
 
-## 🔒 **Security**
+### 3. SAP C4C Integration
+```html
+<!-- Add to SAP C4C application -->
+<iframe id="agent-buddy-frame" 
+        src="https://glowing-frangollo-44ac94.netlify.app/agent-buddy.html"
+        width="100%" height="600px">
+</iframe>
+```
 
-- ✅ **HTTPS Required** - Secure communication
-- ✅ **CORS Configured** - Cross-origin compatibility
-- ✅ **No External Dependencies** - Self-contained
-- ✅ **SAP Message Validation** - Secure message handling
+## 📋 Call Flow
 
-## 🚀 **Performance**
+### 1. Incoming Call
+```
+WebSocket → Agent Buddy → NOTIFY → SAP C4C
+↓
+SAP C4C: Update UI, Show notification
+```
 
-- ⚡ **Lightning Fast** - No heavy frameworks
-- 📦 **Tiny Size** - Single HTML file
-- 🔄 **Instant Loading** - No external resources
-- 🎯 **Optimized** - Minimal JavaScript
+### 2. Call Accepted
+```
+Agent Buddy → ACCEPT → SAP C4C
+↓
+SAP C4C: Load customer, Show customer screen
+```
 
-## 📞 **Support**
+### 3. Call Declined
+```
+Agent Buddy → DECLINE → SAP C4C
+↓
+SAP C4C: Update status, Show decline notification
+```
 
-For technical support:
-1. Check the browser console for errors
-2. Verify HTTPS URL is accessible
-3. Test with SAP Service Cloud integration
-4. Review the deployment logs
+## 🔗 Integrations
 
-## 📄 **License**
+### **SAP C4C (Cloud for Customer)**
+- Officiële SAP C4C CTI integratie
+- PostMessage API communicatie
+- JSON payload format
+- Event-driven architecture
 
-MIT License - Feel free to use and modify for your needs.
+### **SAP Service Cloud**
+- Direct HTTP API calls
+- Basic Authentication
+- Customer data integration
+- Call logging
 
-## 🤝 **Contributing**
+### **SAP UI5**
+- Native SAP UI5 controller
+- SAP Fiori 3 design system
+- Event Bus integration
+- Customer screen management
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+## 📚 Documentation
+
+- **[SAP C4C Integration](SAP_C4C_INTEGRATION.md)** - Complete C4C integratie guide
+- **[SAP UI5 Integration](SAP_UI5_INTEGRATION.md)** - UI5 integratie documentatie
+- **[Environment Setup](ENVIRONMENT_VARIABLES.md)** - Environment variables configuratie
+- **[Netlify Deployment](NETLIFY_ENVIRONMENT_SETUP.md)** - Frontend deployment guide
+- **[Render Deployment](RENDER_DEPLOYMENT.md)** - Backend deployment guide
+
+## 🛠️ Development
+
+### Environment Variables
+```bash
+# Netlify Environment Variables
+SOCKET_URL=https://agent-buddy-socketio.onrender.com
+SAP_ENDPOINT=https://your-sap-instance.service.cloud.sap/api/calls
+SAP_USERNAME=your-sap-username
+SAP_PASSWORD=your-sap-password
+DEFAULT_PHONE=+31651616126
+```
+
+### Local Development
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+node socketio-server.js
+
+# Open http://localhost:3000/agent-buddy.html
+```
+
+## 🎯 Key Features
+
+### **Agent Buddy Widget**
+- Real-time call notifications
+- Accept/decline functionality
+- Customer identification
+- SAP Fiori 3 styling
+- Socket.io integration
+
+### **SAP C4C Integration**
+- Officiële SAP integratie patterns
+- Singleton pattern implementation
+- JSON/XML payload support
+- Error handling en validation
+
+### **Production Deployment**
+- Netlify frontend hosting
+- Render.com backend hosting
+- Environment variable management
+- Comprehensive logging
+
+## 📞 Support
+
+Voor vragen over de SAP C4C integratie, zie de [SAP C4C Integration Guide](SAP_C4C_INTEGRATION.md).
 
 ---
 
-**Ready for SAP Service Cloud v2 Integration!** 🎉
+**Agent Buddy** - SAP C4C CTI Integration Widget 🚀
 
 
