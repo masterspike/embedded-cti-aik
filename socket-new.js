@@ -25,6 +25,9 @@ function initializeWebSocket() {
         console.log('🌐 Protocol:', window.location.protocol);
         console.log('🔗 Full URL:', window.location.href);
         
+        // Update initial status
+        updateWSStatus('Verbinding maken...', 'status-connecting');
+        
         // Load Socket.io client library
         const script = document.createElement('script');
         script.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
@@ -209,10 +212,13 @@ function sendTestMessage() {
 
 // Update WebSocket status display
 function updateWSStatus(status, className) {
-    const statusElement = document.getElementById('ws-status');
+    const statusElement = document.getElementById('wsStatus');
     if (statusElement) {
         statusElement.textContent = status;
         statusElement.className = 'status-indicator ' + className;
+        console.log('📊 WebSocket status bijgewerkt naar:', status);
+    } else {
+        console.warn('⚠️ wsStatus element niet gevonden');
     }
 }
 
