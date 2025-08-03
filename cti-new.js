@@ -76,45 +76,65 @@ function handleIncomingCall(callData) {
     addLog('📞 Incoming call: ' + callData.phoneNumber);
     showToast('🔔 Nieuwe incoming call!');
     
-    // Send SAP notification for incoming call
+    // Send SAP NOTIFY for incoming call
     sendSAPIncomingNotification(callData);
+    
+    // Also send via direct HTTP to SAP
+    const sapNotifyPayload = {
+        "Type": "CALL",
+        "EventType": "INBOUND",
+        "Action": "NOTIFY",
+        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126',
+        "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
+        "Timestamp": new Date().toISOString()
+    };
+    
+    // Send NOTIFY to SAP via HTTP
+    sendSAPPayloadToSAP(sapNotifyPayload).then(success => {
+        if (success) {
+            addLog('✅ SAP NOTIFY verzonden voor incoming call');
+            
+            // Update SAP status
+            const sapStatus = document.getElementById('sapStatus');
+            const lastSapAction = document.getElementById('lastSapAction');
+            
+            if (sapStatus) {
+                sapStatus.textContent = 'Actief';
+            }
+            if (lastSapAction) {
+                lastSapAction.textContent = 'Call notificatie';
+            }
+        } else {
+            addLog('❌ SAP NOTIFY mislukt voor incoming call');
+        }
+    });
 }
 
 // Send SAP notification for incoming call
 function sendSAPIncomingNotification(callData) {
-    if (sapServiceCloud) {
-        const sapNotification = {
-            "Type": "CALL",
-            "EventType": "INBOUND",
-            "Action": "NOTIFY", 
-            "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126',
-            "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
-            "Timestamp": new Date().toISOString()
+    const sapNotification = {
+        "Type": "CALL",
+        "EventType": "INBOUND",
+        "Action": "NOTIFY", 
+        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126',
+        "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
+        "Timestamp": new Date().toISOString()
+    };
+    
+    // Send via PostMessage to parent window
+    sendDirectPostMessage(sapNotification);
+    
+    // Send via Socket.io if available
+    if (window.socket && window.socket.connected) {
+        const socketMessage = {
+            type: 'SAP_INTEGRATION',
+            data: sapNotification
         };
-        
-        sapServiceCloud.sendMessage(sapNotification);
-        addLog('📢 SAP notificatie verzonden voor incoming call');
-        
-        // Send directly to parent window (SAP Service Cloud)
-        if (window.parent && window.parent !== window) {
-            try {
-                window.parent.postMessage(sapNotification, "*");
-                addLog('📤 SAP NOTIFY payload verzonden naar parent window via postMessage');
-            } catch (error) {
-                addLog('❌ Fout bij postMessage naar parent: ' + error.message);
-            }
-        }
-        
-        // Send via Socket.io if available
-        if (window.socket && window.socket.connected) {
-            const socketMessage = {
-                type: 'SAP_INTEGRATION',
-                data: sapNotification
-            };
-            window.socket.emit('message', socketMessage);
-            addLog('📡 SAP NOTIFY payload verzonden via Socket.io');
-        }
+        window.socket.emit('message', socketMessage);
+        addLog('📡 SAP NOTIFY payload verzonden via Socket.io');
     }
+    
+    addLog('📢 SAP NOTIFY verzonden voor incoming call: ' + sapNotification.ANI);
 }
 
 // Accept call
@@ -225,39 +245,49 @@ function declineCall() {
 
 // Send SAP decline notification
 function sendSAPDeclineNotification(callData) {
-    if (sapServiceCloud) {
-        const sapPayload = {
-            "Type": "CALL",
-            "EventType": "INBOUND",
-            "Action": "DECLINE", 
-            "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126',
-            "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
-            "Timestamp": new Date().toISOString()
+    const sapPayload = {
+        "Type": "CALL",
+        "EventType": "INBOUND",
+        "Action": "DECLINE", 
+        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126',
+        "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
+        "Timestamp": new Date().toISOString()
+    };
+    
+    // Send via PostMessage to parent window
+    sendDirectPostMessage(sapPayload);
+    
+    // Send via Socket.io if available
+    if (window.socket && window.socket.connected) {
+        const socketMessage = {
+            type: 'SAP_INTEGRATION',
+            data: sapPayload
         };
-        
-        sapServiceCloud.sendMessage(sapPayload);
-        addLog('❌ SAP DECLINE payload verzonden: ' + JSON.stringify(sapPayload));
-        
-        // Send directly to parent window (SAP Service Cloud)
-        if (window.parent && window.parent !== window) {
-            try {
-                window.parent.postMessage(sapPayload, "*");
-                addLog('📤 SAP DECLINE payload verzonden naar parent window via postMessage');
-            } catch (error) {
-                addLog('❌ Fout bij postMessage naar parent: ' + error.message);
-            }
-        }
-        
-        // Send via Socket.io if available
-        if (window.socket && window.socket.connected) {
-            const socketMessage = {
-                type: 'SAP_INTEGRATION',
-                data: sapPayload
-            };
-            window.socket.emit('message', socketMessage);
-            addLog('📡 SAP DECLINE payload verzonden via Socket.io');
-        }
+        window.socket.emit('message', socketMessage);
+        addLog('📡 SAP DECLINE payload verzonden via Socket.io');
     }
+    
+    // Send via HTTP to SAP
+    sendSAPPayloadToSAP(sapPayload).then(success => {
+        if (success) {
+            addLog('✅ SAP DECLINE verzonden voor call: ' + sapPayload.ANI);
+            
+            // Update SAP status
+            const sapStatus = document.getElementById('sapStatus');
+            const lastSapAction = document.getElementById('lastSapAction');
+            
+            if (sapStatus) {
+                sapStatus.textContent = 'Verbroken';
+            }
+            if (lastSapAction) {
+                lastSapAction.textContent = 'Call afgewezen';
+            }
+        } else {
+            addLog('❌ SAP DECLINE mislukt voor call: ' + sapPayload.ANI);
+        }
+    });
+    
+    addLog('❌ SAP DECLINE payload verzonden: ' + sapPayload.ANI);
 }
 
 // Identify customer by phone number
@@ -304,20 +334,17 @@ function sendToSAPServiceCloud(callData) {
         "Timestamp": new Date().toISOString()
     };
     
-    // Send to SAP if available
-    if (sapServiceCloud) {
-        sapServiceCloud.sendMessage(sapPayload);
-        addLog('✅ SAP ACCEPT payload verzonden: ' + JSON.stringify(sapPayload));
-    }
+    // Send via PostMessage to parent window
+    sendDirectPostMessage(sapPayload);
     
-    // Send directly to parent window (SAP Service Cloud)
-    if (window.parent && window.parent !== window) {
-        try {
-            window.parent.postMessage(sapPayload, "*");
-            addLog('📤 SAP payload verzonden naar parent window via postMessage');
-        } catch (error) {
-            addLog('❌ Fout bij postMessage naar parent: ' + error.message);
-        }
+    // Send via Socket.io if available
+    if (window.socket && window.socket.connected) {
+        const socketMessage = {
+            type: 'SAP_INTEGRATION',
+            data: sapPayload
+        };
+        window.socket.emit('message', socketMessage);
+        addLog('📡 SAP ACCEPT payload verzonden via Socket.io');
     }
     
     // Send HTTP request to SAP Service Cloud
@@ -328,31 +355,15 @@ function sendToSAPServiceCloud(callData) {
         if (success) {
             if (sapStatus) sapStatus.textContent = 'Verbonden';
             if (lastSapAction) lastSapAction.textContent = 'Call geaccepteerd';
+            addLog('✅ SAP ACCEPT verzonden voor call: ' + sapPayload.ANI);
         } else {
             if (sapStatus) sapStatus.textContent = 'Fout';
             if (lastSapAction) lastSapAction.textContent = 'HTTP request gefaald';
+            addLog('❌ SAP ACCEPT mislukt voor call: ' + sapPayload.ANI);
         }
     });
     
-    // Simulate SAP API call
-    setTimeout(() => {
-        const sapStatus = document.getElementById('sapStatus');
-        const lastSapAction = document.getElementById('lastSapAction');
-        
-        if (sapStatus) sapStatus.textContent = 'Verbonden';
-        if (lastSapAction) lastSapAction.textContent = 'Call geaccepteerd';
-        addLog('✅ Call succesvol naar SAP verzonden');
-    }, 1000);
-    
-    // Send via Socket.io if available
-    if (window.socket && window.socket.connected) {
-        const socketMessage = {
-            type: 'SAP_INTEGRATION',
-            data: sapPayload
-        };
-        window.socket.emit('message', socketMessage);
-        addLog('📡 SAP payload verzonden via Socket.io');
-    }
+    addLog('✅ SAP ACCEPT payload verzonden: ' + sapPayload.ANI);
 }
 
 // Generate external reference ID for SAP
