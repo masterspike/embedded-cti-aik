@@ -6,467 +6,460 @@
 
 sap.ui.define([
     "sap/ui/core/mvc/Controller",
-    "sap/ui/core/routing/History",
-    "sap/ui/core/UIComponent",
-    "sap/m/MessageBox",
-    "sap/m/MessageToast"
-], function (Controller, History, UIComponent, MessageBox, MessageToast) {
+    "sap/ui/model/json/JSONModel",
+    "sap/m/MessageToast",
+    "sap/m/MessageBox"
+], function (Controller, JSONModel, MessageToast, MessageBox) {
     "use strict";
 
-    return Controller.extend("com.sap.agentbuddy.SocketView", {
+    return Controller.extend("com.sap.agentbuddy.controller.SocketView", {
         
-        /**
-         * Called when the controller is instantiated
-         */
         onInit: function () {
+            console.log("🎯 Agent Buddy SAP UI5 Controller initialized");
+            
+            // Initialize models
+            this._initializeModels();
+            
+            // Initialize audio
+            this._initializeAudio();
+            
+            // Initialize Socket.io connection
             this._initializeSocketConnection();
-            this._setupSAPIntegration();
-            this._logControllerInitialized();
+            
+            // Setup SAP C4C integration
+            this._setupSAPC4CIntegration();
+            
+            // Setup postMessage listener
+            this._setupPostMessageListener();
         },
-
-        /**
-         * Initialize Socket.io connection
-         */
-        _initializeSocketConnection: function () {
-            try {
-                // Load Socket.io library
-                const script = document.createElement('script');
-                script.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
-                script.onload = () => {
-                    this._connectToSocketServer();
-                };
-                script.onerror = (error) => {
-                    this._logError('Socket.io library failed to load', error);
-                };
-                document.head.appendChild(script);
-            } catch (error) {
-                this._logError('Failed to initialize socket connection', error);
-            }
+        
+        _initializeModels: function() {
+            // Incoming call model
+            this.oIncomingCallModel = new JSONModel({
+                phoneNumber: "",
+                callId: "",
+                timestamp: "",
+                status: "idle"
+            });
+            this.getView().setModel(this.oIncomingCallModel, "incomingCall");
+            
+            // Call status model
+            this.oCallStatusModel = new JSONModel({
+                status: "idle", // idle, ringing, connected, ended
+                lastAction: "",
+                agentId: ""
+            });
+            this.getView().setModel(this.oCallStatusModel, "callStatus");
+            
+            // Activity log model
+            this.oActivityModel = new JSONModel({
+                activities: []
+            });
+            this.getView().setModel(this.oActivityModel, "activity");
         },
-
-        /**
-         * Connect to Socket.io server
-         */
-        _connectToSocketServer: function () {
+        
+        _initializeAudio: function() {
+            // Initialize phone ringtone
+            this.phoneAudio = new Audio("data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT");
+            this.phoneAudio.loop = true;
+            
+            // Initialize call end tone
+            this.callEndAudio = new Audio("data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT");
+        },
+        
+        _initializeSocketConnection: function() {
             try {
                 const socketUrl = this._getSocketUrl();
                 this.socket = io(socketUrl, {
-                    transports: ['polling'],
-                    timeout: 30000,
-                    forceNew: true,
-                    reconnection: true,
-                    reconnectionAttempts: 10,
-                    reconnectionDelay: 1000,
-                    withCredentials: true
+                    withCredentials: false,
+                    connectTimeout: 45000
                 });
-
+                
                 this._setupSocketEventHandlers();
-                this._logInfo('Socket.io connection initialized', { url: socketUrl });
+                this._addActivity("🔌 Socket.io verbinding geïnitialiseerd");
+                
             } catch (error) {
-                this._logError('Failed to connect to socket server', error);
+                console.error("❌ Socket.io initialization failed:", error);
+                this._addActivity("❌ Socket.io initialisatie mislukt: " + error.message);
             }
         },
-
-        /**
-         * Setup Socket.io event handlers
-         */
-        _setupSocketEventHandlers: function () {
+        
+        _setupSocketEventHandlers: function() {
             if (!this.socket) return;
-
-            // Connection events
+            
             this.socket.on('connect', () => {
-                this._logInfo('Socket.io connected', { socketId: this.socket.id });
-                this._updateConnectionStatus('Connected');
+                console.log("✅ Socket.io connected");
+                this._addActivity("✅ Socket.io verbonden");
+                this._updateConnectionStatus("connected");
             });
-
+            
             this.socket.on('disconnect', () => {
-                this._logInfo('Socket.io disconnected');
-                this._updateConnectionStatus('Disconnected');
+                console.log("❌ Socket.io disconnected");
+                this._addActivity("❌ Socket.io verbroken");
+                this._updateConnectionStatus("disconnected");
             });
-
-            this.socket.on('connect_error', (error) => {
-                this._logError('Socket.io connection error', error);
-                this._updateConnectionStatus('Error');
-            });
-
-            // Call events
+            
             this.socket.on('CALL_SIMULATED_BROADCAST', (data) => {
-                this._handleIncomingCall(data.callData);
+                console.log("📢 Call simulation received:", data);
+                this.onNewPhone({
+                    incomingCallData: data.callData,
+                    phoneNumber: data.callData.phoneNumber
+                });
             });
-
-            this.socket.on('SAP_INTEGRATION_BROADCAST', (data) => {
-                this._handleSAPIntegration(data.sapData);
-            });
-
-            // Message events
-            this.socket.on('MESSAGE_RECEIVED', (data) => {
-                this._logInfo('Message received', data);
-            });
-
-            this.socket.on('CONNECTION_ESTABLISHED', (data) => {
-                this._logInfo('Connection established', data);
-            });
-        },
-
-        /**
-         * Setup SAP Service Cloud integration
-         */
-        _setupSAPIntegration: function () {
-            this.sapEndpoint = this._getSAPEndpoint();
-            this.sapCredentials = this._getSAPCredentials();
             
-            this._logInfo('SAP integration initialized', {
-                endpoint: this.sapEndpoint,
-                hasCredentials: !!this.sapCredentials
+            this.socket.on('CALL_ACCEPTED', (data) => {
+                console.log("✅ Call accepted event:", data);
+                this.onCallAccepted({
+                    callData: data
+                });
+            });
+            
+            this.socket.on('CALL_DECLINED', (data) => {
+                console.log("❌ Call declined event:", data);
+                this.onCallDeclined({
+                    callData: data
+                });
+            });
+            
+            this.socket.on('CALL_ENDED', (data) => {
+                console.log("📞 Call ended event:", data);
+                this.onCallEnded({
+                    callData: data
+                });
             });
         },
-
-        /**
-         * Handle incoming call
-         */
-        _handleIncomingCall: function (callData) {
-            try {
-                this._logInfo('Incoming call received', callData);
+        
+        _setupSAPC4CIntegration: function() {
+            this._SAPIntegration = {
+                sendIncomingCalltoC4C: (param) => {
+                    const payload = {
+                        "Type": "CALL",
+                        "EventType": "INBOUND",
+                        "Action": "NOTIFY",
+                        "ANI": param.ANI || "+31651616126",
+                        "ExternalReferenceID": this._generateCallId(),
+                        "Timestamp": new Date().toISOString()
+                    };
+                    
+                    this._sendToC4C(payload);
+                    this._addActivity("📤 SAP C4C NOTIFY verzonden: " + payload.ANI);
+                },
                 
-                // Create SAP notification
-                const sapNotification = {
-                    "Type": "CALL",
-                    "EventType": "INBOUND",
-                    "Action": "NOTIFY",
-                    "ANI": callData.phoneNumber,
-                    "ExternalReferenceID": callData.callId,
-                    "Timestamp": new Date().toISOString()
-                };
-
-                // Send to SAP Service Cloud
-                this._sendToSAPServiceCloud(sapNotification);
+                sendAcceptToC4C: (callData) => {
+                    const payload = {
+                        "Type": "CALL",
+                        "EventType": "INBOUND",
+                        "Action": "ACCEPT",
+                        "ANI": callData.phoneNumber,
+                        "ExternalReferenceID": callData.callId,
+                        "Timestamp": new Date().toISOString()
+                    };
+                    
+                    this._sendToC4C(payload);
+                    this._addActivity("✅ SAP C4C ACCEPT verzonden: " + payload.ANI);
+                },
                 
-                // Update UI
-                this._updateCallDisplay(callData);
+                sendDeclineToC4C: (callData) => {
+                    const payload = {
+                        "Type": "CALL",
+                        "EventType": "INBOUND",
+                        "Action": "DECLINE",
+                        "ANI": callData.phoneNumber,
+                        "ExternalReferenceID": callData.callId,
+                        "Timestamp": new Date().toISOString()
+                    };
+                    
+                    this._sendToC4C(payload);
+                    this._addActivity("❌ SAP C4C DECLINE verzonden: " + payload.ANI);
+                },
                 
-                // Show notification
-                this._showCallNotification(callData);
-                
-            } catch (error) {
-                this._logError('Failed to handle incoming call', error);
-            }
-        },
-
-        /**
-         * Handle SAP integration events
-         */
-        _handleSAPIntegration: function (sapData) {
-            try {
-                this._logInfo('SAP integration event', sapData);
-                
-                switch (sapData.Action) {
-                    case 'ACCEPT':
-                        this._handleCallAccepted(sapData);
-                        break;
-                    case 'DECLINE':
-                        this._handleCallDeclined(sapData);
-                        break;
-                    case 'NOTIFY':
-                        this._handleCallNotification(sapData);
-                        break;
-                    default:
-                        this._logWarning('Unknown SAP action', sapData.Action);
-                }
-            } catch (error) {
-                this._logError('Failed to handle SAP integration', error);
-            }
-        },
-
-        /**
-         * Send data to SAP Service Cloud
-         */
-        _sendToSAPServiceCloud: function (sapPayload) {
-            try {
-                if (!this.sapEndpoint || !this.sapCredentials) {
-                    this._logWarning('SAP credentials not configured');
-                    return;
-                }
-
-                // Create Basic Auth header
-                const credentials = btoa(`${this.sapCredentials.username}:${this.sapCredentials.password}`);
-                
-                fetch(this.sapEndpoint, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Basic ${credentials}`,
-                        'Accept': 'application/json'
-                    },
-                    body: JSON.stringify(sapPayload)
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                _sendToC4C: (payload) => {
+                    const endpoint = this._getC4CEndpoint();
+                    const credentials = this._getC4CCredentials();
+                    
+                    if (!endpoint || !credentials) {
+                        console.warn("⚠️ C4C endpoint or credentials not configured");
+                        this._addActivity("⚠️ C4C configuratie ontbreekt");
+                        return;
                     }
-                })
-                .then(data => {
-                    this._logInfo('SAP Service Cloud response', data);
-                    this._showSuccessMessage('SAP integration successful');
-                })
-                .catch(error => {
-                    this._logError('SAP Service Cloud request failed', error);
-                    this._showErrorMessage('SAP integration failed: ' + error.message);
-                });
-
-            } catch (error) {
-                this._logError('Failed to send to SAP Service Cloud', error);
-            }
-        },
-
-        /**
-         * Handle call accepted
-         */
-        _handleCallAccepted: function (sapData) {
-            this._logInfo('Call accepted', sapData);
-            this._showSuccessMessage('Call accepted successfully');
-            this._updateCallStatus('Accepted');
-        },
-
-        /**
-         * Handle call declined
-         */
-        _handleCallDeclined: function (sapData) {
-            this._logInfo('Call declined', sapData);
-            this._showInfoMessage('Call declined');
-            this._updateCallStatus('Declined');
-        },
-
-        /**
-         * Handle call notification
-         */
-        _handleCallNotification: function (sapData) {
-            this._logInfo('Call notification', sapData);
-            this._updateCallStatus('Notified');
-        },
-
-        /**
-         * Accept call
-         */
-        acceptCall: function () {
-            try {
-                const sapPayload = {
-                    "Type": "CALL",
-                    "EventType": "INBOUND",
-                    "Action": "ACCEPT",
-                    "ANI": this.currentCall?.phoneNumber,
-                    "ExternalReferenceID": this.currentCall?.callId,
-                    "Timestamp": new Date().toISOString()
-                };
-
-                this._sendToSAPServiceCloud(sapPayload);
-                this._emitSocketEvent('CALL_ACCEPTED', sapPayload);
-                
-            } catch (error) {
-                this._logError('Failed to accept call', error);
-            }
-        },
-
-        /**
-         * Decline call
-         */
-        declineCall: function () {
-            try {
-                const sapPayload = {
-                    "Type": "CALL",
-                    "EventType": "INBOUND",
-                    "Action": "DECLINE",
-                    "ANI": this.currentCall?.phoneNumber,
-                    "ExternalReferenceID": this.currentCall?.callId,
-                    "Timestamp": new Date().toISOString()
-                };
-
-                this._sendToSAPServiceCloud(sapPayload);
-                this._emitSocketEvent('CALL_DECLINED', sapPayload);
-                
-            } catch (error) {
-                this._logError('Failed to decline call', error);
-            }
-        },
-
-        /**
-         * Simulate incoming call
-         */
-        simulateIncomingCall: function () {
-            try {
-                const testCall = {
-                    phoneNumber: '+31651616126',
-                    callId: 'CALL-' + Math.floor(Math.random() * 10000),
-                    timestamp: new Date().toISOString()
-                };
-
-                this._emitSocketEvent('CALL_SIMULATED', testCall);
-                this._logInfo('Call simulation sent', testCall);
-                
-            } catch (error) {
-                this._logError('Failed to simulate call', error);
-            }
-        },
-
-        /**
-         * Emit socket event
-         */
-        _emitSocketEvent: function (event, data) {
-            if (this.socket && this.socket.connected) {
-                this.socket.emit('message', {
-                    type: event,
-                    data: data
-                });
-                this._logInfo('Socket event emitted', { event, data });
-            } else {
-                this._logWarning('Socket not connected, cannot emit event', event);
-            }
-        },
-
-        /**
-         * Get Socket.io URL
-         */
-        _getSocketUrl: function () {
-            // Try environment variable first
-            if (window.CONFIG && window.getConfig) {
-                const configUrl = getConfig('SOCKET_URL');
-                if (configUrl) return configUrl;
-            }
-            
-            // Fallback to Render.com URL
-            return 'https://agent-buddy-socketio.onrender.com';
-        },
-
-        /**
-         * Get SAP endpoint
-         */
-        _getSAPEndpoint: function () {
-            if (window.CONFIG && window.getConfig) {
-                return getConfig('SAP_ENDPOINT');
-            }
-            return 'https://my1000354.de1.test.crm.cloud.sap/api/calls';
-        },
-
-        /**
-         * Get SAP credentials
-         */
-        _getSAPCredentials: function () {
-            if (window.CONFIG && window.getConfig) {
-                const username = getConfig('SAP_USERNAME');
-                const password = getConfig('SAP_PASSWORD');
-                if (username && password) {
-                    return { username, password };
-                }
-            }
-            return null;
-        },
-
-        /**
-         * Update connection status
-         */
-        _updateConnectionStatus: function (status) {
-            const statusElement = this.byId('connectionStatus');
-            if (statusElement) {
-                statusElement.setText(status);
-            }
-        },
-
-        /**
-         * Update call display
-         */
-        _updateCallDisplay: function (callData) {
-            this.currentCall = callData;
-            // Update UI elements with call data
-            this._logInfo('Call display updated', callData);
-        },
-
-        /**
-         * Update call status
-         */
-        _updateCallStatus: function (status) {
-            this._logInfo('Call status updated', status);
-        },
-
-        /**
-         * Show call notification
-         */
-        _showCallNotification: function (callData) {
-            MessageBox.show(
-                `Incoming call from ${callData.phoneNumber}`,
-                {
-                    icon: MessageBox.Icon.INFORMATION,
-                    title: "Incoming Call",
-                    actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-                    emphasizedAction: MessageBox.Action.OK,
-                    onClose: (action) => {
-                        if (action === MessageBox.Action.OK) {
-                            this.acceptCall();
-                        } else {
-                            this.declineCall();
+                    
+                    // Simulate C4C call (replace with actual HTTP call)
+                    console.log("🏢 Sending to SAP C4C:", payload);
+                    this._addActivity("🏢 C4C payload: " + JSON.stringify(payload));
+                    
+                    // In production, use actual HTTP call:
+                    /*
+                    $.ajax({
+                        url: endpoint,
+                        method: "POST",
+                        data: JSON.stringify(payload),
+                        contentType: "application/json",
+                        headers: {
+                            "Authorization": "Basic " + btoa(credentials)
+                        },
+                        success: (response) => {
+                            console.log("C4C call successful:", response);
+                            this._addActivity("✅ C4C call successful");
+                        },
+                        error: (xhr, status, error) => {
+                            console.error("C4C call failed:", error);
+                            this._addActivity("❌ C4C call failed: " + error);
                         }
-                    }
+                    });
+                    */
                 }
-            );
+            };
         },
-
-        /**
-         * Show success message
-         */
-        _showSuccessMessage: function (message) {
-            MessageToast.show(message);
+        
+        _setupPostMessageListener: function() {
+            window.addEventListener('message', (event) => {
+                if (event.data && event.data.source === 'agent-buddy') {
+                    this._handleAgentBuddyMessage(event.data);
+                }
+            });
         },
-
-        /**
-         * Show error message
-         */
-        _showErrorMessage: function (message) {
-            MessageBox.error(message);
-        },
-
-        /**
-         * Show info message
-         */
-        _showInfoMessage: function (message) {
-            MessageToast.show(message);
-        },
-
-        /**
-         * Log info message
-         */
-        _logInfo: function (message, data) {
-            console.log(`ℹ️ [SocketView] ${message}`, data || '');
-        },
-
-        /**
-         * Log warning message
-         */
-        _logWarning: function (message, data) {
-            console.warn(`⚠️ [SocketView] ${message}`, data || '');
-        },
-
-        /**
-         * Log error message
-         */
-        _logError: function (message, error) {
-            console.error(`❌ [SocketView] ${message}`, error);
-        },
-
-        /**
-         * Log controller initialized
-         */
-        _logControllerInitialized: function () {
-            this._logInfo('SocketView controller initialized');
-        },
-
-        /**
-         * Called when the view is destroyed
-         */
-        onExit: function () {
-            if (this.socket) {
-                this.socket.disconnect();
-                this._logInfo('Socket connection closed');
+        
+        _handleAgentBuddyMessage: function(message) {
+            console.log("📨 Agent Buddy message received:", message);
+            
+            switch (message.eventType) {
+                case 'INCOMING_CALL':
+                    this.onNewPhone({
+                        incomingCallData: message.callData,
+                        phoneNumber: message.callData.phoneNumber
+                    });
+                    break;
+                    
+                case 'CALL_ACCEPTED':
+                    this.onCallAccepted({
+                        callData: message.callData
+                    });
+                    break;
+                    
+                case 'CALL_DECLINED':
+                    this.onCallDeclined({
+                        callData: message.callData
+                    });
+                    break;
+                    
+                default:
+                    console.log("📨 Unknown message type:", message.eventType);
             }
+        },
+        
+        // Main call handler following the SAP UI5 pattern
+        onNewPhone: function (oEvent) {
+            console.log("📞 New phone call received:", oEvent);
+            
+            // Set Incoming Call Model Data
+            this.incomingCall = oEvent.incomingCallData;
+            this.oIncomingCallModel.setData(this.incomingCall);
+            
+            // Update call status
+            this.oCallStatusModel.setProperty("/status", "ringing");
+            this.oCallStatusModel.setProperty("/lastAction", "Incoming call");
+            
+            // Get phone icon tab filter
+            this.phoneIconTabFilter = sap.ui
+                .getCore()
+                .byId("AgentView--idIconTabBarStretchContent")
+                .getItems()[1];
+            
+            if (!this.phoneIconTabFilter.getVisible()) {
+                // Setup audio loop
+                this.phoneAudio.addEventListener(
+                    "ended",
+                    function () {
+                        this.currentTime = 0;
+                        this.play();
+                    },
+                    false
+                );
+                
+                // Play ringtone
+                this.phoneAudio.play();
+                
+                // Fire notification to C4C
+                var param = {};
+                param.ANI = oEvent.phoneNumber || "+31651616126";
+                this._SAPIntegration.sendIncomingCalltoC4C(param);
+                
+                // Show phone icon tab
+                this.phoneIconTabFilter.setVisible(true);
+                this.phoneIconTabFilter.setIconColor("Critical");
+                
+                this._addActivity("📞 Incoming call: " + param.ANI);
+            }
+        },
+        
+        onCallAccepted: function(oEvent) {
+            console.log("✅ Call accepted:", oEvent);
+            
+            var callData = oEvent.callData;
+            
+            // Update UI
+            this._updateCallStatus("accepted");
+            
+            // Stop ringtone
+            this._stopRingtone();
+            
+            // Send accept to SAP C4C
+            this._SAPIntegration.sendAcceptToC4C(callData);
+            
+            // Update phone icon
+            if (this.phoneIconTabFilter) {
+                this.phoneIconTabFilter.setIconColor("Positive");
+            }
+            
+            this._addActivity("✅ Call accepted: " + callData.phoneNumber);
+        },
+        
+        onCallDeclined: function(oEvent) {
+            console.log("❌ Call declined:", oEvent);
+            
+            var callData = oEvent.callData;
+            
+            // Update UI
+            this._updateCallStatus("declined");
+            
+            // Stop ringtone
+            this._stopRingtone();
+            
+            // Send decline to SAP C4C
+            this._SAPIntegration.sendDeclineToC4C(callData);
+            
+            // Update phone icon
+            if (this.phoneIconTabFilter) {
+                this.phoneIconTabFilter.setIconColor("Negative");
+            }
+            
+            this._addActivity("❌ Call declined: " + callData.phoneNumber);
+        },
+        
+        onCallEnded: function(oEvent) {
+            console.log("📞 Call ended:", oEvent);
+            
+            var callData = oEvent.callData;
+            
+            // Update UI
+            this._updateCallStatus("ended");
+            
+            // Stop ringtone
+            this._stopRingtone();
+            
+            // Play call end tone
+            this.callEndAudio.play();
+            
+            // Hide phone icon tab after delay
+            setTimeout(() => {
+                if (this.phoneIconTabFilter) {
+                    this.phoneIconTabFilter.setVisible(false);
+                }
+            }, 3000);
+            
+            this._addActivity("📞 Call ended: " + callData.phoneNumber);
+        },
+        
+        // UI Event Handlers
+        onAcceptCall: function() {
+            if (this.incomingCall) {
+                this.onCallAccepted({
+                    callData: this.incomingCall
+                });
+            }
+        },
+        
+        onDeclineCall: function() {
+            if (this.incomingCall) {
+                this.onCallDeclined({
+                    callData: this.incomingCall
+                });
+            }
+        },
+        
+        onSimulateCall: function() {
+            const testCallData = {
+                phoneNumber: "+31651616126",
+                callId: "TEST-" + Date.now(),
+                timestamp: new Date().toISOString()
+            };
+            
+            this.onNewPhone({
+                incomingCallData: testCallData,
+                phoneNumber: testCallData.phoneNumber
+            });
+        },
+        
+        // Helper methods
+        _updateCallStatus: function(status) {
+            this.oCallStatusModel.setProperty("/status", status);
+            
+            switch(status) {
+                case "accepted":
+                    this.oCallStatusModel.setProperty("/lastAction", "Call accepted");
+                    break;
+                case "declined":
+                    this.oCallStatusModel.setProperty("/lastAction", "Call declined");
+                    break;
+                case "ended":
+                    this.oCallStatusModel.setProperty("/lastAction", "Call ended");
+                    break;
+            }
+        },
+        
+        _playRingtone: function() {
+            if (this.phoneAudio) {
+                this.phoneAudio.play();
+            }
+        },
+        
+        _stopRingtone: function() {
+            if (this.phoneAudio) {
+                this.phoneAudio.pause();
+                this.phoneAudio.currentTime = 0;
+            }
+        },
+        
+        _updateConnectionStatus: function(status) {
+            this.oCallStatusModel.setProperty("/connectionStatus", status);
+        },
+        
+        _addActivity: function(message) {
+            const activities = this.oActivityModel.getProperty("/activities");
+            activities.unshift({
+                message: message,
+                timestamp: new Date().toLocaleTimeString()
+            });
+            
+            // Keep only last 50 activities
+            if (activities.length > 50) {
+                activities.splice(50);
+            }
+            
+            this.oActivityModel.setProperty("/activities", activities);
+        },
+        
+        _generateCallId: function() {
+            return "CALL-" + Date.now() + "-" + Math.random().toString(36).substr(2, 9);
+        },
+        
+        _getSocketUrl: function() {
+            // Get from environment or use default
+            return window.CONFIG && window.CONFIG.SOCKET_URL || 
+                   "https://agent-buddy-socketio.onrender.com";
+        },
+        
+        _getC4CEndpoint: function() {
+            // Get from environment or use default
+            return window.CONFIG && window.CONFIG.SAP_ENDPOINT || 
+                   "https://my1000354.de1.test.crm.cloud.sap/api/calls";
+        },
+        
+        _getC4CCredentials: function() {
+            const username = window.CONFIG && window.CONFIG.SAP_USERNAME || "LEEMREIA";
+            const password = window.CONFIG && window.CONFIG.SAP_PASSWORD || "";
+            return username + ":" + password;
         }
+        
     });
 }); 

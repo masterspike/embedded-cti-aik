@@ -3,445 +3,659 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>Agent Buddy - CTI Component</title>
+    <title>Agent Buddy - SAP Service Cloud Integration</title>
+    
+    <!-- SAP Fiori Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=72:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- SAP Icons -->
+    <link rel="stylesheet" href="https://sapui5.hana.ondemand.com/resources/sap/ui/core/themes/sap_fiori_3/icons.css">
+    
     <style>
+        /* SAP Fiori 3 Design System */
+        :root {
+            --sapBrandColor: #0070f3;
+            --sapHighlightColor: #0070f3;
+            --sapBaseColor: #ffffff;
+            --sapShellColor: #f5f5f5;
+            --sapShell_BorderColor: #d9d9d9;
+            --sapShell_TextColor: #32363a;
+            --sapContent_LabelColor: #32363a;
+            --sapContent_ForegroundColor: #ffffff;
+            --sapContent_ForegroundBorderColor: #d9d9d9;
+            --sapContent_ForegroundTextColor: #32363a;
+            --sapButton_Background: #ffffff;
+            --sapButton_BorderColor: #d9d9d9;
+            --sapButton_TextColor: #32363a;
+            --sapButton_Hover_Background: #f5f5f5;
+            --sapButton_Hover_BorderColor: #0070f3;
+            --sapButton_Hover_TextColor: #0070f3;
+            --sapButton_Accept_Background: #ffffff;
+            --sapButton_Accept_BorderColor: #107c3e;
+            --sapButton_Accept_TextColor: #107c3e;
+            --sapButton_Accept_Hover_Background: #f0f8f0;
+            --sapButton_Accept_Hover_BorderColor: #107c3e;
+            --sapButton_Accept_Hover_TextColor: #107c3e;
+            --sapButton_Reject_Background: #ffffff;
+            --sapButton_Reject_BorderColor: #bb0000;
+            --sapButton_Reject_TextColor: #bb0000;
+            --sapButton_Reject_Hover_Background: #fef0f0;
+            --sapButton_Reject_Hover_BorderColor: #bb0000;
+            --sapButton_Reject_Hover_TextColor: #bb0000;
+            --sapPositiveColor: #107c3e;
+            --sapNegativeColor: #bb0000;
+            --sapCriticalColor: #e9730c;
+            --sapNeutralColor: #6a6d70;
+            --sapInformativeColor: #0070f3;
+            --sapSuccessColor: #107c3e;
+            --sapWarningColor: #e9730c;
+            --sapErrorColor: #bb0000;
+            --sapFontFamily: "72", "72full", Arial, Helvetica, sans-serif;
+            --sapFontSize: 0.875rem;
+            --sapFontSize_Small: 0.75rem;
+            --sapFontSize_Large: 1rem;
+            --sapFontSize_XLarge: 1.125rem;
+            --sapFontSize_XXLarge: 1.25rem;
+            --sapFontSize_XXXLarge: 1.5rem;
+            --sapFontSize_Giant: 1.75rem;
+            --sapFontSize_Huge: 2rem;
+            --sapFontWeight_Light: 300;
+            --sapFontWeight_Normal: 400;
+            --sapFontWeight_Medium: 500;
+            --sapFontWeight_Bold: 700;
+            --sapBorderRadius: 0.25rem;
+            --sapBorderRadius_Large: 0.5rem;
+            --sapBorderRadius_Small: 0.125rem;
+            --sapShadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.1);
+            --sapShadow_Light: 0 0.0625rem 0.25rem rgba(0, 0, 0, 0.1);
+            --sapShadow_Heavy: 0 0.25rem 1rem rgba(0, 0, 0, 0.15);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f9fa;
-            color: #333;
-            line-height: 1.6;
+            font-family: var(--sapFontFamily);
+            font-size: var(--sapFontSize);
+            font-weight: var(--sapFontWeight_Normal);
+            line-height: 1.5;
+            color: var(--sapContent_ForegroundTextColor);
+            background-color: var(--sapShellColor);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        
-        .app-container {
+
+        /* SAP Fiori Header */
+        .sap-header {
+            background: var(--sapBaseColor);
+            border-bottom: 1px solid var(--sapShell_BorderColor);
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--sapShadow_Light);
+        }
+
+        .sap-header-title {
+            font-size: var(--sapFontSize_XLarge);
+            font-weight: var(--sapFontWeight_Medium);
+            color: var(--sapShell_TextColor);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sap-header-icon {
+            font-size: 1.5rem;
+            color: var(--sapBrandColor);
+        }
+
+        .sap-header-status {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .sap-status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--sapBorderRadius);
+            font-size: var(--sapFontSize_Small);
+            font-weight: var(--sapFontWeight_Medium);
+        }
+
+        .sap-status-connected {
+            background-color: var(--sapSuccessColor);
+            color: white;
+        }
+
+        .sap-status-disconnected {
+            background-color: var(--sapErrorColor);
+            color: white;
+        }
+
+        .sap-status-connecting {
+            background-color: var(--sapWarningColor);
+            color: white;
+        }
+
+        /* SAP Fiori Content */
+        .sap-content {
+            padding: 1rem;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
         }
-        
-        .app-header {
-            background: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .app-title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #2c3e50;
-            margin-bottom: 5px;
-        }
-        
-        .app-subtitle {
-            color: #7f8c8d;
-            font-size: 16px;
-        }
-        
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-        
-        .dashboard-card {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+        /* SAP Fiori Cards */
+        .sap-card {
+            background: var(--sapContent_ForegroundColor);
+            border: 1px solid var(--sapContent_ForegroundBorderColor);
+            border-radius: var(--sapBorderRadius);
+            box-shadow: var(--sapShadow_Light);
+            margin-bottom: 1rem;
             overflow: hidden;
         }
-        
-        .panel-header {
-            background: #3498db;
-            color: white;
-            padding: 15px 20px;
-            font-weight: 600;
+
+        .sap-card-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--sapContent_ForegroundBorderColor);
+            background: var(--sapShellColor);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
-        
-        .panel-content {
-            padding: 20px;
+
+        .sap-card-title {
+            font-size: var(--sapFontSize_Large);
+            font-weight: var(--sapFontWeight_Medium);
+            color: var(--sapContent_LabelColor);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
-        
-        .call-notification {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            animation: slideIn 0.3s ease-out;
+
+        .sap-card-content {
+            padding: 1rem;
         }
-        
-        @keyframes slideIn {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
-        .call-info {
+
+        /* SAP Fiori Grid */
+        .sap-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 20px;
+            gap: 1rem;
         }
-        
-        .customer-info .call-info {
-            grid-template-columns: 1fr;
+
+        .sap-grid-2 {
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         }
-        
-        .sap-integration .call-info {
-            grid-template-columns: 1fr;
+
+        .sap-grid-3 {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         }
-        
-        .call-info-item {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 4px;
-            border-left: 4px solid #3498db;
-            min-height: 60px;
-            display: flex;
-            flex-direction: column;
+
+        /* SAP Fiori Buttons */
+        .sap-button {
+            display: inline-flex;
+            align-items: center;
             justify-content: center;
-        }
-        
-        .call-info-label {
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 11px;
-            text-transform: uppercase;
-            margin-bottom: 4px;
-        }
-        
-        .call-info-value {
-            font-size: 14px;
-            color: #34495e;
-            word-break: break-word;
-        }
-        
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-        }
-        
-        .btn {
-            padding: 12px 24px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--sapButton_BorderColor);
+            border-radius: var(--sapBorderRadius);
+            background: var(--sapButton_Background);
+            color: var(--sapButton_TextColor);
+            font-family: var(--sapFontFamily);
+            font-size: var(--sapFontSize);
+            font-weight: var(--sapFontWeight_Medium);
+            text-decoration: none;
             cursor: pointer;
             transition: all 0.2s ease;
-            min-width: 120px;
+            min-height: 2.5rem;
         }
-        
-        .btn-accept {
-            background: #27ae60;
+
+        .sap-button:hover {
+            background: var(--sapButton_Hover_Background);
+            border-color: var(--sapButton_Hover_BorderColor);
+            color: var(--sapButton_Hover_TextColor);
+        }
+
+        .sap-button:active {
+            transform: translateY(1px);
+        }
+
+        .sap-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .sap-button-accept {
+            background: var(--sapButton_Accept_Background);
+            border-color: var(--sapButton_Accept_BorderColor);
+            color: var(--sapButton_Accept_TextColor);
+        }
+
+        .sap-button-accept:hover {
+            background: var(--sapButton_Accept_Hover_Background);
+            border-color: var(--sapButton_Accept_Hover_BorderColor);
+            color: var(--sapButton_Accept_Hover_TextColor);
+        }
+
+        .sap-button-reject {
+            background: var(--sapButton_Reject_Background);
+            border-color: var(--sapButton_Reject_BorderColor);
+            color: var(--sapButton_Reject_TextColor);
+        }
+
+        .sap-button-reject:hover {
+            background: var(--sapButton_Reject_Hover_Background);
+            border-color: var(--sapButton_Reject_Hover_BorderColor);
+            color: var(--sapButton_Reject_Hover_TextColor);
+        }
+
+        .sap-button-emphasized {
+            background: var(--sapBrandColor);
+            border-color: var(--sapBrandColor);
             color: white;
         }
-        
-        .btn-accept:hover {
-            background: #229954;
-            transform: translateY(-2px);
-        }
-        
-        .btn-decline {
-            background: #e74c3c;
+
+        .sap-button-emphasized:hover {
+            background: var(--sapHighlightColor);
+            border-color: var(--sapHighlightColor);
             color: white;
         }
-        
-        .btn-decline:hover {
-            background: #c0392b;
-            transform: translateY(-2px);
+
+        /* SAP Fiori Forms */
+        .sap-form-group {
+            margin-bottom: 1rem;
         }
-        
-        .status-indicator {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
+
+        .sap-label {
+            display: block;
+            margin-bottom: 0.25rem;
+            font-weight: var(--sapFontWeight_Medium);
+            color: var(--sapContent_LabelColor);
         }
-        
-        .status-connected {
-            background: #27ae60;
+
+        .sap-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--sapContent_ForegroundBorderColor);
+            border-radius: var(--sapBorderRadius);
+            font-family: var(--sapFontFamily);
+            font-size: var(--sapFontSize);
+            background: var(--sapContent_ForegroundColor);
+            color: var(--sapContent_ForegroundTextColor);
+            transition: border-color 0.2s ease;
         }
-        
-        .status-disconnected {
-            background: #e74c3c;
+
+        .sap-input:focus {
+            outline: none;
+            border-color: var(--sapBrandColor);
+            box-shadow: 0 0 0 2px rgba(0, 112, 243, 0.1);
         }
-        
-        .status-connecting {
-            background: #f39c12;
-            animation: pulse 1.5s infinite;
+
+        /* SAP Fiori Call Notification */
+        .sap-call-notification {
+            background: var(--sapContent_ForegroundColor);
+            border: 2px solid var(--sapCriticalColor);
+            border-radius: var(--sapBorderRadius_Large);
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: var(--sapShadow_Heavy);
+            animation: pulse 2s infinite;
         }
-        
+
         @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
+            0% { box-shadow: var(--sapShadow_Heavy); }
+            50% { box-shadow: 0 0 0 0.5rem rgba(233, 115, 12, 0.2); }
+            100% { box-shadow: var(--sapShadow_Heavy); }
         }
-        
-        .customer-info {
-            background: #e8f5e8;
-            border: 1px solid #a8e6cf;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
+
+        .sap-call-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .sap-call-icon {
+            font-size: 2rem;
+            color: var(--sapCriticalColor);
+        }
+
+        .sap-call-info {
+            flex: 1;
+            margin-left: 1rem;
+        }
+
+        .sap-call-number {
+            font-size: var(--sapFontSize_XLarge);
+            font-weight: var(--sapFontWeight_Bold);
+            color: var(--sapContent_ForegroundTextColor);
+            margin-bottom: 0.25rem;
+        }
+
+        .sap-call-time {
+            font-size: var(--sapFontSize_Small);
+            color: var(--sapNeutralColor);
+        }
+
+        .sap-call-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        /* SAP Fiori Activity Log */
+        .sap-activity-log {
             max-height: 300px;
             overflow-y: auto;
         }
-        
-        .customer-info h4 {
-            color: #27ae60;
-            margin-bottom: 10px;
+
+        .sap-activity-item {
+            padding: 0.5rem;
+            border-bottom: 1px solid var(--sapContent_ForegroundBorderColor);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
         }
-        
-        .sap-integration {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-            max-height: 400px;
-            overflow-y: auto;
+
+        .sap-activity-item:last-child {
+            border-bottom: none;
         }
-        
-        .sap-integration h4 {
-            color: #f39c12;
-            margin-bottom: 10px;
+
+        .sap-activity-icon {
+            font-size: 1rem;
+            margin-top: 0.125rem;
         }
-        
-        .log-area {
-            background: #2c3e50;
-            color: #ecf0f1;
-            padding: 15px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            font-size: 12px;
-            max-height: 200px;
-            overflow-y: auto;
-            margin-top: 15px;
+
+        .sap-activity-content {
+            flex: 1;
         }
-        
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #2c3e50;
-            color: white;
-            padding: 15px 20px;
-            border-radius: 6px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 1000;
-            animation: slideInRight 0.3s ease-out;
+
+        .sap-activity-message {
+            font-size: var(--sapFontSize);
+            color: var(--sapContent_ForegroundTextColor);
+            margin-bottom: 0.125rem;
         }
-        
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+
+        .sap-activity-time {
+            font-size: var(--sapFontSize_Small);
+            color: var(--sapNeutralColor);
         }
-        
-        .hidden {
-            display: none;
+
+        /* SAP Fiori Status Colors */
+        .sap-text-success { color: var(--sapSuccessColor); }
+        .sap-text-error { color: var(--sapErrorColor); }
+        .sap-text-warning { color: var(--sapWarningColor); }
+        .sap-text-info { color: var(--sapInformativeColor); }
+        .sap-text-neutral { color: var(--sapNeutralColor); }
+
+        /* SAP Fiori Responsive */
+        @media (max-width: 768px) {
+            .sap-grid-2,
+            .sap-grid-3 {
+                grid-template-columns: 1fr;
+            }
+            
+            .sap-call-actions {
+                flex-direction: column;
+            }
+            
+            .sap-header-status {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
         }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: #2c3e50;
-        }
-        
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
+
+        /* SAP Fiori Utilities */
+        .sap-hidden { display: none !important; }
+        .sap-text-center { text-align: center; }
+        .sap-text-right { text-align: right; }
+        .sap-margin-top { margin-top: 1rem; }
+        .sap-margin-bottom { margin-bottom: 1rem; }
+        .sap-padding { padding: 1rem; }
+
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="app-header">
-            <h1 class="app-title">🤖 Agent Buddy</h1>
-            <p class="app-subtitle">Intelligente call handling met SAP Service Cloud integratie</p>
+    
+    <!-- SAP Fiori Header -->
+    <header class="sap-header">
+        <div class="sap-header-title">
+            <span class="sap-header-icon">📞</span>
+            <span>Agent Buddy</span>
         </div>
-        
-        <div class="dashboard-grid">
-            <!-- Call Notification Panel -->
-            <div class="dashboard-card" id="callNotificationPanel">
-                <div class="panel-header">
-                    📞 Incoming Call
-                </div>
-                <div class="panel-content">
-                    <div class="call-notification hidden" id="callNotification">
-                        <h3>🔔 Nieuwe Incoming Call</h3>
-                        <div class="call-info">
-                            <div class="call-info-item">
-                                <div class="call-info-label">Telefoonnummer</div>
-                                <div class="call-info-value" id="incomingPhoneNumber">-</div>
-                            </div>
-                            <div class="call-info-item">
-                                <div class="call-info-label">Tijd</div>
-                                <div class="call-info-value" id="callTime">-</div>
-                            </div>
-                            <div class="call-info-item">
-                                <div class="call-info-label">Call ID</div>
-                                <div class="call-info-value" id="callId">-</div>
-                            </div>
-                            <div class="call-info-item">
-                                <div class="call-info-label">Status</div>
-                                <div class="call-info-value" id="callStatus">Wachtend</div>
-                            </div>
-                        </div>
-                        
-                        <div class="action-buttons">
-                            <button class="btn btn-accept" onclick="acceptCall()">
-                                ✅ Accepteer
-                            </button>
-                            <button class="btn btn-decline" onclick="declineCall()">
-                                ❌ Afwijzen
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div id="noCallMessage">
-                        <p>🔄 Wachtend op incoming calls...</p>
-                        <p><small>WebSocket status: <span id="wsStatus">Verbinding maken...</span></small></p>
-                    </div>
-                    
-                    <!-- Activity Log Panel -->
-                    <div class="dashboard-card" style="margin-top: 20px; box-shadow: none; border: 1px solid #e0e0e0;">
-                        <div class="panel-header" style="background: #95a5a6; font-size: 14px;">
-                            📋 Activity Log
-                        </div>
-                        <div class="panel-content" style="padding: 15px;">
-                            <div class="log-area" id="activityLog" style="max-height: 150px;">
-                                [System] Agent Buddy gestart...
-                                [System] WebSocket verbinding initialiseren...
-                            </div>
-                        </div>
-                    </div>
-                </div>
+        <div class="sap-header-status">
+            <div class="sap-status-indicator" id="wsStatus">
+                <span class="sap-status-icon">🔌</span>
+                <span class="sap-status-text">Verbinding maken...</span>
             </div>
-            
-            <!-- Hidden Customer Information Panel -->
-            <div class="dashboard-card hidden" id="customerInfoPanel">
-                <div class="panel-header">
-                    👤 Klant Informatie
-                </div>
-                <div class="panel-content">
-                    <div class="customer-info hidden" id="customerInfo">
-                        <h4>🔍 Geïdentificeerde Klant</h4>
-                        <div class="call-info">
-                            <div class="call-info-item">
-                                <div class="call-info-label">Naam</div>
-                                <div class="call-info-value" id="customerName">-</div>
-                            </div>
-                            <div class="call-info-item">
-                                <div class="call-info-label">Klant ID</div>
-                                <div class="call-info-value" id="customerId">-</div>
-                            </div>
-                            <div class="call-info-item">
-                                <div class="call-info-label">Email</div>
-                                <div class="call-info-value" id="customerEmail">-</div>
-                            </div>
-                            <div class="call-info-item">
-                                <div class="call-info-label">Bedrijf</div>
-                                <div class="call-info-value" id="customerCompany">-</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div id="noCustomerMessage">
-                        <p>📋 Geen klant geïdentificeerd</p>
-                        <p><small>Klant informatie wordt automatisch geladen bij call acceptatie</small></p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Hidden SAP Integration Panel -->
-            <div class="dashboard-card hidden" id="sapInfoPanel">
-                <div class="panel-header">
-                    🏢 SAP Service Cloud
-                </div>
-                <div class="panel-content">
-                    <div class="sap-integration">
-                        <h4>🔗 Integratie Status</h4>
-                        <div class="call-info">
-                            <div class="call-info-item">
-                                <div class="call-info-label">SAP Status</div>
-                                <div class="call-info-value" id="sapStatus">Niet verbonden</div>
-                            </div>
-                            <div class="call-info-item">
-                                <div class="call-info-label">Laatste Actie</div>
-                                <div class="call-info-value" id="lastSapAction">-</div>
-                            </div>
-                        </div>
-                        
-                                <div class="form-group">
-            <label for="sapEndpoint">SAP Endpoint URL:</label>
-            <input type="text" id="sapEndpoint" value="https://my1000354.de1.test.crm.cloud.sap" placeholder="SAP Service Cloud endpoint">
-        </div>
-        
-        <div class="form-group">
-            <label for="sapUsername">Username:</label>
-            <input type="text" id="sapUsername" placeholder="SAP Username">
-        </div>
-        
-        <div class="form-group">
-            <label for="sapPassword">Password:</label>
-            <input type="password" id="sapPassword" placeholder="SAP Password">
-        </div>
-                        
-                        <button class="btn btn-accept" onclick="testSapConnection()">
-                            🔗 Test Verbinding
-                        </button>
-                    </div>
-                </div>
+            <div class="sap-status-indicator" id="sapStatus">
+                <span class="sap-status-icon">🏢</span>
+                <span class="sap-status-text">SAP: Inactief</span>
             </div>
         </div>
-    </div>
+    </header>
 
-    <script src="config.js"></script>
-    <script src="postmessage-integration.js"></script>
-    <script>
-        // Ensure config is loaded before other scripts
-        console.log('📋 Config check:', window.CONFIG ? 'Loaded' : 'Not loaded');
-        console.log('🔧 getConfig available:', typeof window.getConfig);
+    <!-- SAP Fiori Content -->
+    <main class="sap-content">
         
-        // Test environment variables
-        setTimeout(() => {
-            if (window.getConfig) {
-                console.log('🔍 Environment Variables Check:');
-                console.log('  SAP_ENDPOINT:', getConfig('SAP_ENDPOINT'));
-                console.log('  SAP_USERNAME:', getConfig('SAP_USERNAME') ? 'Set' : 'Not set');
-                console.log('  SAP_PASSWORD:', getConfig('SAP_PASSWORD') ? 'Set' : 'Not set');
-                console.log('  SOCKET_URL:', getConfig('SOCKET_URL'));
-                console.log('  DEFAULT_PHONE:', getConfig('DEFAULT_PHONE'));
-            }
-        }, 1000);
+        <!-- Call Notification -->
+        <div class="sap-call-notification sap-hidden" id="callNotification">
+            <div class="sap-call-header">
+                <div class="sap-call-icon">📞</div>
+                <div class="sap-call-info">
+                    <div class="sap-call-number" id="incomingNumber">+31651616126</div>
+                    <div class="sap-call-time" id="callTime">Nu</div>
+                </div>
+            </div>
+            <div class="sap-call-actions">
+                <button class="sap-button sap-button-accept" id="acceptButton" onclick="acceptCall()">
+                    <span class="sap-icon">✅</span>
+                    <span>Accepteren</span>
+                </button>
+                <button class="sap-button sap-button-reject" id="declineButton" onclick="declineCall()">
+                    <span class="sap-icon">❌</span>
+                    <span>Afwijzen</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- No Call Message -->
+        <div class="sap-card" id="noCallMessage">
+            <div class="sap-card-content sap-text-center">
+                <div class="sap-margin-bottom">
+                    <span style="font-size: 3rem;">📞</span>
+                </div>
+                <h3>Geen actieve calls</h3>
+                <p class="sap-text-neutral">Wacht op binnenkomende calls...</p>
+                <button class="sap-button sap-button-emphasized sap-margin-top" onclick="simulateIncomingCall()">
+                    <span class="sap-icon">🎯</span>
+                    <span>Simuleer Call</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="sap-grid sap-grid-2 sap-margin-top">
+            
+            <!-- Call Control -->
+            <div class="sap-card">
+                <div class="sap-card-header">
+                    <div class="sap-card-title">
+                        <span class="sap-icon">🎛️</span>
+                        <span>Call Control</span>
+                    </div>
+                </div>
+                <div class="sap-card-content">
+                    <div class="sap-form-group">
+                        <label class="sap-label">Call Status</label>
+                        <div class="sap-input" id="callStatus" readonly>Geen actieve call</div>
+                    </div>
+                    <div class="sap-form-group">
+                        <label class="sap-label">Laatste Actie</label>
+                        <div class="sap-input" id="lastAction" readonly>-</div>
+                    </div>
+                    <div class="sap-form-group">
+                        <label class="sap-label">Agent ID</label>
+                        <div class="sap-input" id="agentId" readonly>-</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SAP Integration -->
+            <div class="sap-card">
+                <div class="sap-card-header">
+                    <div class="sap-card-title">
+                        <span class="sap-icon">🏢</span>
+                        <span>SAP Integration</span>
+                    </div>
+                </div>
+                <div class="sap-card-content">
+                    <div class="sap-form-group">
+                        <label class="sap-label">SAP Status</label>
+                        <div class="sap-input" id="sapStatus" readonly>Inactief</div>
+                    </div>
+                    <div class="sap-form-group">
+                        <label class="sap-label">Laatste SAP Actie</label>
+                        <div class="sap-input" id="lastSapAction" readonly>-</div>
+                    </div>
+                    <div class="sap-form-group">
+                        <label class="sap-label">SAP Endpoint</label>
+                        <div class="sap-input" id="sapEndpoint" readonly>https://my1000354.de1.test.crm.cloud.sap/</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Configuration Grid -->
+        <div class="sap-grid sap-grid-3 sap-margin-top">
+            
+            <!-- Socket.io Configuration -->
+            <div class="sap-card">
+                <div class="sap-card-header">
+                    <div class="sap-card-title">
+                        <span class="sap-icon">🔌</span>
+                        <span>Socket.io Config</span>
+                    </div>
+                </div>
+                <div class="sap-card-content">
+                    <div class="sap-form-group">
+                        <label class="sap-label">Socket.io URL</label>
+                        <input type="text" class="sap-input" id="socketUrl" value="https://agent-buddy-socketio.onrender.com" placeholder="Socket.io server URL">
+                    </div>
+                    <div class="sap-form-group">
+                        <label class="sap-label">Connection Status</label>
+                        <div class="sap-input" id="connectionStatus" readonly>Verbinding maken...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SAP Configuration -->
+            <div class="sap-card">
+                <div class="sap-card-header">
+                    <div class="sap-card-title">
+                        <span class="sap-icon">⚙️</span>
+                        <span>SAP Config</span>
+                    </div>
+                </div>
+                <div class="sap-card-content">
+                    <div class="sap-form-group">
+                        <label class="sap-label">SAP Username</label>
+                        <input type="text" class="sap-input" id="sapUsername" value="LEEMREIA" placeholder="SAP username">
+                    </div>
+                    <div class="sap-form-group">
+                        <label class="sap-label">SAP Password</label>
+                        <input type="password" class="sap-input" id="sapPassword" placeholder="SAP password">
+                    </div>
+                    <button class="sap-button sap-button-emphasized" onclick="testSapConnection()">
+                        <span class="sap-icon">🧪</span>
+                        <span>Test SAP Connection</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Customer Info -->
+            <div class="sap-card">
+                <div class="sap-card-header">
+                    <div class="sap-card-title">
+                        <span class="sap-icon">👤</span>
+                        <span>Klant Informatie</span>
+                    </div>
+                </div>
+                <div class="sap-card-content">
+                    <div class="sap-form-group">
+                        <label class="sap-label">Naam</label>
+                        <div class="sap-input" id="customerName" readonly>-</div>
+                    </div>
+                    <div class="sap-form-group">
+                        <label class="sap-label">Klant ID</label>
+                        <div class="sap-input" id="customerId" readonly>-</div>
+                    </div>
+                    <div class="sap-form-group">
+                        <label class="sap-label">Email</label>
+                        <div class="sap-input" id="customerEmail" readonly>-</div>
+                    </div>
+                    <div class="sap-form-group">
+                        <label class="sap-label">Bedrijf</label>
+                        <div class="sap-input" id="customerCompany" readonly>-</div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Activity Log -->
+        <div class="sap-card sap-margin-top">
+            <div class="sap-card-header">
+                <div class="sap-card-title">
+                    <span class="sap-icon">📋</span>
+                    <span>Activity Log</span>
+                </div>
+                <button class="sap-button" onclick="clearLog()">
+                    <span class="sap-icon">🗑️</span>
+                    <span>Clear Log</span>
+                </button>
+            </div>
+            <div class="sap-card-content">
+                <div class="sap-activity-log" id="activityLog">
+                    <div class="sap-activity-item">
+                        <span class="sap-activity-icon">ℹ️</span>
+                        <div class="sap-activity-content">
+                            <div class="sap-activity-message">Agent Buddy gestart</div>
+                            <div class="sap-activity-time">Nu</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Scripts -->
+    <script src="config.js"></script>
+    <script>
+        // Log config status for debugging
+        console.log('🔧 CONFIG status:', window.CONFIG ? 'Loaded' : 'Not loaded');
+        console.log('🌍 Environment variables:', {
+            SOCKET_URL: window.getConfig && getConfig('SOCKET_URL'),
+            SAP_ENDPOINT: window.getConfig && getConfig('SAP_ENDPOINT'),
+            SAP_USERNAME: window.getConfig && getConfig('SAP_USERNAME'),
+            DEFAULT_PHONE: window.getConfig && getConfig('DEFAULT_PHONE')
+        });
     </script>
+    <script src="postmessage-integration.js"></script>
     <script src="socket-new.js"></script>
     <script src="cti-new.js"></script>
     <script src="app-new.js"></script>
+
 </body>
 </html> 
