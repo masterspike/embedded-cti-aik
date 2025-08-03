@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embedded CTI - AIK</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .app-header {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .app-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .app-subtitle {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .dashboard-card {
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            background: #3498db;
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+        }
+        
+        .panel-content {
+            padding: 20px;
+        }
+        
+        .info-message {
+            background: #e8f4fd;
+            border: 1px solid #b3d9ff;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .btn-emphasized {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .btn-emphasized:hover {
+            background: #c0392b;
+        }
+        
+        .btn-link {
+            background: transparent;
+            color: #3498db;
+            text-decoration: underline;
+        }
+        
+        .display-value {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+            word-break: break-all;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+        
+        .status-dot.online {
+            background: #27ae60;
+        }
+        
+        .status-dot.connecting {
+            background: #f39c12;
+        }
+        
+        .data-grid {
+            display: grid;
+            gap: 10px;
+        }
+        
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .data-item:last-child {
+            border-bottom: none;
+        }
+        
+        .data-item label {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .chat-section {
+            margin-top: 15px;
+        }
+        
+        .chat-header {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .customer-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .chat-messages {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            background: #f8f9fa;
+        }
+        
+        .message-sender {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+        
+        .message-text {
+            color: #555;
+        }
+        
+        .chat-input textarea {
+            margin-bottom: 10px;
+        }
+        
+        .quick-actions {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .quick-actions h4 {
+            margin-bottom: 10px;
+            color: #2c3e50;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #27ae60;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="app-title">📞 Embedded CTI - AIK</h1>
+            <p class="app-subtitle">Customer Service Integration Platform</p>
+        </header>
+        
+        <main>
+            <div class="dashboard-grid">
+                
+                <!-- Call Simulation Panel -->
+                <div class="dashboard-card">
+                    <div class="panel-header">
+                        <h3>📞 Call Simulation</h3>
+                    </div>
+                    <div class="panel-content">
+                        <div class="info-message">
+                            This module demonstrates real-time call integration with the customer service platform
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="phoneNumber">Phone Number</label>
+                            <input type="tel" id="phoneNumber" placeholder="Enter phone number..." value="13131313">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="callType">Call Type</label>
+                            <select id="callType">
+                                <option value="inbound">Inbound Call</option>
+                                <option value="outbound">Outbound Call</option>
+                                <option value="missed">Missed Call</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="customerName">Customer Name</label>
+                            <input type="text" id="customerName" placeholder="Enter customer name..." value="John Doe">
+                        </div>
+                        
+                        <div class="button-group">
+                            <button class="btn btn-primary" onclick="simulateCall()">
+                                🚀 Simulate Call
+                            </button>
+                            <button class="btn btn-secondary" onclick="resetForm()">
+                                🔄 Reset Form
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Socket Connection Panel -->
+                <div class="dashboard-card">
+                    <div class="panel-header">
+                        <h3>🔌 Socket Connection Demo</h3>
+                    </div>
+                    <div class="panel-content">
+                        <div class="info-message success">
+                            Real-time socket connection for external message simulation
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Socket ID</label>
+                            <div id="socketId" class="display-value">Generating...</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Connection Status</label>
+                            <div class="status-indicator">
+                                <span class="status-dot online"></span>
+                                <span id="connectionStatus">Connected</span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Last Message</label>
+                            <textarea id="lastMessage" rows="3" placeholder="Waiting for incoming messages..." readonly></textarea>
+                        </div>
+                        
+                        <div class="button-group">
+                            <button class="btn btn-emphasized" onclick="copySocketId()">
+                                📋 Copy Socket ID
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Outbound Call Panel -->
+                <div class="dashboard-card">
+                    <div class="panel-header">
+                        <h3>📞 Outbound Call Information</h3>
+                    </div>
+                    <div class="panel-content">
+                        <div class="info-message">
+                            Detailed information about outbound call activities
+                        </div>
+                        
+                        <div class="data-grid">
+                            <div class="data-item">
+                                <label>📱 Phone Number</label>
+                                <div id="outboundPhone">-</div>
+                            </div>
+                            <div class="data-item">
+                                <label>👤 Business Partner ID</label>
+                                <div id="businessPartnerId">-</div>
+                            </div>
+                            <div class="data-item">
+                                <label>🆔 Object ID</label>
+                                <div id="objectId">-</div>
+                            </div>
+                            <div class="data-item">
+                                <label>📋 Object Type Code</label>
+                                <div id="objectTypeCode">-</div>
+                            </div>
+                            <div class="data-item">
+                                <label>🆔 ES Object ID</label>
+                                <div id="esObjectId">-</div>
+                            </div>
+                            <div class="data-item">
+                                <label>🔑 Activity UUID</label>
+                                <div id="activityUuid">-</div>
+                            </div>
+                            <div class="data-item">
+                                <label>➡️ Direction</label>
+                                <div id="direction">-</div>
+                            </div>
+                            <div class="data-item">
+                                <label>🔗 Is BTD Ref</label>
+                                <div id="isBtdRef">-</div>
+                            </div>
+                            <div class="data-item">
+                                <label>👤 Logged In User ID</label>
+                                <div id="loggedInUserId">-</div>
+                            </div>
+                            <div class="data-item">
+                                <label>📝 Object Thing Type</label>
+                                <div id="objectThingType">-</div>
+                            </div>
+                            <div class="data-item">
+                                <label>🔑 Object UUID</label>
+                                <div id="objectUuid">-</div>
+                            </div>
+                        </div>
+                        
+                        <div class="button-group">
+                            <button class="btn btn-emphasized" onclick="refreshData()">
+                                🔄 Refresh Data
+                            </button>
+                            <button class="btn btn-primary" onclick="exportData()">
+                                📋 Export Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Agent Chat Panel -->
+                <div class="dashboard-card">
+                    <div class="panel-header">
+                        <h3>💬 Agent Chat Window</h3>
+                    </div>
+                    <div class="panel-content">
+                        <div id="chatWaiting" class="chat-section">
+                            <div class="info-message">
+                                Waiting for incoming chat requests...
+                            </div>
+                            <div class="status-indicator">
+                                <span class="status-dot connecting"></span>
+                                <span>Waiting for customer connection...</span>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn btn-emphasized" onclick="refreshStatus()">
+                                    🔄 Refresh Status
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="chatActive" class="chat-section" style="display: none;">
+                            <div class="chat-header">
+                                <div class="customer-info">
+                                    <span class="status-dot online"></span>
+                                    <span id="customerName">Customer</span>
+                                </div>
+                            </div>
+                            
+                            <div class="chat-messages" id="chatMessages">
+                                <!-- Messages will be added here -->
+                            </div>
+                            
+                            <div class="chat-input">
+                                <textarea id="messageInput" placeholder="Type your message here..." rows="3"></textarea>
+                                <div class="button-group">
+                                    <button class="btn btn-primary" onclick="sendMessage()">
+                                        📤 Send Message
+                                    </button>
+                                    <button class="btn btn-emphasized" onclick="endChat()">
+                                        ❌ End Chat
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="quick-actions">
+                                <h4>⚡ Quick Actions</h4>
+                                <div class="button-group">
+                                    <button class="btn btn-secondary" onclick="quickGreeting()">
+                                        👋 Greeting
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="quickHelp()">
+                                        ❓ Help
+                                    </button>
+                                    <button class="btn btn-secondary" onclick="quickCall()">
+                                        📞 Call
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // SAP Service Cloud Integration
+        let sapServiceCloud = null;
+        let currentActivity = null;
+        
+        // Initialize SAP Service Cloud integration
+        function initializeSAPIntegration() {
+            // Check if running in SAP Service Cloud environment
+            if (typeof window.parent !== 'undefined' && window.parent.postMessage) {
+                console.log('SAP Service Cloud integration available');
+                sapServiceCloud = {
+                    sendMessage: function(message) {
+                        window.parent.postMessage(message, '*');
+                    },
+                    receiveMessage: function(event) {
+                        if (event.data && event.data.type) {
+                            handleSAPMessage(event.data);
+                        }
+                    }
+                };
+                
+                // Listen for messages from SAP Service Cloud
+                window.addEventListener('message', sapServiceCloud.receiveMessage);
+                
+                // Notify SAP Service Cloud that widget is ready
+                sapServiceCloud.sendMessage({
+                    type: 'WIDGET_READY',
+                    widgetId: 'embedded-cti-aik'
+                });
+            }
+        }
+        
+        // Handle messages from SAP Service Cloud
+        function handleSAPMessage(message) {
+            console.log('Received SAP message:', message);
+            
+            switch (message.type) {
+                case 'ACTIVITY_LOADED':
+                    currentActivity = message.activity;
+                    updateActivityDisplay(message.activity);
+                    break;
+                case 'CALL_INCOMING':
+                    handleIncomingCall(message.callData);
+                    break;
+                case 'CALL_OUTGOING':
+                    handleOutgoingCall(message.callData);
+                    break;
+                case 'CHAT_MESSAGE':
+                    handleChatMessage(message.chatData);
+                    break;
+            }
+        }
+        
+        // Update activity display with SAP data
+        function updateActivityDisplay(activity) {
+            if (activity) {
+                document.getElementById('outboundPhone').textContent = activity.phoneNumber || '-';
+                document.getElementById('businessPartnerId').textContent = activity.businessPartnerId || '-';
+                document.getElementById('objectId').textContent = activity.objectId || '-';
+                document.getElementById('objectTypeCode').textContent = activity.objectTypeCode || '-';
+                document.getElementById('esObjectId').textContent = activity.esObjectId || '-';
+                document.getElementById('activityUuid').textContent = activity.activityUuid || '-';
+                document.getElementById('direction').textContent = activity.direction || '-';
+                document.getElementById('isBtdRef').textContent = activity.isBtdRef || '-';
+                document.getElementById('loggedInUserId').textContent = activity.loggedInUserId || '-';
+                document.getElementById('objectThingType').textContent = activity.objectThingType || '-';
+                document.getElementById('objectUuid').textContent = activity.objectUuid || '-';
+            }
+        }
+        
+        // Handle incoming call from SAP
+        function handleIncomingCall(callData) {
+            console.log('Incoming call from SAP:', callData);
+            document.getElementById('phoneNumber').value = callData.phoneNumber || '';
+            document.getElementById('callType').value = 'inbound';
+            document.getElementById('customerName').value = callData.customerName || '';
+            showToast('Incoming call received from SAP Service Cloud');
+        }
+        
+        // Handle outgoing call from SAP
+        function handleOutgoingCall(callData) {
+            console.log('Outgoing call from SAP:', callData);
+            document.getElementById('phoneNumber').value = callData.phoneNumber || '';
+            document.getElementById('callType').value = 'outbound';
+            document.getElementById('customerName').value = callData.customerName || '';
+            showToast('Outgoing call initiated from SAP Service Cloud');
+        }
+        
+        // Handle chat message from SAP
+        function handleChatMessage(chatData) {
+            console.log('Chat message from SAP:', chatData);
+            addMessage(chatData.sender || 'Customer', chatData.message || '');
+            showToast('Chat message received from SAP Service Cloud');
+        }
+        
+        // Send activity update to SAP Service Cloud
+        function sendToSAP(message) {
+            if (sapServiceCloud) {
+                sapServiceCloud.sendMessage({
+                    type: 'ACTIVITY_UPDATE',
+                    activity: currentActivity,
+                    data: message
+                });
+            }
+        }
+        
+        // Initialize socket connection
+        let socketId;
+        
+        function initializeSocket() {
+            socketId = Math.floor(Math.random() * 100000000) + 1;
+            document.getElementById('socketId').textContent = socketId;
+        }
+        
+        function simulateCall() {
+            const phoneNumber = document.getElementById('phoneNumber').value;
+            if (!phoneNumber || phoneNumber.trim() === '') {
+                showToast('Please enter a phone number');
+                return;
+            }
+            
+            const callType = document.getElementById('callType').value;
+            const customerName = document.getElementById('customerName').value;
+            
+            const callData = {
+                phoneNumber: phoneNumber,
+                callType: callType,
+                customerName: customerName,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Simulate the call
+            console.log('Simulating call:', callData);
+            showToast('Call Simulated Successfully');
+            
+            // Send to SAP Service Cloud
+            sendToSAP({
+                type: 'CALL_SIMULATED',
+                callData: callData
+            });
+        }
+        
+        function resetForm() {
+            document.getElementById('phoneNumber').value = '';
+            document.getElementById('callType').value = 'inbound';
+            document.getElementById('customerName').value = '';
+            showToast('Form Reset');
+        }
+        
+        function copySocketId() {
+            const socketIdText = document.getElementById('socketId').textContent;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(socketIdText).then(() => {
+                    showToast('Socket ID copied to clipboard');
+                }).catch(() => {
+                    showToast('Failed to copy Socket ID');
+                });
+            } else {
+                // Fallback
+                const textArea = document.createElement('textarea');
+                textArea.value = socketIdText;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showToast('Socket ID copied to clipboard');
+            }
+        }
+        
+        function refreshData() {
+            showToast('Refreshing outbound call data...');
+            
+            // Request fresh data from SAP Service Cloud
+            if (sapServiceCloud) {
+                sapServiceCloud.sendMessage({
+                    type: 'REQUEST_ACTIVITY_DATA'
+                });
+            }
+        }
+        
+        function exportData() {
+            const data = {
+                phoneNumber: document.getElementById('outboundPhone').textContent,
+                businessPartnerId: document.getElementById('businessPartnerId').textContent,
+                objectId: document.getElementById('objectId').textContent,
+                objectTypeCode: document.getElementById('objectTypeCode').textContent,
+                esObjectId: document.getElementById('esObjectId').textContent,
+                activityUuid: document.getElementById('activityUuid').textContent,
+                direction: document.getElementById('direction').textContent,
+                isBtdRef: document.getElementById('isBtdRef').textContent,
+                loggedInUserId: document.getElementById('loggedInUserId').textContent,
+                objectThingType: document.getElementById('objectThingType').textContent,
+                objectUuid: document.getElementById('objectUuid').textContent
+            };
+            
+            const csvContent = Object.keys(data).map(key => `${key},${data[key]}`).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'outbound_call_data.csv';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showToast('Data exported successfully');
+        }
+        
+        function refreshStatus() {
+            showToast('Refreshing chat status...');
+        }
+        
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            if (message) {
+                addMessage('Agent', message);
+                messageInput.value = '';
+                showToast('Message sent');
+                
+                // Send to SAP Service Cloud
+                sendToSAP({
+                    type: 'CHAT_MESSAGE_SENT',
+                    message: message,
+                    sender: 'Agent'
+                });
+            }
+        }
+        
+        function endChat() {
+            document.getElementById('chatWaiting').style.display = 'block';
+            document.getElementById('chatActive').style.display = 'none';
+            document.getElementById('chatMessages').innerHTML = '';
+            showToast('Chat ended');
+            
+            // Send to SAP Service Cloud
+            sendToSAP({
+                type: 'CHAT_ENDED'
+            });
+        }
+        
+        function quickGreeting() {
+            document.getElementById('messageInput').value = 'Hello! How can I help you today?';
+            showToast('Greeting message added');
+        }
+        
+        function quickHelp() {
+            document.getElementById('messageInput').value = 'I\'m here to assist you. What do you need help with?';
+            showToast('Help message added');
+        }
+        
+        function quickCall() {
+            document.getElementById('messageInput').value = 'Would you like me to call you back? Please provide your phone number.';
+            showToast('Call message added');
+        }
+        
+        function addMessage(sender, message) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.innerHTML = `
+                <div class="message-sender">${sender}</div>
+                <div class="message-text">${message}</div>
+            `;
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        function showToast(message) {
+            // Simple toast implementation
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeSocket();
+            initializeSAPIntegration();
+        });
+    </script>
+</body>
+</html> 
