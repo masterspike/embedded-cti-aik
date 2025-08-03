@@ -75,7 +75,7 @@ function addTestButton() {
 // Simulate incoming call for testing
 function simulateIncomingCall() {
     const testCall = {
-        phoneNumber: '+31 6 12345678',
+        phoneNumber: '+31651616126', // Aik's Dutch phone number
         callId: 'CALL-' + Math.floor(Math.random() * 10000),
         timestamp: new Date().toISOString()
     };
