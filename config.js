@@ -6,7 +6,7 @@ window.CONFIG = {
     // SAP Service Cloud Configuration
     SAP_ENDPOINT: process.env.SAP_ENDPOINT || 'https://my1000354.de1.test.crm.cloud.sap' ,
     SAP_USERNAME: process.env.SAP_USERNAME || 'LEEMREIA',
-    SAP_PASSWORD: process.env.SAP_PASSWORD || 'qwewero2u3i4oyfug2E!S_3groufgo2rgur32',
+
     SAP_API_VERSION: process.env.SAP_API_VERSION || 'v1',
     
     // Socket.io Configuration
@@ -31,7 +31,7 @@ if (!window.CONFIG) {
     window.CONFIG = {
         SAP_ENDPOINT: 'https://my1000354.de1.test.crm.cloud.sap',
         SAP_USERNAME: ' ',
-        SAP_PASSWORD: 'qwewero2u3i4oyfug2E!S_3groufgo2rgur32',
+
         SAP_API_VERSION: 'v1',
         SOCKET_URL: 'https://agent-buddy-socketio.onrender.com',
         SOCKET_TIMEOUT: 30000,
