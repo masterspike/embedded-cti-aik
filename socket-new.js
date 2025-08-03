@@ -1,93 +1,110 @@
-// Socket.js - WebSocket Communication Module (NEW VERSION - CACHE BUSTED)
+// Socket.js - Socket.io Communication Module (NEW VERSION - CACHE BUSTED)
 console.log('🚀 Loading NEW socket.js version - cache busted!');
 // Handles real-time communication, connection management, and message handling
 
-// Global socket variables
 let socket = null;
-let socketId = null;
 let isConnected = false;
+let socketId = null;
 
-// Initialize WebSocket connection
+// Initialize Socket.io connection
 function initializeWebSocket() {
     try {
-        socketId = Math.floor(Math.random() * 100000000) + 1;
+        // Generate unique socket ID
+        socketId = 'socket_' + Math.random().toString(36).substr(2, 9);
         
-        // Try different WebSocket URLs for production and development
-        const wsUrls = [
-            window.WEBSOCKET_URL || 'wss://embedd-cti-railway-production.up.railway.app',
-            'ws://localhost:3001' // Fallback for local development
-        ];
-        
-        // Try to connect to the first available WebSocket server
-        let wsUrl = 'ws://localhost:3001'; // Default to localhost for development
+        // Try to connect to the first available Socket.io server
+        let socketUrl = 'http://localhost:8080'; // Default to localhost for development
         
         // Only use Railway URL if we're on production (Netlify)
         if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            wsUrl = window.WEBSOCKET_URL || 'wss://embedd-cti-railway-production.up.railway.app';
+            socketUrl = window.SOCKET_URL || 'https://embedd-cti-railway-production.up.railway.app';
         }
         
-        console.log('🔗 Attempting to connect to WebSocket:', wsUrl);
+        console.log('🔗 Attempting to connect to Socket.io:', socketUrl);
         console.log('📍 Current hostname:', window.location.hostname);
-        socket = new WebSocket(wsUrl);
         
-        socket.onopen = function() {
-            isConnected = true;
-            updateWSStatus('Verbonden', 'status-connected');
-            addLog('✅ WebSocket verbinding opgezet');
-            showToast('WebSocket verbonden!');
+        // Load Socket.io client library
+        const script = document.createElement('script');
+        script.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
+        script.onload = function() {
+            // Initialize Socket.io connection
+            socket = io(socketUrl, {
+                transports: ['websocket', 'polling'],
+                timeout: 20000,
+                forceNew: true,
+                reconnection: true,
+                reconnectionAttempts: 5,
+                reconnectionDelay: 1000
+            });
             
-            // Send initial connection message
-            const connectMessage = {
-                type: 'CONNECT',
-                socketId: socketId,
-                timestamp: new Date().toISOString()
-            };
-            socket.send(JSON.stringify(connectMessage));
-            addLog('📤 Verbindingsbericht verzonden: ' + socketId);
-        };
-        
-        socket.onmessage = function(event) {
-            try {
-                const data = JSON.parse(event.data);
+            socket.on('connect', function() {
+                isConnected = true;
+                socketId = socket.id;
+                updateWSStatus('Verbonden', 'status-connected');
+                addLog('✅ Socket.io verbinding opgezet');
+                showToast('Socket.io verbonden!');
+                
+                // Send initial connection message
+                const connectMessage = {
+                    type: 'CONNECT',
+                    socketId: socketId,
+                    timestamp: new Date().toISOString()
+                };
+                socket.emit('message', connectMessage);
+                addLog('📤 Verbindingsbericht verzonden: ' + socketId);
+            });
+            
+            socket.on('CONNECTION_ESTABLISHED', function(data) {
+                addLog('✅ Socket.io verbinding bevestigd');
                 handleWebSocketMessage(data);
-            } catch (error) {
-                addLog('❌ Fout bij parsen WebSocket bericht: ' + error.message);
-            }
-        };
-        
-        socket.onclose = function() {
-            isConnected = false;
-            updateWSStatus('Verbroken', 'status-disconnected');
-            addLog('🔌 WebSocket verbinding verbroken');
+            });
             
-            // Attempt to reconnect after 5 seconds
-            setTimeout(() => {
-                if (!isConnected) {
-                    addLog('🔄 Poging tot herverbinding...');
-                    initializeWebSocket();
-                }
-            }, 5000);
+            socket.on('CALL_SIMULATED_BROADCAST', function(data) {
+                addLog('📢 Call simulatie ontvangen');
+                handleWebSocketMessage(data);
+            });
+            
+            socket.on('MESSAGE_RECEIVED', function(data) {
+                addLog('📡 Bericht bevestiging ontvangen');
+                handleWebSocketMessage(data);
+            });
+            
+            socket.on('disconnect', function() {
+                isConnected = false;
+                updateWSStatus('Verbroken', 'status-disconnected');
+                addLog('🔌 Socket.io verbinding verbroken');
+                
+                // Attempt to reconnect after 5 seconds
+                setTimeout(() => {
+                    if (!isConnected) {
+                        addLog('🔄 Poging tot herverbinding...');
+                        initializeWebSocket();
+                    }
+                }, 5000);
+            });
+            
+            socket.on('connect_error', function(error) {
+                isConnected = false;
+                updateWSStatus('Fout', 'status-disconnected');
+                addLog('❌ Socket.io verbindingsfout: ' + error);
+                console.error('❌ Socket.io error details:', error);
+            });
+            
         };
-        
-        socket.onerror = function(error) {
-            isConnected = false;
-            updateWSStatus('Fout', 'status-disconnected');
-            addLog('❌ WebSocket fout: ' + error);
-            console.error('❌ WebSocket error details:', error);
-        };
+        document.head.appendChild(script);
         
     } catch (error) {
-        addLog('❌ Kon WebSocket niet initialiseren: ' + error.message);
+        addLog('❌ Kon Socket.io niet initialiseren: ' + error.message);
     }
 }
 
-// Handle incoming WebSocket messages
+// Handle incoming Socket.io messages
 function handleWebSocketMessage(data) {
-    addLog('📨 Bericht ontvangen: ' + data.type);
+    addLog('📨 Bericht ontvangen: ' + (data.type || 'unknown'));
     
     switch (data.type) {
         case 'CONNECTION_ESTABLISHED':
-            addLog('✅ WebSocket verbinding bevestigd');
+            addLog('✅ Socket.io verbinding bevestigd');
             break;
             
         case 'CALL_SIMULATED_BROADCAST':
@@ -111,63 +128,62 @@ function handleWebSocketMessage(data) {
             break;
             
         default:
-            addLog('📨 Onbekend bericht type: ' + data.type);
+            addLog('📨 Onbekend bericht type: ' + (data.type || 'unknown'));
     }
 }
 
-// Send message via WebSocket
+// Send message via Socket.io
 function sendWebSocketMessage(message) {
-    if (socket && socket.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify(message));
+    if (socket && socket.connected) {
+        socket.emit('message', message);
         addLog('📤 Bericht verzonden: ' + message.type);
         return true;
     } else {
-        addLog('❌ WebSocket niet beschikbaar voor verzending');
+        addLog('❌ Socket.io niet beschikbaar voor verzending');
         return false;
     }
 }
 
 // Send call simulation
 function sendCallSimulation(callData) {
-    const message = {
-        type: 'CALL_SIMULATED',
-        socketId: socketId,
-        callData: callData,
-        timestamp: new Date().toISOString()
-    };
-    
-    return sendWebSocketMessage(message);
+    if (socket && socket.connected) {
+        socket.emit('CALL_SIMULATED', callData);
+        addLog('📞 Call simulatie verzonden');
+        return true;
+    } else {
+        addLog('❌ Socket.io niet beschikbaar voor call simulatie');
+        return false;
+    }
 }
 
-// Send SAP integration data
+// Send SAP integration message
 function sendSAPIntegration(sapData) {
-    const message = {
-        type: 'SAP_INTEGRATION',
-        socketId: socketId,
-        data: sapData,
-        timestamp: new Date().toISOString()
-    };
-    
-    return sendWebSocketMessage(message);
+    if (socket && socket.connected) {
+        socket.emit('SAP_INTEGRATION', sapData);
+        addLog('🏢 SAP integratie bericht verzonden');
+        return true;
+    } else {
+        addLog('❌ Socket.io niet beschikbaar voor SAP integratie');
+        return false;
+    }
 }
 
 // Send test message
 function sendTestMessage() {
-    const message = {
-        type: 'TEST_MESSAGE',
-        socketId: socketId,
-        data: 'Test from Agent Buddy',
+    const testMessage = {
+        type: 'TEST',
+        message: 'Test bericht van Agent Buddy',
         timestamp: new Date().toISOString()
     };
-    
-    return sendWebSocketMessage(message);
+    return sendWebSocketMessage(testMessage);
 }
 
 // Update WebSocket status display
 function updateWSStatus(status, className) {
-    const statusElement = document.getElementById('wsStatus');
+    const statusElement = document.getElementById('ws-status');
     if (statusElement) {
-        statusElement.innerHTML = `<span class="status-indicator ${className}"></span>${status}`;
+        statusElement.textContent = status;
+        statusElement.className = 'status-indicator ' + className;
     }
 }
 
@@ -181,70 +197,47 @@ function getSocketId() {
     return socketId;
 }
 
-// Disconnect WebSocket
+// Disconnect Socket.io
 function disconnectWebSocket() {
     if (socket) {
-        socket.close();
+        socket.disconnect();
         isConnected = false;
-        addLog('🔌 WebSocket handmatig verbroken');
+        addLog('🔌 Socket.io handmatig verbroken');
     }
 }
 
-// Reconnect WebSocket
+// Reconnect Socket.io
 function reconnectWebSocket() {
     if (socket) {
-        socket.close();
+        socket.connect();
+        addLog('🔄 Socket.io herverbinding gestart');
     }
-    setTimeout(() => {
-        initializeWebSocket();
-    }, 1000);
 }
 
 // Test connection
 function testConnection() {
-    if (isConnected) {
+    if (socket && socket.connected) {
         sendTestMessage();
-        showToast('✅ Verbinding getest');
+        addLog('🧪 Socket.io verbinding getest');
     } else {
-        showToast('❌ Geen verbinding');
+        addLog('❌ Socket.io niet verbonden voor test');
     }
 }
 
-// Broadcast message to all connected clients
+// Broadcast message to all clients
 function broadcastMessage(message) {
-    const broadcastData = {
-        type: 'BROADCAST',
-        socketId: socketId,
-        message: message,
-        timestamp: new Date().toISOString()
-    };
-    
-    return sendWebSocketMessage(broadcastData);
+    if (socket && socket.connected) {
+        socket.emit('broadcast', message);
+        addLog('📢 Bericht uitgezonden naar alle clients');
+    } else {
+        addLog('❌ Socket.io niet beschikbaar voor broadcast');
+    }
 }
 
 // Handle connection retry
 function handleConnectionRetry() {
     if (!isConnected) {
-        addLog('🔄 Verbinding opnieuw proberen...');
+        addLog('🔄 Socket.io herverbinding...');
         initializeWebSocket();
     }
-}
-
-// Export socket to global scope for other modules
-window.socket = socket;
-
-// Export functions for global access
-window.initializeWebSocket = initializeWebSocket;
-window.handleWebSocketMessage = handleWebSocketMessage;
-window.sendWebSocketMessage = sendWebSocketMessage;
-window.sendCallSimulation = sendCallSimulation;
-window.sendSAPIntegration = sendSAPIntegration;
-window.sendTestMessage = sendTestMessage;
-window.updateWSStatus = updateWSStatus;
-window.getConnectionStatus = getConnectionStatus;
-window.getSocketId = getSocketId;
-window.disconnectWebSocket = disconnectWebSocket;
-window.reconnectWebSocket = reconnectWebSocket;
-window.testConnection = testConnection;
-window.broadcastMessage = broadcastMessage;
-window.handleConnectionRetry = handleConnectionRetry; 
+} 
