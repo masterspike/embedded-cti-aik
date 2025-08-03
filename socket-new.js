@@ -23,7 +23,7 @@ function initializeWebSocket() {
         
         // Only use Railway URL if we're on production (Netlify)
         if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            wsUrl = window.WEBSOCKET_URL || 'wss://embedd-cti-railway-production.up.railway.app/ws';
+            wsUrl = window.WEBSOCKET_URL || 'wss://embedd-cti-railway-production.up.railway.app';
         }
         
         console.log('🔗 Attempting to connect to WebSocket:', wsUrl);

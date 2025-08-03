@@ -19,11 +19,8 @@ const server = http.createServer((req, res) => {
     res.end('WebSocket Server Running');
 });
 
-// Create WebSocket server with proper upgrade handling
-const wss = new WebSocket.Server({ 
-    server,
-    path: '/ws' // Add specific path for WebSocket
-});
+// Create WebSocket server without path restriction
+const wss = new WebSocket.Server({ server });
 
 console.log('🚀 WebSocket Server Starting...');
 console.log('📡 Listening on port', process.env.PORT || 3001);
@@ -102,7 +99,7 @@ const HOST = process.env.HOST || '0.0.0.0';
 // Add error handling for server start
 server.listen(PORT, HOST, () => {
     console.log(`🎯 WebSocket server is running on ${HOST}:${PORT}`);
-    console.log(`🔗 Connect your widget to: ${process.env.PORT ? 'wss://embedd-cti-railway-production.up.railway.app/ws' : 'ws://localhost:3001'}`);
+    console.log(`🔗 Connect your widget to: ${process.env.PORT ? 'wss://embedd-cti-railway-production.up.railway.app' : 'ws://localhost:3001'}`);
 }).on('error', (err) => {
     console.error('❌ Server error:', err);
     process.exit(1);
