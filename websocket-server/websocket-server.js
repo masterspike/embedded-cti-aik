@@ -3,6 +3,18 @@ const http = require('http');
 
 // Create HTTP server
 const server = http.createServer((req, res) => {
+    // Health check endpoint
+    if (req.url === '/health') {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+            status: 'healthy',
+            timestamp: new Date().toISOString(),
+            websocket: 'running'
+        }));
+        return;
+    }
+    
+    // Default response
     res.writeHead(200, { 'Content-Type': 'text/plain' });
     res.end('WebSocket Server Running');
 });
@@ -83,9 +95,14 @@ wss.on('connection', function connection(ws, req) {
 // Start the server
 const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
+
+// Add error handling for server start
 server.listen(PORT, HOST, () => {
     console.log(`🎯 WebSocket server is running on ${HOST}:${PORT}`);
     console.log(`🔗 Connect your widget to: ${process.env.PORT ? 'wss://embedd-cti-railway-production.up.railway.app' : 'ws://localhost:3001'}`);
+}).on('error', (err) => {
+    console.error('❌ Server error:', err);
+    process.exit(1);
 });
 
 // Graceful shutdown
