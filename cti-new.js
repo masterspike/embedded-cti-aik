@@ -114,7 +114,7 @@ function handleIncomingCall(callData) {
         "Type": "CALL",
         "EventType": "INBOUND",
         "Action": "NOTIFY",
-        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126',
+        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31 651616126',
         "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
         "Timestamp": new Date().toISOString()
     };
@@ -146,7 +146,7 @@ function sendSAPIncomingNotification(callData) {
         "Type": "CALL",
         "EventType": "INBOUND",
         "Action": "NOTIFY", 
-        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126',
+        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31 651616126',
         "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
         "Timestamp": new Date().toISOString()
     };
@@ -311,7 +311,7 @@ function sendSAPDeclineNotification(callData) {
         "Type": "CALL",
         "EventType": "INBOUND",
         "Action": "DECLINE", 
-        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126',
+        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31 651616126',
         "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
         "Timestamp": new Date().toISOString()
     };
@@ -401,7 +401,7 @@ function sendToSAPServiceCloud(callData) {
         "Type": "CALL",
         "EventType": "INBOUND", 
         "Action": "ACCEPT",
-        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126',
+        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31 651616126',
         "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
         "Timestamp": new Date().toISOString()
     };
@@ -588,7 +588,7 @@ async function testSapConnection() {
 // Simulate incoming call for testing
 function simulateIncomingCall() {
     const testCall = {
-        phoneNumber: (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126', // Configurable phone number
+        phoneNumber: (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31 651616126', // Configurable phone number
         callId: generateExternalReferenceId(),
         timestamp: new Date().toISOString()
     };

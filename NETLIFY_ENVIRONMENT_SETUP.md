@@ -26,7 +26,7 @@ SOCKET_URL=https://agent-buddy-socketio.onrender.com
 
 #### Application Settings
 ```bash
-DEFAULT_PHONE=+31651616126
+DEFAULT_PHONE=+31 651616126
 DEBUG_MODE=true
 ```
 
@@ -52,7 +52,7 @@ Na de deploy, open de applicatie en controleer:
 | `SAP_USERNAME` | `LEEMREIA` | SAP Basic Auth username |
 
 | `SOCKET_URL` | `https://agent-buddy-socketio.onrender.com` | Socket.io server URL |
-| `DEFAULT_PHONE` | `+31651616126` | Default phone number for testing |
+| `DEFAULT_PHONE` | `+31 651616126` | Default phone number for testing |
 | `DEBUG_MODE` | `true` | Enable debug logging |
 
 ### ✅ Voordelen van Environment Variables

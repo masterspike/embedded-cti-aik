@@ -75,7 +75,7 @@ function addTestButton() {
 // Simulate incoming call for testing
 function simulateIncomingCall() {
     try {
-        let phoneNumber = '+31651616126'; // Default fallback
+        let phoneNumber = '+31 651616126'; // Default fallback
         
         // Try to get from config
         if (window.getConfig && typeof window.getConfig === 'function') {

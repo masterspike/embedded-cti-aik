@@ -19,7 +19,7 @@ window.CONFIG = {
     DEBUG_MODE: false,
     
     // Default Phone Number
-    DEFAULT_PHONE: '+31651616126',
+            DEFAULT_PHONE: '+31 651616126',
     
     // Logging Configuration
     LOG_LEVEL: 'info'
@@ -38,7 +38,7 @@ if (!window.CONFIG) {
         APP_NAME: 'Agent Buddy',
         APP_VERSION: '1.0.0',
         DEBUG_MODE: false,
-        DEFAULT_PHONE: '+31651616126',
+        DEFAULT_PHONE: '+31 651616126',
         LOG_LEVEL: 'info'
     };
 }
