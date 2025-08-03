@@ -114,6 +114,12 @@ function acceptCall() {
     showToast('✅ Call geaccepteerd en naar SAP verzonden!');
 }
 
+// Make functions globally available
+window.acceptCall = acceptCall;
+window.declineCall = declineCall;
+window.testSapConnection = testSapConnection;
+window.simulateIncomingCall = simulateIncomingCall;
+
 // Decline call
 function declineCall() {
     if (!currentCall) return;
