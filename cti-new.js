@@ -71,7 +71,7 @@ function sendSAPIncomingNotification(callData) {
             "Type": "CALL",
             "EventType": "INBOUND",
             "Action": "NOTIFY", 
-            "ANI": callData.phoneNumber || "+31651616126",
+            "ANI": callData.phoneNumber || getConfig('DEFAULT_PHONE'),
             "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
             "Timestamp": new Date().toISOString()
         };
@@ -160,7 +160,7 @@ function sendSAPDeclineNotification(callData) {
             "Type": "CALL",
             "EventType": "INBOUND",
             "Action": "DECLINE", 
-            "ANI": callData.phoneNumber || "+31651616126",
+            "ANI": callData.phoneNumber || getConfig('DEFAULT_PHONE'),
             "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
             "Timestamp": new Date().toISOString()
         };
@@ -225,7 +225,7 @@ function sendToSAPServiceCloud(callData) {
         "Type": "CALL",
         "EventType": "INBOUND", 
         "Action": "ACCEPT",
-        "ANI": callData.phoneNumber || "+31651616126",
+        "ANI": callData.phoneNumber || getConfig('DEFAULT_PHONE'),
         "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
         "Timestamp": new Date().toISOString()
     };
@@ -414,7 +414,7 @@ async function testSapConnection() {
 // Simulate incoming call for testing
 function simulateIncomingCall() {
     const testCall = {
-        phoneNumber: '+31651616126', // Aik's Dutch phone number
+        phoneNumber: getConfig('DEFAULT_PHONE'), // Configurable phone number
         callId: generateExternalReferenceId(),
         timestamp: new Date().toISOString()
     };
@@ -439,11 +439,12 @@ function sendSAPPayloadToParent(sapPayload) {
 
 // Send SAP payload to SAP Service Cloud via HTTP
 async function sendSAPPayloadToSAP(sapPayload) {
-    const sapEndpoint = document.getElementById('sapEndpoint')?.value;
-    const sapApiKey = document.getElementById('sapApiKey')?.value;
+    // Try environment variable first, then fallback to UI input
+    const sapEndpoint = getConfig('SAP_ENDPOINT') || document.getElementById('sapEndpoint')?.value;
+    const sapApiKey = getConfig('SAP_API_KEY') || document.getElementById('sapApiKey')?.value;
     
     if (!sapEndpoint || sapEndpoint === 'https://your-sap-instance.service.cloud.sap') {
-        addLog('⚠️ SAP endpoint niet geconfigureerd');
+        addLog('⚠️ SAP endpoint niet geconfigureerd - gebruik environment variabele SAP_ENDPOINT');
         return false;
     }
     
