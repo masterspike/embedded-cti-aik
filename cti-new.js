@@ -246,6 +246,17 @@ function sendToSAPServiceCloud(callData) {
         }
     }
     
+    // Send HTTP request to SAP Service Cloud
+    sendSAPPayloadToSAP(sapPayload).then(success => {
+        if (success) {
+            document.getElementById('sapStatus').textContent = 'Verbonden';
+            document.getElementById('lastSapAction').textContent = 'Call geaccepteerd';
+        } else {
+            document.getElementById('sapStatus').textContent = 'Fout';
+            document.getElementById('lastSapAction').textContent = 'HTTP request gefaald';
+        }
+    });
+    
     // Simulate SAP API call
     setTimeout(() => {
         document.getElementById('sapStatus').textContent = 'Verbonden';
@@ -358,26 +369,46 @@ function handleChatMessage(chatData) {
 }
 
 // Test SAP connection
-function testSapConnection() {
+async function testSapConnection() {
     const endpoint = document.getElementById('sapEndpoint').value;
     const apiKey = document.getElementById('sapApiKey').value;
     
     addLog('🔗 SAP verbinding testen...');
     
-    // Simulate connection test
-    setTimeout(() => {
-        if (endpoint && apiKey) {
+    if (!endpoint || endpoint === 'https://your-sap-instance.service.cloud.sap') {
+        document.getElementById('sapStatus').textContent = 'Fout';
+        document.getElementById('lastSapAction').textContent = 'Endpoint niet geconfigureerd';
+        addLog('❌ SAP endpoint niet geconfigureerd');
+        showToast('SAP endpoint niet geconfigureerd!');
+        return;
+    }
+    
+    try {
+        const response = await fetch(endpoint, {
+            method: 'GET',
+            headers: {
+                'Authorization': apiKey ? `Bearer ${apiKey}` : '',
+                'Accept': 'application/json'
+            }
+        });
+        
+        if (response.ok) {
             document.getElementById('sapStatus').textContent = 'Verbonden';
-            document.getElementById('lastSapAction').textContent = 'Verbinding getest';
+            document.getElementById('lastSapAction').textContent = 'Verbinding succesvol';
             addLog('✅ SAP verbinding succesvol');
             showToast('SAP verbinding succesvol!');
         } else {
             document.getElementById('sapStatus').textContent = 'Fout';
             document.getElementById('lastSapAction').textContent = 'Verbinding mislukt';
-            addLog('❌ SAP verbinding mislukt');
+            addLog('❌ SAP verbinding mislukt: ' + response.status);
             showToast('SAP verbinding mislukt!');
         }
-    }, 2000);
+    } catch (error) {
+        document.getElementById('sapStatus').textContent = 'Fout';
+        document.getElementById('lastSapAction').textContent = 'Verbinding mislukt';
+        addLog('❌ SAP verbinding mislukt: ' + error.message);
+        showToast('SAP verbinding mislukt!');
+    }
 }
 
 // Simulate incoming call for testing
@@ -406,6 +437,41 @@ function sendSAPPayloadToParent(sapPayload) {
     return false;
 }
 
+// Send SAP payload to SAP Service Cloud via HTTP
+async function sendSAPPayloadToSAP(sapPayload) {
+    const sapEndpoint = document.getElementById('sapEndpoint')?.value;
+    const sapApiKey = document.getElementById('sapApiKey')?.value;
+    
+    if (!sapEndpoint || sapEndpoint === 'https://your-sap-instance.service.cloud.sap') {
+        addLog('⚠️ SAP endpoint niet geconfigureerd');
+        return false;
+    }
+    
+    try {
+        const response = await fetch(sapEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': sapApiKey ? `Bearer ${sapApiKey}` : '',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(sapPayload)
+        });
+        
+        if (response.ok) {
+            const result = await response.json();
+            addLog('✅ SAP Service Cloud response: ' + JSON.stringify(result));
+            return true;
+        } else {
+            addLog('❌ SAP Service Cloud error: ' + response.status + ' ' + response.statusText);
+            return false;
+        }
+    } catch (error) {
+        addLog('❌ SAP Service Cloud request failed: ' + error.message);
+        return false;
+    }
+}
+
 // Export functions for global access
 window.initializeCTI = initializeCTI;
 window.handleIncomingCall = handleIncomingCall;
@@ -417,4 +483,5 @@ window.showDeclinePopup = showDeclinePopup;
 window.handleSAPMessage = handleSAPMessage;
 window.testSapConnection = testSapConnection;
 window.simulateIncomingCall = simulateIncomingCall;
-window.sendSAPPayloadToParent = sendSAPPayloadToParent; 
+window.sendSAPPayloadToParent = sendSAPPayloadToParent;
+window.sendSAPPayloadToSAP = sendSAPPayloadToSAP; 
