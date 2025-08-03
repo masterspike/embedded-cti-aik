@@ -1,0 +1,163 @@
+<mvc:View
+    controllerName="com.sap.agentbuddy.SocketView"
+    xmlns="sap.m"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns:core="sap.ui.core"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    displayBlock="true">
+    
+    <Page title="Agent Buddy - Socket Integration" showNavButton="false">
+        <content>
+            <l:Grid defaultSpan="XL6 L6 M6 S12" class="sapUiSmallMargin">
+                
+                <!-- Connection Status Panel -->
+                <Panel headerText="Connection Status" class="sapUiSmallMargin">
+                    <content>
+                        <l:VerticalLayout width="100%">
+                            <Label text="Socket.io Status:" />
+                            <Text id="connectionStatus" text="Connecting..." />
+                            
+                            <Label text="SAP Integration:" />
+                            <Text id="sapStatus" text="Not configured" />
+                            
+                            <Label text="Last Action:" />
+                            <Text id="lastAction" text="None" />
+                        </l:VerticalLayout>
+                    </content>
+                </Panel>
+                
+                <!-- Call Control Panel -->
+                <Panel headerText="Call Control" class="sapUiSmallMargin">
+                    <content>
+                        <l:VerticalLayout width="100%">
+                            <Button 
+                                text="Simulate Incoming Call" 
+                                type="Emphasized"
+                                press=".simulateIncomingCall"
+                                class="sapUiSmallMarginBottom" />
+                            
+                            <Button 
+                                text="Accept Call" 
+                                type="Accept"
+                                press=".acceptCall"
+                                enabled="false"
+                                id="acceptButton"
+                                class="sapUiSmallMarginBottom" />
+                            
+                            <Button 
+                                text="Decline Call" 
+                                type="Reject"
+                                press=".declineCall"
+                                enabled="false"
+                                id="declineButton" />
+                        </l:VerticalLayout>
+                    </content>
+                </Panel>
+                
+                <!-- Call Information Panel -->
+                <Panel headerText="Call Information" class="sapUiSmallMargin">
+                    <content>
+                        <l:VerticalLayout width="100%">
+                            <Label text="Phone Number:" />
+                            <Text id="phoneNumber" text="-" />
+                            
+                            <Label text="Call ID:" />
+                            <Text id="callId" text="-" />
+                            
+                            <Label text="Timestamp:" />
+                            <Text id="callTimestamp" text="-" />
+                            
+                            <Label text="Status:" />
+                            <Text id="callStatus" text="No active call" />
+                        </l:VerticalLayout>
+                    </content>
+                </Panel>
+                
+                <!-- SAP Integration Panel -->
+                <Panel headerText="SAP Service Cloud Integration" class="sapUiSmallMargin">
+                    <content>
+                        <l:VerticalLayout width="100%">
+                            <Label text="Endpoint:" />
+                            <Text id="sapEndpoint" text="Not configured" />
+                            
+                            <Label text="Credentials:" />
+                            <Text id="sapCredentials" text="Not configured" />
+                            
+                            <Label text="Last SAP Action:" />
+                            <Text id="lastSapAction" text="None" />
+                            
+                            <Label text="SAP Response:" />
+                            <Text id="sapResponse" text="-" />
+                        </l:VerticalLayout>
+                    </content>
+                </Panel>
+                
+                <!-- Log Panel -->
+                <Panel headerText="Activity Log" class="sapUiSmallMargin" expandable="true" expanded="false">
+                    <content>
+                        <TextArea 
+                            id="logArea" 
+                            width="100%" 
+                            height="200px" 
+                            editable="false"
+                            value="Application started..." />
+                    </content>
+                </Panel>
+                
+                <!-- Configuration Panel -->
+                <Panel headerText="Configuration" class="sapUiSmallMargin" expandable="true" expanded="false">
+                    <content>
+                        <f:SimpleForm 
+                            editable="true" 
+                            layout="ResponsiveGridLayout" 
+                            labelSpanXL="4" 
+                            labelSpanL="4" 
+                            labelSpanM="4" 
+                            labelSpanS="12">
+                            
+                            <f:content>
+                                <Label text="Socket.io URL:" />
+                                <Input id="socketUrl" value="https://agent-buddy-socketio.onrender.com" />
+                                
+                                <Label text="SAP Endpoint:" />
+                                <Input id="sapEndpointInput" value="https://my1000354.de1.test.crm.cloud.sap/api/calls" />
+                                
+                                <Label text="SAP Username:" />
+                                <Input id="sapUsername" value="LEEMREIA" />
+                                
+                                <Label text="SAP Password:" />
+                                <Input id="sapPassword" type="Password" value="" />
+                                
+                                <Label text="Default Phone:" />
+                                <Input id="defaultPhone" value="+31651616126" />
+                            </f:content>
+                        </f:SimpleForm>
+                        
+                        <HBox justifyContent="End" class="sapUiSmallMarginTop">
+                            <Button 
+                                text="Test Connection" 
+                                type="Emphasized"
+                                press=".testConnection"
+                                class="sapUiSmallMarginEnd" />
+                            
+                            <Button 
+                                text="Save Configuration" 
+                                type="Accept"
+                                press=".saveConfiguration" />
+                        </HBox>
+                    </content>
+                </Panel>
+                
+            </l:Grid>
+        </content>
+        
+        <footer>
+            <Toolbar>
+                <ToolbarSpacer />
+                <Text text="Agent Buddy v1.0.0 - SAP Service Cloud Integration" />
+            </Toolbar>
+        </footer>
+    </Page>
+    
+</mvc:View> 
