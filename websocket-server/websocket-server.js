@@ -3,6 +3,18 @@ const http = require('http');
 
 // Create HTTP server
 const server = http.createServer((req, res) => {
+    // Add CORS headers for Railway
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        res.writeHead(200);
+        res.end();
+        return;
+    }
+    
     // Health check endpoint
     if (req.url === '/health') {
         res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -10,7 +22,7 @@ const server = http.createServer((req, res) => {
             status: 'healthy',
             timestamp: new Date().toISOString(),
             websocket: 'running',
-            port: process.env.PORT || 3001
+            port: process.env.PORT || 8080
         }));
         return;
     }
@@ -20,11 +32,21 @@ const server = http.createServer((req, res) => {
     res.end('WebSocket Server Running');
 });
 
-// Create WebSocket server
-const wss = new WebSocket.Server({ server });
+// Create WebSocket server with Railway compatibility
+const wss = new WebSocket.Server({ 
+    server,
+    // Handle Railway proxy headers
+    handleProtocols: () => 'websocket',
+    // Add headers for Railway
+    headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type'
+    }
+});
 
 console.log('🚀 WebSocket Server Starting...');
-console.log('📡 Listening on port', process.env.PORT || 3001);
+console.log('📡 Listening on port', process.env.PORT || 8080);
 console.log('🌐 Environment:', process.env.PORT ? 'Railway Production' : 'Local Development');
 
 // Handle WebSocket connections
@@ -94,7 +116,7 @@ wss.on('connection', function connection(ws, req) {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 8080;
 const HOST = process.env.HOST || '0.0.0.0';
 
 server.listen(PORT, HOST, () => {
