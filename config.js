@@ -4,25 +4,25 @@
 // Initialize CONFIG immediately to prevent "Cannot access before initialization" error
 window.CONFIG = {
     // SAP Service Cloud Configuration
-    SAP_ENDPOINT: process.env.SAP_ENDPOINT || 'https://my1000354.de1.test.crm.cloud.sap' ,
-    SAP_USERNAME: process.env.SAP_USERNAME || 'LEEMREIA',
+    SAP_ENDPOINT: 'https://my1000354.de1.test.crm.cloud.sap',
+    SAP_USERNAME: 'LEEMREIA',
 
-    SAP_API_VERSION: process.env.SAP_API_VERSION || 'v1',
+    SAP_API_VERSION: 'v1',
     
     // Socket.io Configuration
-    SOCKET_URL: process.env.SOCKET_URL || 'https://agent-buddy-socketio.onrender.com',
-    SOCKET_TIMEOUT: process.env.SOCKET_TIMEOUT || 30000,
+    SOCKET_URL: 'https://agent-buddy-socketio.onrender.com',
+    SOCKET_TIMEOUT: 30000,
     
     // Application Configuration
-    APP_NAME: process.env.APP_NAME || 'Agent Buddy',
-    APP_VERSION: process.env.APP_VERSION || '1.0.0',
-    DEBUG_MODE: process.env.DEBUG_MODE === 'true' || false,
+    APP_NAME: 'Agent Buddy',
+    APP_VERSION: '1.0.0',
+    DEBUG_MODE: false,
     
     // Default Phone Number
-    DEFAULT_PHONE: process.env.DEFAULT_PHONE || '+31651616126',
+    DEFAULT_PHONE: '+31651616126',
     
     // Logging Configuration
-    LOG_LEVEL: process.env.LOG_LEVEL || 'info'
+    LOG_LEVEL: 'info'
 };
 
 // Ensure CONFIG is always available
@@ -30,7 +30,7 @@ if (!window.CONFIG) {
     console.log('⚠️ CONFIG was not initialized, creating default config');
     window.CONFIG = {
         SAP_ENDPOINT: 'https://my1000354.de1.test.crm.cloud.sap',
-        SAP_USERNAME: ' ',
+        SAP_USERNAME: 'LEEMREIA',
 
         SAP_API_VERSION: 'v1',
         SOCKET_URL: 'https://agent-buddy-socketio.onrender.com',
@@ -63,8 +63,26 @@ function setConfig(key, value) {
     return true;
 }
 
+// Helper function to read environment variables from Netlify
+function getEnvironmentVariable(key, defaultValue = '') {
+    // Try to get from Netlify environment variables
+    // This works if the variables are injected during build
+    if (typeof window !== 'undefined' && window.__ENV__ && window.__ENV__[key]) {
+        return window.__ENV__[key];
+    }
+    
+    // Try to get from meta tags (alternative method)
+    const metaTag = document.querySelector(`meta[name="env-${key}"]`);
+    if (metaTag) {
+        return metaTag.getAttribute('content');
+    }
+    
+    return defaultValue;
+}
+
 // Export for global access
 window.getConfig = getConfig;
 window.setConfig = setConfig;
+window.getEnvironmentVariable = getEnvironmentVariable;
 
 console.log('📋 Configuration loaded:', window.CONFIG); 
