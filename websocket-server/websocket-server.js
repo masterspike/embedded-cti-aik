@@ -82,8 +82,9 @@ wss.on('connection', function connection(ws, req) {
 
 // Start the server
 const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => {
-    console.log(`🎯 WebSocket server is running on port ${PORT}`);
+const HOST = process.env.HOST || '0.0.0.0';
+server.listen(PORT, HOST, () => {
+    console.log(`🎯 WebSocket server is running on ${HOST}:${PORT}`);
     console.log(`🔗 Connect your widget to: ${process.env.PORT ? 'wss://embedd-cti-railway-production.up.railway.app' : 'ws://localhost:3001'}`);
 });
 
@@ -94,4 +95,22 @@ process.on('SIGINT', () => {
         console.log('✅ WebSocket server closed');
         process.exit(0);
     });
+});
+
+// Handle SIGTERM for Railway
+process.on('SIGTERM', () => {
+    console.log('\n🛑 Railway shutting down WebSocket server...');
+    wss.close(() => {
+        console.log('✅ WebSocket server closed');
+        process.exit(0);
+    });
+});
+
+// Keep the process alive
+process.on('uncaughtException', (err) => {
+    console.log('❌ Uncaught Exception:', err);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+    console.log('❌ Unhandled Rejection at:', promise, 'reason:', reason);
 }); 
