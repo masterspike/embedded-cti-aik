@@ -416,8 +416,12 @@
         </div>
     </div>
 
-    <script src="socket.js?v=2"></script>
-    <script src="cti.js?v=2"></script>
-    <script src="app.js?v=2"></script>
+    <script>
+        // Force cache busting
+        const timestamp = Date.now();
+        document.write('<script src="socket.js?v=3&t=' + timestamp + '"><\/script>');
+        document.write('<script src="cti.js?v=3&t=' + timestamp + '"><\/script>');
+        document.write('<script src="app.js?v=3&t=' + timestamp + '"><\/script>');
+    </script>
 </body>
 </html> 
