@@ -71,13 +71,23 @@ function sendSAPIncomingNotification(callData) {
             "Type": "CALL",
             "EventType": "INBOUND",
             "Action": "NOTIFY", 
-            "ANI": callData.phoneNumber || "+31612345678",
+            "ANI": callData.phoneNumber || "+31651616126",
             "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
             "Timestamp": new Date().toISOString()
         };
         
         sapServiceCloud.sendMessage(sapNotification);
         addLog('📢 SAP notificatie verzonden voor incoming call');
+        
+        // Send via Socket.io if available
+        if (window.socket && window.socket.connected) {
+            const socketMessage = {
+                type: 'SAP_INTEGRATION',
+                data: sapNotification
+            };
+            window.socket.emit('message', socketMessage);
+            addLog('📡 SAP NOTIFY payload verzonden via Socket.io');
+        }
     }
 }
 
@@ -141,6 +151,16 @@ function sendSAPDeclineNotification(callData) {
         
         sapServiceCloud.sendMessage(sapPayload);
         addLog('❌ SAP DECLINE payload verzonden: ' + JSON.stringify(sapPayload));
+        
+        // Send via Socket.io if available
+        if (window.socket && window.socket.connected) {
+            const socketMessage = {
+                type: 'SAP_INTEGRATION',
+                data: sapPayload
+            };
+            window.socket.emit('message', socketMessage);
+            addLog('📡 SAP DECLINE payload verzonden via Socket.io');
+        }
     }
 }
 
@@ -197,13 +217,14 @@ function sendToSAPServiceCloud(callData) {
         addLog('✅ Call succesvol naar SAP verzonden');
     }, 1000);
     
-    // Send via WebSocket if available
-    if (window.socket && window.socket.readyState === WebSocket.OPEN) {
-        const wsMessage = {
+    // Send via Socket.io if available
+    if (window.socket && window.socket.connected) {
+        const socketMessage = {
             type: 'SAP_INTEGRATION',
             data: sapPayload
         };
-        window.socket.send(JSON.stringify(wsMessage));
+        window.socket.emit('message', socketMessage);
+        addLog('📡 SAP payload verzonden via Socket.io');
     }
 }
 

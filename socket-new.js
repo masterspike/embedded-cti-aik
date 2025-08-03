@@ -123,6 +123,26 @@ function handleWebSocketMessage(data) {
             addLog('🏢 SAP integratie bericht ontvangen');
             break;
             
+        case 'SAP_INTEGRATION_BROADCAST':
+            console.log('🏢 SAP Integration broadcast received:', data);
+            addLog('📨 SAP bericht ontvangen: ' + data.sapData.Action);
+            
+            // Update SAP status based on the action
+            if (data.sapData.Action === 'ACCEPT') {
+                document.getElementById('sapStatus').textContent = 'Verbonden';
+                document.getElementById('lastSapAction').textContent = 'Call geaccepteerd';
+                addLog('✅ SAP ACCEPT verwerkt');
+            } else if (data.sapData.Action === 'DECLINE') {
+                document.getElementById('sapStatus').textContent = 'Verbroken';
+                document.getElementById('lastSapAction').textContent = 'Call afgewezen';
+                addLog('❌ SAP DECLINE verwerkt');
+            } else if (data.sapData.Action === 'NOTIFY') {
+                document.getElementById('sapStatus').textContent = 'Actief';
+                document.getElementById('lastSapAction').textContent = 'Call notificatie';
+                addLog('📢 SAP NOTIFY verwerkt');
+            }
+            break;
+            
         case 'ERROR':
             addLog('❌ Server fout: ' + data.message);
             break;

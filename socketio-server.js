@@ -75,6 +75,25 @@ io.on('connection', (socket) => {
             io.emit('CALL_SIMULATED_BROADCAST', broadcastMessage);
             console.log('📢 Broadcasted call simulation to all clients');
         }
+        
+        // Handle SAP integration messages
+        if (data.type === 'SAP_INTEGRATION') {
+            console.log('🏢 SAP Integration message received:', data.data);
+            
+            // Broadcast SAP message to all connected clients
+            const sapBroadcastMessage = {
+                type: 'SAP_INTEGRATION_BROADCAST',
+                sapData: data.data,
+                socketId: socket.id,
+                timestamp: new Date().toISOString()
+            };
+            
+            io.emit('SAP_INTEGRATION_BROADCAST', sapBroadcastMessage);
+            console.log('📢 Broadcasted SAP integration message to all clients');
+            
+            // Log the SAP payload for debugging
+            console.log('📋 SAP Payload:', JSON.stringify(data.data, null, 2));
+        }
     });
     
     // Handle call simulation
