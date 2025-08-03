@@ -11,8 +11,17 @@ function initializeWebSocket() {
     try {
         socketId = Math.floor(Math.random() * 100000000) + 1;
         
-        // Use environment variable for production, fallback to localhost for development
-        const wsUrl = window.WEBSOCKET_URL || 'wss://embedd-cti-railway-production.up.railway.app';
+        // Try different WebSocket URLs for production and development
+        const wsUrls = [
+            window.WEBSOCKET_URL || 'wss://embedd-cti-railway-production.up.railway.app',
+            'ws://localhost:3001' // Fallback for local development
+        ];
+        
+        // Try to connect to the first available WebSocket server
+        let wsUrl = wsUrls[0];
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            wsUrl = 'ws://localhost:3001'; // Use localhost for development
+        }
         socket = new WebSocket(wsUrl);
         
         socket.onopen = function() {
