@@ -74,13 +74,32 @@ function addTestButton() {
 
 // Simulate incoming call for testing
 function simulateIncomingCall() {
-    const testCall = {
-        phoneNumber: (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126', // Configurable phone number
-        callId: 'CALL-' + Math.floor(Math.random() * 10000),
-        timestamp: new Date().toISOString()
-    };
-    
-    handleIncomingCall(testCall);
+    try {
+        let phoneNumber = '+31651616126'; // Default fallback
+        
+        // Try to get from config
+        if (window.getConfig && typeof window.getConfig === 'function') {
+            try {
+                const configPhone = getConfig('DEFAULT_PHONE');
+                if (configPhone) {
+                    phoneNumber = configPhone;
+                }
+            } catch (error) {
+                console.log('⚠️ Error getting DEFAULT_PHONE from config:', error.message);
+            }
+        }
+        
+        const testCall = {
+            phoneNumber: phoneNumber,
+            callId: 'CALL-' + Math.floor(Math.random() * 10000),
+            timestamp: new Date().toISOString()
+        };
+        
+        handleIncomingCall(testCall);
+    } catch (error) {
+        console.error('❌ Error in simulateIncomingCall:', error);
+        addLog('❌ Fout bij call simulatie: ' + error.message);
+    }
 }
 
 // Export functions for global access
