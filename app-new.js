@@ -75,7 +75,7 @@ function addTestButton() {
 // Simulate incoming call for testing
 function simulateIncomingCall() {
     const testCall = {
-        phoneNumber: getConfig('DEFAULT_PHONE'), // Configurable phone number
+        phoneNumber: (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126', // Configurable phone number
         callId: 'CALL-' + Math.floor(Math.random() * 10000),
         timestamp: new Date().toISOString()
     };

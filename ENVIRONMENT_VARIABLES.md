@@ -8,9 +8,9 @@ De Agent Buddy applicatie gebruikt environment variabelen voor configuratie. Dez
 
 #### SAP Service Cloud (Basic Auth)
 ```bash
-SAP_ENDPOINT=https://your-sap-instance.service.cloud.sap/api/calls
-SAP_USERNAME=your-sap-username
-SAP_PASSWORD=your-sap-password
+SAP_ENDPOINT=https://my1000354.de1.test.crm.cloud.sap/
+SAP_USERNAME=LEEMREIA
+SAP_PASSWORD=qwewero2u3i4oyfug2E!S_3groufgo2rgur32
 SAP_API_VERSION=v1
 ```
 

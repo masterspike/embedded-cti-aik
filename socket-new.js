@@ -17,7 +17,7 @@ function initializeWebSocket() {
         
         // Only use Render URL if we're on production (Netlify)
         if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            socketUrl = getConfig('SOCKET_URL') || window.SOCKET_URL || 'https://agent-buddy-socketio.onrender.com';
+            socketUrl = (window.getConfig && getConfig('SOCKET_URL')) || window.SOCKET_URL || 'https://agent-buddy-socketio.onrender.com';
         }
         
         console.log('🔗 Attempting to connect to Socket.io:', socketUrl);

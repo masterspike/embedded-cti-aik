@@ -71,7 +71,7 @@ function sendSAPIncomingNotification(callData) {
             "Type": "CALL",
             "EventType": "INBOUND",
             "Action": "NOTIFY", 
-            "ANI": callData.phoneNumber || getConfig('DEFAULT_PHONE'),
+            "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126',
             "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
             "Timestamp": new Date().toISOString()
         };
@@ -160,7 +160,7 @@ function sendSAPDeclineNotification(callData) {
             "Type": "CALL",
             "EventType": "INBOUND",
             "Action": "DECLINE", 
-            "ANI": callData.phoneNumber || getConfig('DEFAULT_PHONE'),
+            "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126',
             "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
             "Timestamp": new Date().toISOString()
         };
@@ -225,7 +225,7 @@ function sendToSAPServiceCloud(callData) {
         "Type": "CALL",
         "EventType": "INBOUND", 
         "Action": "ACCEPT",
-        "ANI": callData.phoneNumber || getConfig('DEFAULT_PHONE'),
+        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126',
         "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
         "Timestamp": new Date().toISOString()
     };
@@ -370,9 +370,9 @@ function handleChatMessage(chatData) {
 
 // Test SAP connection with Basic Auth
 async function testSapConnection() {
-    const endpoint = getConfig('SAP_ENDPOINT') || document.getElementById('sapEndpoint').value;
-    const username = getConfig('SAP_USERNAME') || document.getElementById('sapUsername').value;
-    const password = getConfig('SAP_PASSWORD') || document.getElementById('sapPassword').value;
+    const endpoint = (window.getConfig && getConfig('SAP_ENDPOINT')) || document.getElementById('sapEndpoint').value;
+    const username = (window.getConfig && getConfig('SAP_USERNAME')) || document.getElementById('sapUsername').value;
+    const password = (window.getConfig && getConfig('SAP_PASSWORD')) || document.getElementById('sapPassword').value;
     
     addLog('🔗 SAP verbinding testen met Basic Auth...');
     
@@ -426,7 +426,7 @@ async function testSapConnection() {
 // Simulate incoming call for testing
 function simulateIncomingCall() {
     const testCall = {
-        phoneNumber: getConfig('DEFAULT_PHONE'), // Configurable phone number
+        phoneNumber: (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31651616126', // Configurable phone number
         callId: generateExternalReferenceId(),
         timestamp: new Date().toISOString()
     };
@@ -452,9 +452,9 @@ function sendSAPPayloadToParent(sapPayload) {
 // Send SAP payload to SAP Service Cloud via HTTP with Basic Auth
 async function sendSAPPayloadToSAP(sapPayload) {
     // Try environment variable first, then fallback to UI input
-    const sapEndpoint = getConfig('SAP_ENDPOINT') || document.getElementById('sapEndpoint')?.value;
-    const sapUsername = getConfig('SAP_USERNAME') || document.getElementById('sapUsername')?.value;
-    const sapPassword = getConfig('SAP_PASSWORD') || document.getElementById('sapPassword')?.value;
+    const sapEndpoint = (window.getConfig && getConfig('SAP_ENDPOINT')) || document.getElementById('sapEndpoint')?.value;
+    const sapUsername = (window.getConfig && getConfig('SAP_USERNAME')) || document.getElementById('sapUsername')?.value;
+    const sapPassword = (window.getConfig && getConfig('SAP_PASSWORD')) || document.getElementById('sapPassword')?.value;
     
     if (!sapEndpoint || sapEndpoint === 'https://your-sap-instance.service.cloud.sap') {
         addLog('⚠️ SAP endpoint niet geconfigureerd - gebruik environment variabele SAP_ENDPOINT');
