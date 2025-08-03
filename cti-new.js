@@ -273,15 +273,19 @@ function identifyCustomer(phoneNumber) {
         phoneNumber: phoneNumber
     };
     
-    // Update customer info display
-    document.getElementById('customerName').textContent = customerData.name;
-    document.getElementById('customerId').textContent = customerData.id;
-    document.getElementById('customerEmail').textContent = customerData.email;
-    document.getElementById('customerCompany').textContent = customerData.company;
+    // Update customer info display with null checks
+    const customerName = document.getElementById('customerName');
+    const customerId = document.getElementById('customerId');
+    const customerEmail = document.getElementById('customerEmail');
+    const customerCompany = document.getElementById('customerCompany');
     
-    // Show customer info
-    document.getElementById('customerInfo').classList.remove('hidden');
-    document.getElementById('noCustomerMessage').classList.add('hidden');
+    if (customerName) customerName.textContent = customerData.name;
+    if (customerId) customerId.textContent = customerData.id;
+    if (customerEmail) customerEmail.textContent = customerData.email;
+    if (customerCompany) customerCompany.textContent = customerData.company;
+    
+    // Note: customerInfo and noCustomerMessage elements don't exist in new HTML structure
+    // Customer info is now always visible in the SAP Fiori cards
     
     addLog('✅ Klant geïdentificeerd: ' + customerData.name);
 }
@@ -318,19 +322,25 @@ function sendToSAPServiceCloud(callData) {
     
     // Send HTTP request to SAP Service Cloud
     sendSAPPayloadToSAP(sapPayload).then(success => {
+        const sapStatus = document.getElementById('sapStatus');
+        const lastSapAction = document.getElementById('lastSapAction');
+        
         if (success) {
-            document.getElementById('sapStatus').textContent = 'Verbonden';
-            document.getElementById('lastSapAction').textContent = 'Call geaccepteerd';
+            if (sapStatus) sapStatus.textContent = 'Verbonden';
+            if (lastSapAction) lastSapAction.textContent = 'Call geaccepteerd';
         } else {
-            document.getElementById('sapStatus').textContent = 'Fout';
-            document.getElementById('lastSapAction').textContent = 'HTTP request gefaald';
+            if (sapStatus) sapStatus.textContent = 'Fout';
+            if (lastSapAction) lastSapAction.textContent = 'HTTP request gefaald';
         }
     });
     
     // Simulate SAP API call
     setTimeout(() => {
-        document.getElementById('sapStatus').textContent = 'Verbonden';
-        document.getElementById('lastSapAction').textContent = 'Call geaccepteerd';
+        const sapStatus = document.getElementById('sapStatus');
+        const lastSapAction = document.getElementById('lastSapAction');
+        
+        if (sapStatus) sapStatus.textContent = 'Verbonden';
+        if (lastSapAction) lastSapAction.textContent = 'Call geaccepteerd';
         addLog('✅ Call succesvol naar SAP verzonden');
     }, 1000);
     
