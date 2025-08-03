@@ -232,6 +232,17 @@
         .sap-button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            background: var(--sapNeutralColor) !important;
+            border-color: var(--sapNeutralColor) !important;
+            color: white !important;
+        }
+        
+        .sap-button-disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: var(--sapNeutralColor) !important;
+            border-color: var(--sapNeutralColor) !important;
+            color: white !important;
         }
 
         .sap-button-accept {
@@ -479,6 +490,10 @@
                 <button class="sap-button sap-button-emphasized sap-margin-top" onclick="simulateIncomingCall()">
                     <span class="sap-icon">🎯</span>
                     <span>Simuleer Call</span>
+                </button>
+                <button class="sap-button sap-margin-top" onclick="resetCallButtons()">
+                    <span class="sap-icon">🔄</span>
+                    <span>Reset Knoppen</span>
                 </button>
             </div>
         </div>

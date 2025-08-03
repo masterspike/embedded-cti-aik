@@ -43,9 +43,29 @@ function initializeSAPIntegration() {
     }
 }
 
+// Reset call buttons to enabled state
+function resetCallButtons() {
+    const acceptBtn = document.getElementById('acceptButton');
+    const declineBtn = document.getElementById('declineButton');
+    
+    if (acceptBtn) {
+        acceptBtn.disabled = false;
+        acceptBtn.classList.remove('sap-button-disabled');
+    }
+    if (declineBtn) {
+        declineBtn.disabled = false;
+        declineBtn.classList.remove('sap-button-disabled');
+    }
+    
+    addLog('🔄 Call knoppen gereset voor nieuwe call');
+}
+
 // Handle incoming call
 function handleIncomingCall(callData) {
     currentCall = callData;
+    
+    // Reset buttons for new call
+    resetCallButtons();
     
     // Update call notification with new element IDs
     const incomingNumber = document.getElementById('incomingNumber');
@@ -167,8 +187,14 @@ function acceptCall() {
     // Disable buttons
     const acceptBtn = document.getElementById('acceptButton');
     const declineBtn = document.getElementById('declineButton');
-    if (acceptBtn) acceptBtn.disabled = true;
-    if (declineBtn) declineBtn.disabled = true;
+    if (acceptBtn) {
+        acceptBtn.disabled = true;
+        acceptBtn.classList.add('sap-button-disabled');
+    }
+    if (declineBtn) {
+        declineBtn.disabled = true;
+        declineBtn.classList.add('sap-button-disabled');
+    }
     
     // Hide call notification after delay
     setTimeout(() => {
@@ -220,8 +246,14 @@ function declineCall() {
     // Disable buttons
     const acceptBtn = document.getElementById('acceptButton');
     const declineBtn = document.getElementById('declineButton');
-    if (acceptBtn) acceptBtn.disabled = true;
-    if (declineBtn) declineBtn.disabled = true;
+    if (acceptBtn) {
+        acceptBtn.disabled = true;
+        acceptBtn.classList.add('sap-button-disabled');
+    }
+    if (declineBtn) {
+        declineBtn.disabled = true;
+        declineBtn.classList.add('sap-button-disabled');
+    }
     
     // Show decline popup
     showDeclinePopup(currentCall);
@@ -596,4 +628,5 @@ window.showDeclinePopup = showDeclinePopup;
 window.handleSAPMessage = handleSAPMessage;
 window.testSapConnection = testSapConnection;
 window.simulateIncomingCall = simulateIncomingCall;
+window.resetCallButtons = resetCallButtons;
 window.sendSAPPayloadToSAP = sendSAPPayloadToSAP; 
