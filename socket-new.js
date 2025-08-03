@@ -29,7 +29,12 @@ function initializeWebSocket() {
             } catch (error) {
                 console.log('⚠️ Config error:', error.message);
             }
+            
+            // Try multiple fallback URLs
             socketUrl = configSocketUrl || window.SOCKET_URL || 'https://agent-buddy-socketio.onrender.com';
+            
+            // If Render.com fails, we can add more fallbacks here
+            console.log('🔗 Using Socket.io URL:', socketUrl);
         }
         
         console.log('🔗 Attempting to connect to Socket.io:', socketUrl);
@@ -113,8 +118,21 @@ function initializeWebSocket() {
             socket.on('connect_error', function(error) {
                 isConnected = false;
                 updateWSStatus('Fout', 'status-disconnected');
-                addLog('❌ Socket.io verbindingsfout: ' + error);
-                console.error('❌ Socket.io error details:', error);
+                addLog('❌ Socket.io verbindingsfout: ' + error.message);
+                console.error('🔍 Detailed connect error:', error);
+                
+                // Log more details for debugging
+                console.log('🌐 Current URL:', socketUrl);
+                console.log('🔗 Socket state:', socket.connected);
+                console.log('📡 Transport:', socket.io.engine.transport.name);
+                
+                // Attempt to reconnect after 5 seconds
+                setTimeout(() => {
+                    if (!isConnected) {
+                        addLog('🔄 Poging tot herverbinding...');
+                        initializeWebSocket();
+                    }
+                }, 5000);
             });
             
         };

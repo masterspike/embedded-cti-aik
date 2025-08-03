@@ -14,7 +14,7 @@ app.use((req, res, next) => {
     res.header('Access-Control-Allow-Credentials', 'false');
     res.header('Access-Control-Max-Age', '86400');
     
-    console.log('🌐 CORS headers set for:', req.headers.origin);
+    console.log('🌐 CORS headers set for:', req.headers.origin, 'Method:', req.method, 'URL:', req.url);
     
     // Handle preflight requests
     if (req.method === 'OPTIONS') {
@@ -39,7 +39,8 @@ const io = socketIo(server, {
     pingTimeout: 60000,
     pingInterval: 25000,
     upgradeTimeout: 30000,
-    maxHttpBufferSize: 1e8
+    maxHttpBufferSize: 1e8,
+    connectTimeout: 45000
 });
 
 // Serve static files
@@ -68,6 +69,8 @@ console.log('🌐 Environment:', process.env.NODE_ENV || 'development');
 // Handle Socket.io connections
 io.on('connection', (socket) => {
     console.log('✅ New Socket.io connection established:', socket.id);
+    console.log('🌐 Client origin:', socket.handshake.headers.origin);
+    console.log('🔗 Client transport:', socket.handshake.transport);
     
     // Send welcome message
     socket.emit('CONNECTION_ESTABLISHED', {
