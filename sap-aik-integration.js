@@ -269,13 +269,13 @@ aik.cti.integration.prototype._handleCallDeclinedFromAik = function(payload) {
 };
 
 /**
- * Handle customer loaded from C4C
+ * Handle customer loaded from Aik
  * @param payload - Customer payload
  * @private
  */
-c4c.cti.integration.prototype._handleCustomerLoadedFromC4C = function(payload) {
-    console.log('👤 Customer loaded van C4C:', payload);
-    addLog('👤 C4C: Klant geladen - ' + payload.customerName);
+aik.cti.integration.prototype._handleCustomerLoadedFromAik = function(payload) {
+    console.log('👤 Customer loaded van Aik:', payload);
+    addLog('👤 Aik: Klant geladen - ' + payload.customerName);
     
     // Update customer info in Agent Buddy
     const customerName = document.getElementById('customerName');
@@ -290,13 +290,13 @@ c4c.cti.integration.prototype._handleCustomerLoadedFromC4C = function(payload) {
 };
 
 /**
- * Handle agent status update from C4C
+ * Handle agent status update from Aik
  * @param payload - Status payload
  * @private
  */
-c4c.cti.integration.prototype._handleAgentStatusUpdateFromC4C = function(payload) {
-    console.log('👤 Agent status update van C4C:', payload);
-    addLog('👤 C4C: Agent status - ' + payload.status);
+aik.cti.integration.prototype._handleAgentStatusUpdateFromAik = function(payload) {
+    console.log('👤 Agent status update van Aik:', payload);
+    addLog('👤 Aik: Agent status - ' + payload.status);
     
     // Update agent status in Agent Buddy
     const agentId = document.getElementById('agentId');
@@ -306,13 +306,13 @@ c4c.cti.integration.prototype._handleAgentStatusUpdateFromC4C = function(payload
 };
 
 /**
- * Handle widget configuration from C4C
+ * Handle widget configuration from Aik
  * @param payload - Config payload
  * @private
  */
-c4c.cti.integration.prototype._handleWidgetConfigFromC4C = function(payload) {
-    console.log('⚙️ Widget config van C4C:', payload);
-    addLog('⚙️ C4C: Widget configuratie ontvangen');
+aik.cti.integration.prototype._handleWidgetConfigFromAik = function(payload) {
+    console.log('⚙️ Widget config van Aik:', payload);
+    addLog('⚙️ Aik: Widget configuratie ontvangen');
     
     // Apply configuration to Agent Buddy
     if (payload.socketUrl) {
@@ -334,7 +334,7 @@ c4c.cti.integration.prototype._handleWidgetConfigFromC4C = function(payload) {
  * Add message event listener
  * @private
  */
-c4c.cti.integration.prototype._addOnMessageEvent = function() {
+aik.cti.integration.prototype._addOnMessageEvent = function() {
     if (window.addEventListener) {
         window.addEventListener("message", this._onMessage.bind(this), false);
     } else {
@@ -346,17 +346,17 @@ c4c.cti.integration.prototype._addOnMessageEvent = function() {
  * Register callback function for outbound messages
  * @param callbackFunction - Callback function
  */
-c4c.cti.integration.prototype.registerOutboundCallback = function(callbackFunction) {
+aik.cti.integration.prototype.registerOutboundCallback = function(callbackFunction) {
     this._callbackFunction = callbackFunction;
-    addLog('🔌 C4C callback geregistreerd');
+    addLog('🔌 Aik callback geregistreerd');
 };
 
 /**
  * Send call request to CTI adapter (legacy)
  * @param cadData - CAD data
  */
-c4c.cti.integration.prototype.onSendCallRequestToCTIAdapter = function(cadData) {
-    var query = "CID=BCM1234";
+    aik.cti.integration.prototype.onSendCallRequestToCTIAdapter = function(cadData) {
+    var query = "AIK=2109";
     for (var key in cadData) {
         query = query + "&" + key + "=" + cadData[key];
     }
@@ -365,7 +365,7 @@ c4c.cti.integration.prototype.onSendCallRequestToCTIAdapter = function(cadData) 
     if (typeof fetch !== 'undefined') {
         fetch("http://localhost:36729?" + query)
             .then(response => {
-                addLog('📞 CTI adapter call request verzonden');
+                addLog('📞 Aik CTI adapter call request verzonden');
             })
             .catch(error => {
                 addLog('❌ CTI adapter error: ' + error.message);
