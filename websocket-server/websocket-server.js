@@ -12,7 +12,7 @@ const wss = new WebSocket.Server({ server });
 
 console.log('🚀 WebSocket Server Starting...');
 console.log('📡 Listening on port', process.env.PORT || 3001);
-console.log('🌐 Environment:', process.env.RAILWAY_STATIC_URL ? 'Railway Production' : 'Local Development');
+console.log('🌐 Environment:', process.env.PORT ? 'Railway Production' : 'Local Development');
 
 // Handle WebSocket connections
 wss.on('connection', function connection(ws, req) {
@@ -84,7 +84,7 @@ wss.on('connection', function connection(ws, req) {
 const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
     console.log(`🎯 WebSocket server is running on port ${PORT}`);
-    console.log(`🔗 Connect your widget to: ${process.env.RAILWAY_STATIC_URL ? 'wss://embedd-cti-railway-production.up.railway.app' : 'ws://localhost:3001'}`);
+    console.log(`🔗 Connect your widget to: ${process.env.PORT ? 'wss://embedd-cti-railway-production.up.railway.app' : 'ws://localhost:3001'}`);
 });
 
 // Graceful shutdown
