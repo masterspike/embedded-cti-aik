@@ -1,102 +1,100 @@
-/**
- * SAP C4C (Cloud for Customer) Integration
- * Based on official SAP C4C CTI integration example
- * Adapted for Agent Buddy widget
+/*
+ * Agent Buddy widget - SAP Aik Integration
  */
 
 /**
- * SAP C4C CTI Integration Object
+ * SAP Aik CTI Integration Object
  */
 // Check if jQuery.sap is available (SAP environment)
 if (typeof jQuery !== 'undefined' && jQuery.sap) {
-    jQuery.sap.declare("c4c.cti.integration");
+    jQuery.sap.declare("aik.cti.integration");
 }
 
 /**
- * Initialize the C4C CTI integration object
+ * Initialize the Aik CTI integration object
  */
-var c4c = c4c || {};
-c4c.cti = c4c.cti || {};
-c4c.cti.integration = function() {
+var aik = aik || {};
+aik.cti = aik.cti || {};
+aik.cti.integration = function() {
     this.init();
 };
 
-c4c.cti.integration._privateInstance = null;
+aik.cti.integration._privateInstance = null;
 
 /**
  * Return the singleton instance
- * @returns {null|c4c.cti.integration}
+ * @returns {null|aik.cti.integration}
  */
-c4c.cti.integration.getInstance = function() {
-    if (!c4c.cti.integration._privateInstance) {
-        c4c.cti.integration._privateInstance = new c4c.cti.integration();
+aik.cti.integration.getInstance = function() {
+    if (!aik.cti.integration._privateInstance) {
+        aik.cti.integration._privateInstance = new aik.cti.integration();
     }
-    return c4c.cti.integration._privateInstance;
+    return aik.cti.integration._privateInstance;
 };
 
 /**
- * Send incoming call information to C4C
+ * Send incoming call information to Aik
  * @param parameters - Call parameters
  */
-c4c.cti.integration.prototype.sendIncomingCalltoC4C = function(parameters) {
+aik.cti.integration.prototype.sendIncomingCalltoAik = function(parameters) {
     var payload = this._formJSONPayload(parameters);
     this._doCall(payload);
-    addLog('📤 Incoming call verzonden naar C4C: ' + parameters.ANI);
+    addLog('📤 Incoming call verzonden naar Aik: ' + parameters.ANI);
 };
 
 /**
- * Send incoming chat information to C4C
+ * Send incoming chat information to Aik
  * @param parameters - Chat parameters
  */
-c4c.cti.integration.prototype.sendIncomingChatToC4C = function(parameters) {
+aik.cti.integration.prototype.sendIncomingChatToAik = function(parameters) {
     var payload = this._formJSONPayload(parameters);
     this._doCall(payload);
-    addLog('📤 Incoming chat verzonden naar C4C: ' + parameters.originator);
+    addLog('📤 Incoming chat verzonden naar Aik: ' + parameters.originator);
 };
 
 /**
- * Send call accept to C4C
+ * Send call accept to Aik
  * @param parameters - Call accept parameters
  */
-c4c.cti.integration.prototype.sendCallAcceptToC4C = function(parameters) {
+aik.cti.integration.prototype.sendCallAcceptToAik = function(parameters) {
     var payload = this._formJSONPayload(parameters);
     this._doCall(payload);
-    addLog('✅ Call accept verzonden naar C4C: ' + parameters.ANI);
+    addLog('✅ Call accept verzonden naar Aik: ' + parameters.ANI);
 };
 
 /**
- * Send call decline to C4C
+ * Send call decline to Aik
  * @param parameters - Call decline parameters
  */
-c4c.cti.integration.prototype.sendCallDeclineToC4C = function(parameters) {
+aik.cti.integration.prototype.sendCallDeclineToAik = function(parameters) {
     var payload = this._formJSONPayload(parameters);
     this._doCall(payload);
-    addLog('❌ Call decline verzonden naar C4C: ' + parameters.ANI);
+    addLog('❌ Call decline verzonden naar Aik: ' + parameters.ANI);
 };
 
 /**
- * Send customer identification to C4C
+ * Send customer identification to Aik
  * @param parameters - Customer identification parameters
  */
-c4c.cti.integration.prototype.sendCustomerIdentificationToC4C = function(parameters) {
+aik.cti.integration.prototype.sendCustomerIdentificationToAik = function(parameters) {
     var payload = this._formJSONPayload(parameters);
     this._doCall(payload);
-    addLog('👤 Customer identification verzonden naar C4C: ' + parameters.ANI);
+    addLog('👤 Customer identification verzonden naar Aik: ' + parameters.ANI);
 };
 
 /**
- * Post message to parent window (C4C)
+ * Post message to parent window (Aik)
  * @param sPayload - Payload to send
  * @private
  */
-c4c.cti.integration.prototype._doCall = function(sPayload) {
+aik.cti.integration.prototype._doCall = function(sPayload) {
     if (window.parent !== window) {
-        // Send to C4C parent window
+        // Send to Aik parent window
         window.parent.postMessage(sPayload, "*");
-        console.log('📤 C4C payload verzonden:', sPayload);
+        console.log('📤 Aik payload verzonden:', sPayload);
     } else {
-        console.warn('⚠️ Geen C4C parent window gevonden');
-        addLog('⚠️ Agent Buddy niet embedded in C4C');
+        console.warn('⚠️ Geen Aik parent window gevonden');
+        addLog('⚠️ Agent Buddy niet embedded in Aik');
     }
 };
 
@@ -106,7 +104,7 @@ c4c.cti.integration.prototype._doCall = function(sPayload) {
  * @returns {Object} JSON payload
  * @private
  */
-c4c.cti.integration.prototype._formJSONPayload = function(parameters) {
+aik.cti.integration.prototype._formJSONPayload = function(parameters) {
     var payload = {
         "payload": parameters,
         "source": "agent-buddy",
@@ -123,7 +121,7 @@ c4c.cti.integration.prototype._formJSONPayload = function(parameters) {
  * @returns {string} XML payload
  * @private
  */
-c4c.cti.integration.prototype._formXMLPayload = function(parameters) {
+aik.cti.integration.prototype._formXMLPayload = function(parameters) {
     var sPayload = "<?xml version='1.0' encoding='utf-8' ?> <payload> ";
     
     for (var key in parameters) {
@@ -138,10 +136,10 @@ c4c.cti.integration.prototype._formXMLPayload = function(parameters) {
 /**
  * Initialize the integration
  */
-c4c.cti.integration.prototype.init = function() {
+aik.cti.integration.prototype.init = function() {
     this._callbackFunction = null;
     this._addOnMessageEvent();
-    addLog('🚀 C4C CTI integratie geïnitialiseerd');
+    addLog('🚀 Aik CTI integratie geïnitialiseerd');
 };
 
 /**
@@ -151,9 +149,9 @@ c4c.cti.integration.prototype.init = function() {
  * @returns {boolean} - True if valid
  * @private
  */
-c4c.cti.integration.prototype._validateMessage = function(message, origin) {
+aik.cti.integration.prototype._validateMessage = function(message, origin) {
     // Add origin validation if needed
-    // if (origin !== "https://your-c4c-instance.crm.ondemand.com") {
+    // if (origin !== "https://your-aik-instance.crm.ondemand.com") {
     //     addLog('❌ Onbekende origin: ' + origin);
     //     return false;
     // }
@@ -161,72 +159,72 @@ c4c.cti.integration.prototype._validateMessage = function(message, origin) {
 };
 
 /**
- * Handle incoming messages from C4C
+ * Handle incoming messages from Aik
  * @param event - Message event
  * @private
  */
-c4c.cti.integration.prototype._onMessage = function(event) {
+aik.cti.integration.prototype._onMessage = function(event) {
     if (this._validateMessage(event.data, event.origin) === true) {
-        console.log('📨 Bericht ontvangen van C4C:', event.data);
-        addLog('📨 C4C bericht ontvangen: ' + JSON.stringify(event.data));
+        console.log('📨 Bericht ontvangen van Aik:', event.data);
+        addLog('📨 Aik bericht ontvangen: ' + JSON.stringify(event.data));
         
         if (this._callbackFunction) {
             this._callbackFunction(event);
         }
         
-        // Handle specific C4C message types
-        this._handleC4CMessage(event.data);
+        // Handle specific Aik message types
+        this._handleAikMessage(event.data);
     }
 };
 
 /**
- * Handle specific C4C message types
- * @param message - C4C message
+ * Handle specific Aik message types
+ * @param message - Aik message
  * @private
  */
-c4c.cti.integration.prototype._handleC4CMessage = function(message) {
+aik.cti.integration.prototype._handleAikMessage = function(message) {
     if (message && message.payload) {
         var payload = message.payload;
         
         switch (payload.type) {
             case 'CALL_INCOMING':
-                this._handleIncomingCallFromC4C(payload);
+                this._handleIncomingCallFromAik(payload);
                 break;
                 
             case 'CALL_ACCEPTED':
-                this._handleCallAcceptedFromC4C(payload);
+                this._handleCallAcceptedFromAik(payload);
                 break;
                 
             case 'CALL_DECLINED':
-                this._handleCallDeclinedFromC4C(payload);
+                this._handleCallDeclinedFromAik(payload);
                 break;
                 
             case 'CUSTOMER_LOADED':
-                this._handleCustomerLoadedFromC4C(payload);
+                this._handleCustomerLoadedFromAik(payload);
                 break;
                 
             case 'AGENT_STATUS_UPDATE':
-                this._handleAgentStatusUpdateFromC4C(payload);
+                this._handleAgentStatusUpdateFromAik(payload);
                 break;
                 
             case 'WIDGET_CONFIG':
-                this._handleWidgetConfigFromC4C(payload);
+                this._handleWidgetConfigFromAik(payload);
                 break;
                 
             default:
-                console.log('📨 Onbekend C4C bericht type:', payload.type);
+                console.log('📨 Onbekend Aik bericht type:', payload.type);
         }
     }
 };
 
 /**
- * Handle incoming call from C4C
+ * Handle incoming call from Aik
  * @param payload - Call payload
  * @private
  */
-c4c.cti.integration.prototype._handleIncomingCallFromC4C = function(payload) {
-    console.log('📞 Incoming call van C4C:', payload);
-    addLog('📞 C4C: Incoming call van ' + payload.ANI);
+aik.cti.integration.prototype._handleIncomingCallFromAik = function(payload) {
+    console.log('📞 Incoming call van Aik:', payload);
+    addLog('📞 Aik: Incoming call van ' + payload.ANI);
     
     // Trigger call handling in Agent Buddy
     if (window.handleIncomingCall) {
@@ -239,34 +237,34 @@ c4c.cti.integration.prototype._handleIncomingCallFromC4C = function(payload) {
 };
 
 /**
- * Handle call accepted from C4C
+ * Handle call accepted from Aik
  * @param payload - Call payload
  * @private
  */
-c4c.cti.integration.prototype._handleCallAcceptedFromC4C = function(payload) {
-    console.log('✅ Call accepted van C4C:', payload);
-    addLog('✅ C4C: Call geaccepteerd voor ' + payload.ANI);
+aik.cti.integration.prototype._handleCallAcceptedFromAik = function(payload) {
+    console.log('✅ Call accepted van Aik:', payload);
+    addLog('✅ Aik: Call geaccepteerd voor ' + payload.ANI);
     
     // Update Agent Buddy UI
     const callStatus = document.getElementById('callStatus');
     if (callStatus) {
-        callStatus.textContent = 'Geaccepteerd door C4C';
+        callStatus.textContent = 'Geaccepteerd door Aik';
     }
 };
 
 /**
- * Handle call declined from C4C
+ * Handle call declined from Aik
  * @param payload - Call payload
  * @private
  */
-c4c.cti.integration.prototype._handleCallDeclinedFromC4C = function(payload) {
-    console.log('❌ Call declined van C4C:', payload);
-    addLog('❌ C4C: Call afgewezen voor ' + payload.ANI);
+aik.cti.integration.prototype._handleCallDeclinedFromAik = function(payload) {
+    console.log('❌ Call declined van Aik:', payload);
+    addLog('❌ Aik: Call afgewezen voor ' + payload.ANI);
     
     // Update Agent Buddy UI
     const callStatus = document.getElementById('callStatus');
     if (callStatus) {
-        callStatus.textContent = 'Afgewezen door C4C';
+        callStatus.textContent = 'Afgewezen door Aik';
     }
 };
 
@@ -382,12 +380,12 @@ c4c.cti.integration.prototype.onSendCallRequestToCTIAdapter = function(cadData) 
 // ============================================================================
 
 /**
- * Send incoming call to C4C with Agent Buddy format
+ * Send incoming call to Aik with Agent Buddy format
  * @param callData - Call data from Agent Buddy
  */
-function sendAgentBuddyIncomingCallToC4C(callData) {
+function sendAgentBuddyIncomingCallToAik(callData) {
     try {
-        var c4cIntegration = c4c.cti.integration.getInstance();
+        var aikIntegration = aik.cti.integration.getInstance();
         
         var parameters = {
             "Type": "CALL",
@@ -400,10 +398,10 @@ function sendAgentBuddyIncomingCallToC4C(callData) {
             "CallType": "INBOUND"
         };
         
-        c4cIntegration.sendIncomingCalltoC4C(parameters);
+        aikIntegration.sendIncomingCalltoAik(parameters);
     } catch (error) {
-        console.warn('⚠️ C4C integratie niet beschikbaar:', error.message);
-        addLog('⚠️ C4C integratie niet beschikbaar - gebruik fallback');
+        console.warn('⚠️ Aik integratie niet beschikbaar:', error.message);
+        addLog('⚠️ Aik integratie niet beschikbaar - gebruik fallback');
         
         // Fallback: direct PostMessage
         if (window.parent && window.parent !== window) {
@@ -415,18 +413,18 @@ function sendAgentBuddyIncomingCallToC4C(callData) {
                 "version": "1.0.0"
             };
             window.parent.postMessage(fallbackPayload, "*");
-            addLog('📤 Fallback PostMessage verzonden naar C4C');
+            addLog('📤 Fallback PostMessage verzonden naar Aik');
         }
     }
 }
 
 /**
- * Send call accept to C4C with Agent Buddy format
+ * Send call accept to Aik with Agent Buddy format
  * @param callData - Call data from Agent Buddy
  */
-function sendAgentBuddyCallAcceptToC4C(callData) {
+function sendAgentBuddyCallAcceptToAik(callData) {
     try {
-        var c4cIntegration = c4c.cti.integration.getInstance();
+        var aikIntegration = aik.cti.integration.getInstance();
         
         var parameters = {
             "Type": "CALL",
@@ -439,10 +437,10 @@ function sendAgentBuddyCallAcceptToC4C(callData) {
             "CallDuration": 0
         };
         
-        c4cIntegration.sendCallAcceptToC4C(parameters);
+        aikIntegration.sendCallAcceptToAik(parameters);
     } catch (error) {
-        console.warn('⚠️ C4C integratie niet beschikbaar:', error.message);
-        addLog('⚠️ C4C integratie niet beschikbaar - gebruik fallback');
+        console.warn('⚠️ Aik integratie niet beschikbaar:', error.message);
+        addLog('⚠️ Aik integratie niet beschikbaar - gebruik fallback');
         
         // Fallback: direct PostMessage
         if (window.parent && window.parent !== window) {
@@ -454,18 +452,18 @@ function sendAgentBuddyCallAcceptToC4C(callData) {
                 "version": "1.0.0"
             };
             window.parent.postMessage(fallbackPayload, "*");
-            addLog('📤 Fallback PostMessage verzonden naar C4C');
+            addLog('📤 Fallback PostMessage verzonden naar Aik');
         }
     }
 }
 
 /**
- * Send call decline to C4C with Agent Buddy format
+ * Send call decline to Aik with Agent Buddy format
  * @param callData - Call data from Agent Buddy
  */
-function sendAgentBuddyCallDeclineToC4C(callData) {
+function sendAgentBuddyCallDeclineToAik(callData) {
     try {
-        var c4cIntegration = c4c.cti.integration.getInstance();
+        var aikIntegration = aik.cti.integration.getInstance();
         
         var parameters = {
             "Type": "CALL",
@@ -478,10 +476,10 @@ function sendAgentBuddyCallDeclineToC4C(callData) {
             "Reason": "Agent not available"
         };
         
-        c4cIntegration.sendCallDeclineToC4C(parameters);
+        aikIntegration.sendCallDeclineToAik(parameters);
     } catch (error) {
-        console.warn('⚠️ C4C integratie niet beschikbaar:', error.message);
-        addLog('⚠️ C4C integratie niet beschikbaar - gebruik fallback');
+        console.warn('⚠️ Aik integratie niet beschikbaar:', error.message);
+        addLog('⚠️ Aik integratie niet beschikbaar - gebruik fallback');
         
         // Fallback: direct PostMessage
         if (window.parent && window.parent !== window) {
@@ -493,19 +491,19 @@ function sendAgentBuddyCallDeclineToC4C(callData) {
                 "version": "1.0.0"
             };
             window.parent.postMessage(fallbackPayload, "*");
-            addLog('📤 Fallback PostMessage verzonden naar C4C');
+            addLog('📤 Fallback PostMessage verzonden naar Aik');
         }
     }
 }
 
 /**
- * Send customer identification to C4C with Agent Buddy format
+ * Send customer identification to Aik with Agent Buddy format
  * @param phoneNumber - Phone number
  * @param customerData - Customer data
  */
-function sendAgentBuddyCustomerIdentificationToC4C(phoneNumber, customerData) {
+function sendAgentBuddyCustomerIdentificationToAik(phoneNumber, customerData) {
     try {
-        var c4cIntegration = c4c.cti.integration.getInstance();
+        var aikIntegration = aik.cti.integration.getInstance();
         
         var parameters = {
             "Type": "CUSTOMER",
@@ -517,10 +515,10 @@ function sendAgentBuddyCustomerIdentificationToC4C(phoneNumber, customerData) {
             "Source": "agent-buddy"
         };
         
-        c4cIntegration.sendCustomerIdentificationToC4C(parameters);
+        aikIntegration.sendCustomerIdentificationToAik(parameters);
     } catch (error) {
-        console.warn('⚠️ C4C integratie niet beschikbaar:', error.message);
-        addLog('⚠️ C4C integratie niet beschikbaar - gebruik fallback');
+        console.warn('⚠️ Aik integratie niet beschikbaar:', error.message);
+        addLog('⚠️ Aik integratie niet beschikbaar - gebruik fallback');
         
         // Fallback: direct PostMessage
         if (window.parent && window.parent !== window) {
@@ -532,7 +530,7 @@ function sendAgentBuddyCustomerIdentificationToC4C(phoneNumber, customerData) {
                 "version": "1.0.0"
             };
             window.parent.postMessage(fallbackPayload, "*");
-            addLog('📤 Fallback PostMessage verzonden naar C4C');
+            addLog('📤 Fallback PostMessage verzonden naar Aik');
         }
     }
 }
@@ -542,24 +540,24 @@ function sendAgentBuddyCustomerIdentificationToC4C(phoneNumber, customerData) {
 // ============================================================================
 
 /**
- * Initialize C4C integration for Agent Buddy
+ * Initialize Aik integration for Agent Buddy
  */
-function initializeAgentBuddyC4CIntegration() {
-    console.log('🚀 Agent Buddy C4C integratie initialiseren...');
+function initializeAgentBuddyAikIntegration() {
+    console.log('🚀 Agent Buddy Aik integratie initialiseren...');
     
     try {
-        // Initialize C4C integration
-        var c4cIntegration = c4c.cti.integration.getInstance();
+        // Initialize Aik integration
+        var aikIntegration = aik.cti.integration.getInstance();
         
-        // Register callback for C4C messages
-        c4cIntegration.registerOutboundCallback(function(event) {
-            console.log('📨 C4C callback triggered:', event);
+        // Register callback for Aik messages
+        aikIntegration.registerOutboundCallback(function(event) {
+            console.log('📨 Aik callback triggered:', event);
         });
         
-        addLog('🚀 Agent Buddy C4C integratie geïnitialiseerd');
+        addLog('🚀 Agent Buddy Aik integratie geïnitialiseerd');
     } catch (error) {
-        console.warn('⚠️ C4C integratie initialisatie gefaald:', error.message);
-        addLog('⚠️ C4C integratie niet beschikbaar - gebruik fallback mode');
+        console.warn('⚠️ Aik integratie initialisatie gefaald:', error.message);
+        addLog('⚠️ Aik integratie niet beschikbaar - gebruik fallback mode');
         
         // Setup basic PostMessage listener as fallback
         window.addEventListener('message', function(event) {
@@ -569,15 +567,15 @@ function initializeAgentBuddyC4CIntegration() {
 }
 
 // Export functions for global access
-window.sendAgentBuddyIncomingCallToC4C = sendAgentBuddyIncomingCallToC4C;
-window.sendAgentBuddyCallAcceptToC4C = sendAgentBuddyCallAcceptToC4C;
-window.sendAgentBuddyCallDeclineToC4C = sendAgentBuddyCallDeclineToC4C;
-window.sendAgentBuddyCustomerIdentificationToC4C = sendAgentBuddyCustomerIdentificationToC4C;
-window.initializeAgentBuddyC4CIntegration = initializeAgentBuddyC4CIntegration;
+window.sendAgentBuddyIncomingCallToAik = sendAgentBuddyIncomingCallToAik;
+window.sendAgentBuddyCallAcceptToAik = sendAgentBuddyCallAcceptToAik;
+window.sendAgentBuddyCallDeclineToAik = sendAgentBuddyCallDeclineToAik;
+window.sendAgentBuddyCustomerIdentificationToAik = sendAgentBuddyCustomerIdentificationToAik;
+window.initializeAgentBuddyAikIntegration = initializeAgentBuddyAikIntegration;
 
 // Auto-initialize when script loads
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeAgentBuddyC4CIntegration);
+    document.addEventListener('DOMContentLoaded', initializeAgentBuddyAikIntegration);
 } else {
-    initializeAgentBuddyC4CIntegration();
+    initializeAgentBuddyAikIntegration();
 } 

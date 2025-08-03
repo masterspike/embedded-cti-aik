@@ -104,9 +104,9 @@ function handleIncomingCall(callData) {
         window.sendCallNotificationToSAP(callData.phoneNumber, callData.callId);
     }
     
-    // Send to C4C using official SAP integration
-    if (window.sendAgentBuddyIncomingCallToC4C) {
-        window.sendAgentBuddyIncomingCallToC4C(callData);
+    // Send to Aik using official SAP integration
+    if (window.sendAgentBuddyIncomingCallToAik) {
+        window.sendAgentBuddyIncomingCallToAik(callData);
     }
     
     // Also send via direct HTTP to SAP
@@ -190,9 +190,9 @@ function acceptCall() {
         window.sendCallAcceptToSAP(currentCall.phoneNumber, currentCall.callId);
     }
     
-    // Send to C4C using official SAP integration
-    if (window.sendAgentBuddyCallAcceptToC4C) {
-        window.sendAgentBuddyCallAcceptToC4C(currentCall);
+    // Send to Aik using official SAP integration
+    if (window.sendAgentBuddyCallAcceptToAik) {
+        window.sendAgentBuddyCallAcceptToAik(currentCall);
     }
     
     // Send via Socket.io
@@ -259,9 +259,9 @@ function declineCall() {
         window.sendCallDeclineToSAP(currentCall.phoneNumber, currentCall.callId);
     }
     
-    // Send to C4C using official SAP integration
-    if (window.sendAgentBuddyCallDeclineToC4C) {
-        window.sendAgentBuddyCallDeclineToC4C(currentCall);
+    // Send to Aik using official SAP integration
+    if (window.sendAgentBuddyCallDeclineToAik) {
+        window.sendAgentBuddyCallDeclineToAik(currentCall);
     }
     
     // Send via Socket.io
@@ -384,9 +384,9 @@ function identifyCustomer(phoneNumber) {
         window.sendCustomerIdentificationToSAP(phoneNumber, customerData);
     }
     
-    // Send customer identification to C4C using official SAP integration
-    if (window.sendAgentBuddyCustomerIdentificationToC4C) {
-        window.sendAgentBuddyCustomerIdentificationToC4C(phoneNumber, customerData);
+    // Send customer identification to Aik using official SAP integration
+    if (window.sendAgentBuddyCustomerIdentificationToAik) {
+        window.sendAgentBuddyCustomerIdentificationToAik(phoneNumber, customerData);
     }
     
     addLog('✅ Klant geïdentificeerd: ' + customerData.name);
