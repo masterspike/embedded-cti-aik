@@ -153,12 +153,6 @@
             background: #c0392b;
         }
         
-        .btn-link {
-            background: transparent;
-            color: #3498db;
-            text-decoration: underline;
-        }
-        
         .display-value {
             background: #f8f9fa;
             padding: 10px;
@@ -273,11 +267,14 @@
             right: 20px;
             background: #27ae60;
             color: white;
-            padding: 10px 20px;
-            border-radius: 4px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             z-index: 1000;
             animation: slideIn 0.3s ease-out;
+            font-weight: 600;
+            min-width: 300px;
+            text-align: center;
         }
         
         @keyframes slideIn {
@@ -347,12 +344,16 @@
                         </div>
                         
                         <div class="button-group">
-                            <button class="btn btn-primary" onclick="simulateCall()">
+                            <button class="btn btn-primary" onclick="simulateCall()" id="simulateBtn">
                                 🚀 Simulate Call
                             </button>
                             <button class="btn btn-secondary" onclick="resetForm()">
                                 🔄 Reset Form
                             </button>
+                        </div>
+                        
+                        <div id="callStatus" style="display: none; margin-top: 15px; padding: 10px; background: #e8f5e8; border: 1px solid #27ae60; border-radius: 4px; color: #27ae60;">
+                            <strong>✅ Call Status:</strong> <span id="callStatusText">Call simulated successfully!</span>
                         </div>
                     </div>
                 </div>
@@ -388,6 +389,12 @@
                         <div class="button-group">
                             <button class="btn btn-emphasized" onclick="copySocketId()">
                                 📋 Copy Socket ID
+                            </button>
+                            <button class="btn btn-primary" onclick="testWebSocket()">
+                                🧪 Test WebSocket
+                            </button>
+                            <button class="btn btn-secondary" onclick="debugWebSocket()">
+                                🔍 Debug Connection
                             </button>
                         </div>
                     </div>
@@ -501,13 +508,13 @@
                                         📤 Send Message
                                     </button>
                                     <button class="btn btn-emphasized" onclick="endChat()">
-                                        ❌ End Chat
+                                        🔚 End Chat
                                     </button>
                                 </div>
                             </div>
                             
                             <div class="quick-actions">
-                                <h4>⚡ Quick Actions</h4>
+                                <h4>Quick Actions</h4>
                                 <div class="button-group">
                                     <button class="btn btn-secondary" onclick="quickGreeting()">
                                         👋 Greeting
@@ -516,7 +523,7 @@
                                         ❓ Help
                                     </button>
                                     <button class="btn btn-secondary" onclick="quickCall()">
-                                        📞 Call
+                                        📞 Call Back
                                     </button>
                                 </div>
                             </div>
@@ -526,12 +533,12 @@
             </div>
         </main>
     </div>
-    
+
     <script>
         // SAP Service Cloud Integration
         let sapServiceCloud = null;
         let currentActivity = null;
-        
+
         // Initialize SAP Service Cloud integration
         function initializeSAPIntegration() {
             // Check if running in SAP Service Cloud environment
@@ -547,10 +554,10 @@
                         }
                     }
                 };
-                
+
                 // Listen for messages from SAP Service Cloud
                 window.addEventListener('message', sapServiceCloud.receiveMessage);
-                
+
                 // Notify SAP Service Cloud that widget is ready
                 sapServiceCloud.sendMessage({
                     type: 'WIDGET_READY',
@@ -558,11 +565,11 @@
                 });
             }
         }
-        
+
         // Handle messages from SAP Service Cloud
         function handleSAPMessage(message) {
             console.log('Received SAP message:', message);
-            
+
             switch (message.type) {
                 case 'ACTIVITY_LOADED':
                     currentActivity = message.activity;
@@ -579,7 +586,7 @@
                     break;
             }
         }
-        
+
         // Update activity display with SAP data
         function updateActivityDisplay(activity) {
             if (activity) {
@@ -596,7 +603,7 @@
                 document.getElementById('objectUuid').textContent = activity.objectUuid || '-';
             }
         }
-        
+
         // Handle incoming call from SAP
         function handleIncomingCall(callData) {
             console.log('Incoming call from SAP:', callData);
@@ -605,7 +612,7 @@
             document.getElementById('customerName').value = callData.customerName || '';
             showToast('Incoming call received from SAP Service Cloud');
         }
-        
+
         // Handle outgoing call from SAP
         function handleOutgoingCall(callData) {
             console.log('Outgoing call from SAP:', callData);
@@ -614,14 +621,14 @@
             document.getElementById('customerName').value = callData.customerName || '';
             showToast('Outgoing call initiated from SAP Service Cloud');
         }
-        
+
         // Handle chat message from SAP
         function handleChatMessage(chatData) {
             console.log('Chat message from SAP:', chatData);
             addMessage(chatData.sender || 'Customer', chatData.message || '');
             showToast('Chat message received from SAP Service Cloud');
         }
-        
+
         // Send activity update to SAP Service Cloud
         function sendToSAP(message) {
             if (sapServiceCloud) {
@@ -632,13 +639,117 @@
                 });
             }
         }
-        
+
         // Initialize socket connection
         let socketId;
+        let socket = null;
         
-        function initializeSocket() {
+        async function initializeSocket() {
             socketId = Math.floor(Math.random() * 100000000) + 1;
             document.getElementById('socketId').textContent = socketId;
+            
+            // Try to connect to WebSocket server
+            try {
+                // Try different WebSocket URLs for production
+                const wsUrls = [
+                    'wss://your-websocket-server.herokuapp.com',
+                    'wss://your-websocket-server.railway.app',
+                    'wss://your-websocket-server.render.com',
+                    'ws://localhost:3001' // Fallback for local development
+                ];
+                
+                for (let wsUrl of wsUrls) {
+                    try {
+                        console.log('🔗 Attempting to connect to:', wsUrl);
+                        socket = new WebSocket(wsUrl);
+                        
+                        socket.onopen = function() {
+                            console.log('✅ WebSocket connected successfully!');
+                            document.getElementById('connectionStatus').textContent = 'Connected';
+                            document.querySelector('.status-dot').className = 'status-dot online';
+                            
+                            // Send initial connection message
+                            const connectMessage = {
+                                type: 'CONNECT',
+                                socketId: socketId,
+                                timestamp: new Date().toISOString()
+                            };
+                            socket.send(JSON.stringify(connectMessage));
+                            console.log('📤 Sent connection message:', connectMessage);
+                            
+                            // Show toast notification
+                            showToast('✅ WebSocket connected!');
+                        };
+                        
+                        socket.onmessage = function(event) {
+                            console.log('📨 WebSocket message received:', event.data);
+                            
+                            // Update the last message field
+                            const lastMessageField = document.getElementById('lastMessage');
+                            if (lastMessageField) {
+                                lastMessageField.value = event.data;
+                                console.log('📝 Updated last message field with:', event.data);
+                            } else {
+                                console.log('❌ Could not find lastMessage field');
+                            }
+                            
+                            try {
+                                const data = JSON.parse(event.data);
+                                console.log('📋 Parsed message data:', data);
+                                
+                                if (data.type === 'CONNECTION_ESTABLISHED') {
+                                    showToast('✅ WebSocket connection established!');
+                                } else if (data.type === 'CALL_SIMULATED_BROADCAST') {
+                                    showToast('📢 Call simulation broadcast received!');
+                                } else if (data.type === 'MESSAGE_RECEIVED') {
+                                    showToast('📡 Message confirmation received!');
+                                } else if (data.type === 'TEST_MESSAGE') {
+                                    showToast('🧪 Test message received!');
+                                }
+                            } catch (e) {
+                                console.log('❌ Error parsing JSON message:', e);
+                            }
+                        };
+                        
+                        socket.onclose = function(event) {
+                            console.log('🔌 WebSocket disconnected:', event.code, event.reason);
+                            document.getElementById('connectionStatus').textContent = 'Disconnected';
+                            document.querySelector('.status-dot').className = 'status-dot connecting';
+                            showToast('🔌 WebSocket disconnected');
+                        };
+                        
+                        socket.onerror = function(error) {
+                            console.log('❌ WebSocket error:', error);
+                            document.getElementById('connectionStatus').textContent = 'Error';
+                            document.querySelector('.status-dot').className = 'status-dot connecting';
+                            showToast('❌ WebSocket connection error');
+                        };
+                        
+                        // Wait a bit before trying next URL
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        
+                        // If connection is open, break out of the loop
+                        if (socket.readyState === WebSocket.OPEN) {
+                            console.log('✅ Successfully connected to:', wsUrl);
+                            break;
+                        }
+                    } catch (e) {
+                        console.log('❌ Failed to connect to:', wsUrl, e);
+                    }
+                }
+                
+                if (!socket || socket.readyState !== WebSocket.OPEN) {
+                    console.log('No WebSocket server available, using local simulation');
+                    document.getElementById('connectionStatus').textContent = 'Local Mode';
+                    document.querySelector('.status-dot').className = 'status-dot connecting';
+                }
+                
+            } catch (error) {
+                console.log('❌ Failed to create WebSocket connection:', error);
+                document.getElementById('connectionStatus').textContent = 'Local Mode';
+                document.querySelector('.status-dot').className = 'status-dot connecting';
+                showToast('❌ Failed to connect to WebSocket server');
+            }
         }
         
         function simulateCall() {
@@ -660,13 +771,66 @@
             
             // Simulate the call
             console.log('Simulating call:', callData);
-            showToast('Call Simulated Successfully');
+            
+            // Update the outbound call information panel
+            document.getElementById('outboundPhone').textContent = phoneNumber;
+            document.getElementById('businessPartnerId').textContent = 'BP-' + Math.floor(Math.random() * 10000);
+            document.getElementById('objectId').textContent = 'OBJ-' + Math.floor(Math.random() * 10000);
+            document.getElementById('objectTypeCode').textContent = callType.toUpperCase();
+            document.getElementById('esObjectId').textContent = 'ES-' + Math.floor(Math.random() * 10000);
+            document.getElementById('activityUuid').textContent = 'uuid-' + Math.random().toString(36).substr(2, 9);
+            document.getElementById('direction').textContent = callType;
+            document.getElementById('isBtdRef').textContent = 'false';
+            document.getElementById('loggedInUserId').textContent = 'AGENT-' + Math.floor(Math.random() * 1000);
+            document.getElementById('objectThingType').textContent = 'Call';
+            document.getElementById('objectUuid').textContent = 'obj-uuid-' + Math.random().toString(36).substr(2, 9);
+            
+            // Show success message
+            showToast(`✅ Call Simulated Successfully! ${callType} call to ${phoneNumber}`);
+            
+            // Show call status indicator
+            const callStatus = document.getElementById('callStatus');
+            const callStatusText = document.getElementById('callStatusText');
+            callStatusText.textContent = `${callType} call to ${phoneNumber} - ${customerName}`;
+            callStatus.style.display = 'block';
+            
+            // Temporarily disable the simulate button
+            const simulateBtn = document.getElementById('simulateBtn');
+            simulateBtn.disabled = true;
+            simulateBtn.textContent = '⏳ Processing...';
+            
+            // Re-enable after 2 seconds
+            setTimeout(() => {
+                simulateBtn.disabled = false;
+                simulateBtn.textContent = '🚀 Simulate Call';
+                callStatus.style.display = 'none';
+            }, 2000);
             
             // Send to SAP Service Cloud
             sendToSAP({
                 type: 'CALL_SIMULATED',
                 callData: callData
             });
+            
+            // Send via WebSocket if available
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                const wsMessage = {
+                    type: 'CALL_SIMULATED',
+                    socketId: socketId,
+                    callData: callData,
+                    timestamp: new Date().toISOString()
+                };
+                
+                socket.send(JSON.stringify(wsMessage));
+                console.log('📡 Call simulation sent via WebSocket!');
+                showToast('📡 Call simulation sent via WebSocket!');
+            } else {
+                console.log('WebSocket not available, using local simulation only');
+                showToast('🔄 Call simulated locally (no WebSocket connection)');
+            }
+            
+            // Update last message in socket panel
+            document.getElementById('lastMessage').value = JSON.stringify(callData, null, 2);
         }
         
         function resetForm() {
@@ -693,6 +857,82 @@
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
                 showToast('Socket ID copied to clipboard');
+            }
+        }
+        
+        function testWebSocket() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                const testMessage = {
+                    type: 'TEST_MESSAGE',
+                    socketId: socketId,
+                    message: 'Hello WebSocket Server!',
+                    timestamp: new Date().toISOString()
+                };
+                
+                socket.send(JSON.stringify(testMessage));
+                console.log('🧪 Sent test message:', testMessage);
+                showToast('🧪 Test message sent via WebSocket!');
+                
+                // Also manually update the last message field for testing
+                setTimeout(() => {
+                    const lastMessageField = document.getElementById('lastMessage');
+                    if (lastMessageField) {
+                        lastMessageField.value = JSON.stringify(testMessage, null, 2);
+                        console.log('📝 Manually updated last message field for testing');
+                    }
+                }, 1000);
+            } else {
+                console.log('❌ WebSocket not connected');
+                showToast('❌ WebSocket not connected');
+                
+                // Show connection status
+                console.log('Socket state:', socket ? socket.readyState : 'null');
+                console.log('Connection status:', document.getElementById('connectionStatus').textContent);
+            }
+        }
+        
+        function debugWebSocket() {
+            console.log('🔍 WebSocket Debug Information:');
+            console.log('Socket object:', socket);
+            console.log('Socket readyState:', socket ? socket.readyState : 'null');
+            console.log('Connection status element:', document.getElementById('connectionStatus'));
+            console.log('Last message element:', document.getElementById('lastMessage'));
+            console.log('Socket ID:', socketId);
+            
+            // Check if elements exist
+            const statusElement = document.getElementById('connectionStatus');
+            const messageElement = document.getElementById('lastMessage');
+            
+            if (statusElement) {
+                console.log('✅ Connection status element found:', statusElement.textContent);
+            } else {
+                console.log('❌ Connection status element not found');
+            }
+            
+            if (messageElement) {
+                console.log('✅ Last message element found:', messageElement.value);
+            } else {
+                console.log('❌ Last message element not found');
+            }
+            
+            // Test WebSocket connection
+            if (socket) {
+                if (socket.readyState === WebSocket.OPEN) {
+                    console.log('✅ WebSocket is OPEN');
+                    showToast('✅ WebSocket is connected and ready');
+                } else if (socket.readyState === WebSocket.CONNECTING) {
+                    console.log('⏳ WebSocket is CONNECTING');
+                    showToast('⏳ WebSocket is connecting...');
+                } else if (socket.readyState === WebSocket.CLOSING) {
+                    console.log('🔌 WebSocket is CLOSING');
+                    showToast('🔌 WebSocket is closing');
+                } else if (socket.readyState === WebSocket.CLOSED) {
+                    console.log('❌ WebSocket is CLOSED');
+                    showToast('❌ WebSocket is closed');
+                }
+            } else {
+                console.log('❌ No WebSocket object');
+                showToast('❌ No WebSocket connection');
             }
         }
         
