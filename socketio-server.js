@@ -7,10 +7,9 @@ const app = express();
 
 // Add CORS headers for all routes
 app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'https://glowing-frangollo-44ac94.netlify.app');
+    res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.header('Access-Control-Allow-Credentials', 'true');
     
     if (req.method === 'OPTIONS') {
         res.sendStatus(200);
@@ -22,12 +21,11 @@ app.use((req, res, next) => {
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: ["https://glowing-frangollo-44ac94.netlify.app", "http://localhost:3000", "http://localhost:3001"],
+        origin: "*",
         methods: ["GET", "POST", "OPTIONS"],
-        credentials: true,
-        allowedHeaders: ["Content-Type", "Authorization"]
+        credentials: false
     },
-    transports: ['polling', 'websocket'],
+    transports: ['polling'],
     allowEIO3: true,
     pingTimeout: 60000,
     pingInterval: 25000,

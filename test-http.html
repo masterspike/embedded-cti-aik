@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTTP Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .log { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 4px; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <h1>🔧 HTTP Test</h1>
+    <div id="status">Status: Testen...</div>
+    <div id="logs"></div>
+    
+    <script>
+        function addLog(message, type = 'info') {
+            const logs = document.getElementById('logs');
+            const log = document.createElement('div');
+            log.className = `log ${type}`;
+            log.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logs.appendChild(log);
+            console.log(message);
+        }
+        
+        function updateStatus(status) {
+            document.getElementById('status').textContent = `Status: ${status}`;
+        }
+        
+        addLog('🚀 HTTP Test gestart');
+        
+        // Test basic HTTP connectivity
+        fetch('https://agent-buddy-socketio.onrender.com/health')
+            .then(response => {
+                addLog('✅ HTTP request succesvol', 'success');
+                return response.json();
+            })
+            .then(data => {
+                addLog('📊 Response data: ' + JSON.stringify(data), 'success');
+                updateStatus('HTTP OK');
+            })
+            .catch(error => {
+                addLog('❌ HTTP request gefaald: ' + error, 'error');
+                updateStatus('HTTP Fout');
+            });
+    </script>
+</body>
+</html> 

@@ -38,13 +38,12 @@
         addLog(`🔗 Verbinden met: ${socketUrl}`);
         
         const socket = io(socketUrl, {
-            transports: ['polling', 'websocket'],
+            transports: ['polling'],
             timeout: 30000,
             forceNew: true,
             reconnection: true,
             reconnectionAttempts: 10,
-            reconnectionDelay: 1000,
-            withCredentials: true
+            reconnectionDelay: 1000
         });
         
         socket.on('connect', function() {
