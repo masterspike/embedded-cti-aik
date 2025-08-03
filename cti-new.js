@@ -79,6 +79,16 @@ function sendSAPIncomingNotification(callData) {
         sapServiceCloud.sendMessage(sapNotification);
         addLog('📢 SAP notificatie verzonden voor incoming call');
         
+        // Send directly to parent window (SAP Service Cloud)
+        if (window.parent && window.parent !== window) {
+            try {
+                window.parent.postMessage(sapNotification, "*");
+                addLog('📤 SAP NOTIFY payload verzonden naar parent window via postMessage');
+            } catch (error) {
+                addLog('❌ Fout bij postMessage naar parent: ' + error.message);
+            }
+        }
+        
         // Send via Socket.io if available
         if (window.socket && window.socket.connected) {
             const socketMessage = {
@@ -158,6 +168,16 @@ function sendSAPDeclineNotification(callData) {
         sapServiceCloud.sendMessage(sapPayload);
         addLog('❌ SAP DECLINE payload verzonden: ' + JSON.stringify(sapPayload));
         
+        // Send directly to parent window (SAP Service Cloud)
+        if (window.parent && window.parent !== window) {
+            try {
+                window.parent.postMessage(sapPayload, "*");
+                addLog('📤 SAP DECLINE payload verzonden naar parent window via postMessage');
+            } catch (error) {
+                addLog('❌ Fout bij postMessage naar parent: ' + error.message);
+            }
+        }
+        
         // Send via Socket.io if available
         if (window.socket && window.socket.connected) {
             const socketMessage = {
@@ -214,6 +234,16 @@ function sendToSAPServiceCloud(callData) {
     if (sapServiceCloud) {
         sapServiceCloud.sendMessage(sapPayload);
         addLog('✅ SAP ACCEPT payload verzonden: ' + JSON.stringify(sapPayload));
+    }
+    
+    // Send directly to parent window (SAP Service Cloud)
+    if (window.parent && window.parent !== window) {
+        try {
+            window.parent.postMessage(sapPayload, "*");
+            addLog('📤 SAP payload verzonden naar parent window via postMessage');
+        } catch (error) {
+            addLog('❌ Fout bij postMessage naar parent: ' + error.message);
+        }
     }
     
     // Simulate SAP API call
@@ -361,6 +391,21 @@ function simulateIncomingCall() {
     handleIncomingCall(testCall);
 }
 
+// Helper function to send SAP payload to parent window
+function sendSAPPayloadToParent(sapPayload) {
+    if (window.parent && window.parent !== window) {
+        try {
+            window.parent.postMessage(sapPayload, "*");
+            addLog('📤 SAP payload verzonden naar parent window: ' + sapPayload.Action);
+            return true;
+        } catch (error) {
+            addLog('❌ Fout bij postMessage naar parent: ' + error.message);
+            return false;
+        }
+    }
+    return false;
+}
+
 // Export functions for global access
 window.initializeCTI = initializeCTI;
 window.handleIncomingCall = handleIncomingCall;
@@ -371,4 +416,5 @@ window.sendToSAPServiceCloud = sendToSAPServiceCloud;
 window.showDeclinePopup = showDeclinePopup;
 window.handleSAPMessage = handleSAPMessage;
 window.testSapConnection = testSapConnection;
-window.simulateIncomingCall = simulateIncomingCall; 
+window.simulateIncomingCall = simulateIncomingCall;
+window.sendSAPPayloadToParent = sendSAPPayloadToParent; 
