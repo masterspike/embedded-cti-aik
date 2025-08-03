@@ -7,11 +7,16 @@
 /**
  * SAP C4C CTI Integration Object
  */
-jQuery.sap.declare("c4c.cti.integration");
+// Check if jQuery.sap is available (SAP environment)
+if (typeof jQuery !== 'undefined' && jQuery.sap) {
+    jQuery.sap.declare("c4c.cti.integration");
+}
 
 /**
  * Initialize the C4C CTI integration object
  */
+var c4c = c4c || {};
+c4c.cti = c4c.cti || {};
 c4c.cti.integration = function() {
     this.init();
 };
@@ -333,9 +338,9 @@ c4c.cti.integration.prototype._handleWidgetConfigFromC4C = function(payload) {
  */
 c4c.cti.integration.prototype._addOnMessageEvent = function() {
     if (window.addEventListener) {
-        window.addEventListener("message", $.proxy(this._onMessage, this), false);
+        window.addEventListener("message", this._onMessage.bind(this), false);
     } else {
-        window.attachEvent("onmessage", $.proxy(this._onMessage, this));
+        window.attachEvent("onmessage", this._onMessage.bind(this));
     }
 };
 
@@ -357,8 +362,19 @@ c4c.cti.integration.prototype.onSendCallRequestToCTIAdapter = function(cadData) 
     for (var key in cadData) {
         query = query + "&" + key + "=" + cadData[key];
     }
-    $.get("http://localhost:36729", query);
-    addLog('📞 CTI adapter call request verzonden');
+    
+    // Use fetch instead of jQuery
+    if (typeof fetch !== 'undefined') {
+        fetch("http://localhost:36729?" + query)
+            .then(response => {
+                addLog('📞 CTI adapter call request verzonden');
+            })
+            .catch(error => {
+                addLog('❌ CTI adapter error: ' + error.message);
+            });
+    } else {
+        addLog('⚠️ Fetch niet beschikbaar voor CTI adapter');
+    }
 };
 
 // ============================================================================
@@ -370,20 +386,38 @@ c4c.cti.integration.prototype.onSendCallRequestToCTIAdapter = function(cadData) 
  * @param callData - Call data from Agent Buddy
  */
 function sendAgentBuddyIncomingCallToC4C(callData) {
-    var c4cIntegration = c4c.cti.integration.getInstance();
-    
-    var parameters = {
-        "Type": "CALL",
-        "EventType": "INBOUND",
-        "Action": "NOTIFY",
-        "ANI": callData.phoneNumber,
-        "ExternalReferenceID": callData.callId,
-        "Timestamp": new Date().toISOString(),
-        "Priority": "HIGH",
-        "CallType": "INBOUND"
-    };
-    
-    c4cIntegration.sendIncomingCalltoC4C(parameters);
+    try {
+        var c4cIntegration = c4c.cti.integration.getInstance();
+        
+        var parameters = {
+            "Type": "CALL",
+            "EventType": "INBOUND",
+            "Action": "NOTIFY",
+            "ANI": callData.phoneNumber,
+            "ExternalReferenceID": callData.callId,
+            "Timestamp": new Date().toISOString(),
+            "Priority": "HIGH",
+            "CallType": "INBOUND"
+        };
+        
+        c4cIntegration.sendIncomingCalltoC4C(parameters);
+    } catch (error) {
+        console.warn('⚠️ C4C integratie niet beschikbaar:', error.message);
+        addLog('⚠️ C4C integratie niet beschikbaar - gebruik fallback');
+        
+        // Fallback: direct PostMessage
+        if (window.parent && window.parent !== window) {
+            var fallbackPayload = {
+                "payload": parameters,
+                "source": "agent-buddy",
+                "widgetId": "crm-agent-cti-plugin",
+                "timestamp": new Date().toISOString(),
+                "version": "1.0.0"
+            };
+            window.parent.postMessage(fallbackPayload, "*");
+            addLog('📤 Fallback PostMessage verzonden naar C4C');
+        }
+    }
 }
 
 /**
@@ -391,20 +425,38 @@ function sendAgentBuddyIncomingCallToC4C(callData) {
  * @param callData - Call data from Agent Buddy
  */
 function sendAgentBuddyCallAcceptToC4C(callData) {
-    var c4cIntegration = c4c.cti.integration.getInstance();
-    
-    var parameters = {
-        "Type": "CALL",
-        "EventType": "INBOUND",
-        "Action": "ACCEPT",
-        "ANI": callData.phoneNumber,
-        "ExternalReferenceID": callData.callId,
-        "Timestamp": new Date().toISOString(),
-        "AgentAction": "ACCEPTED",
-        "CallDuration": 0
-    };
-    
-    c4cIntegration.sendCallAcceptToC4C(parameters);
+    try {
+        var c4cIntegration = c4c.cti.integration.getInstance();
+        
+        var parameters = {
+            "Type": "CALL",
+            "EventType": "INBOUND",
+            "Action": "ACCEPT",
+            "ANI": callData.phoneNumber,
+            "ExternalReferenceID": callData.callId,
+            "Timestamp": new Date().toISOString(),
+            "AgentAction": "ACCEPTED",
+            "CallDuration": 0
+        };
+        
+        c4cIntegration.sendCallAcceptToC4C(parameters);
+    } catch (error) {
+        console.warn('⚠️ C4C integratie niet beschikbaar:', error.message);
+        addLog('⚠️ C4C integratie niet beschikbaar - gebruik fallback');
+        
+        // Fallback: direct PostMessage
+        if (window.parent && window.parent !== window) {
+            var fallbackPayload = {
+                "payload": parameters,
+                "source": "agent-buddy",
+                "widgetId": "crm-agent-cti-plugin",
+                "timestamp": new Date().toISOString(),
+                "version": "1.0.0"
+            };
+            window.parent.postMessage(fallbackPayload, "*");
+            addLog('📤 Fallback PostMessage verzonden naar C4C');
+        }
+    }
 }
 
 /**
@@ -412,20 +464,38 @@ function sendAgentBuddyCallAcceptToC4C(callData) {
  * @param callData - Call data from Agent Buddy
  */
 function sendAgentBuddyCallDeclineToC4C(callData) {
-    var c4cIntegration = c4c.cti.integration.getInstance();
-    
-    var parameters = {
-        "Type": "CALL",
-        "EventType": "INBOUND",
-        "Action": "DECLINE",
-        "ANI": callData.phoneNumber,
-        "ExternalReferenceID": callData.callId,
-        "Timestamp": new Date().toISOString(),
-        "AgentAction": "DECLINED",
-        "Reason": "Agent not available"
-    };
-    
-    c4cIntegration.sendCallDeclineToC4C(parameters);
+    try {
+        var c4cIntegration = c4c.cti.integration.getInstance();
+        
+        var parameters = {
+            "Type": "CALL",
+            "EventType": "INBOUND",
+            "Action": "DECLINE",
+            "ANI": callData.phoneNumber,
+            "ExternalReferenceID": callData.callId,
+            "Timestamp": new Date().toISOString(),
+            "AgentAction": "DECLINED",
+            "Reason": "Agent not available"
+        };
+        
+        c4cIntegration.sendCallDeclineToC4C(parameters);
+    } catch (error) {
+        console.warn('⚠️ C4C integratie niet beschikbaar:', error.message);
+        addLog('⚠️ C4C integratie niet beschikbaar - gebruik fallback');
+        
+        // Fallback: direct PostMessage
+        if (window.parent && window.parent !== window) {
+            var fallbackPayload = {
+                "payload": parameters,
+                "source": "agent-buddy",
+                "widgetId": "crm-agent-cti-plugin",
+                "timestamp": new Date().toISOString(),
+                "version": "1.0.0"
+            };
+            window.parent.postMessage(fallbackPayload, "*");
+            addLog('📤 Fallback PostMessage verzonden naar C4C');
+        }
+    }
 }
 
 /**
@@ -434,19 +504,37 @@ function sendAgentBuddyCallDeclineToC4C(callData) {
  * @param customerData - Customer data
  */
 function sendAgentBuddyCustomerIdentificationToC4C(phoneNumber, customerData) {
-    var c4cIntegration = c4c.cti.integration.getInstance();
-    
-    var parameters = {
-        "Type": "CUSTOMER",
-        "EventType": "IDENTIFICATION",
-        "Action": "LOAD",
-        "ANI": phoneNumber,
-        "CustomerData": customerData,
-        "Timestamp": new Date().toISOString(),
-        "Source": "agent-buddy"
-    };
-    
-    c4cIntegration.sendCustomerIdentificationToC4C(parameters);
+    try {
+        var c4cIntegration = c4c.cti.integration.getInstance();
+        
+        var parameters = {
+            "Type": "CUSTOMER",
+            "EventType": "IDENTIFICATION",
+            "Action": "LOAD",
+            "ANI": phoneNumber,
+            "CustomerData": customerData,
+            "Timestamp": new Date().toISOString(),
+            "Source": "agent-buddy"
+        };
+        
+        c4cIntegration.sendCustomerIdentificationToC4C(parameters);
+    } catch (error) {
+        console.warn('⚠️ C4C integratie niet beschikbaar:', error.message);
+        addLog('⚠️ C4C integratie niet beschikbaar - gebruik fallback');
+        
+        // Fallback: direct PostMessage
+        if (window.parent && window.parent !== window) {
+            var fallbackPayload = {
+                "payload": parameters,
+                "source": "agent-buddy",
+                "widgetId": "crm-agent-cti-plugin",
+                "timestamp": new Date().toISOString(),
+                "version": "1.0.0"
+            };
+            window.parent.postMessage(fallbackPayload, "*");
+            addLog('📤 Fallback PostMessage verzonden naar C4C');
+        }
+    }
 }
 
 // ============================================================================
@@ -459,15 +547,25 @@ function sendAgentBuddyCustomerIdentificationToC4C(phoneNumber, customerData) {
 function initializeAgentBuddyC4CIntegration() {
     console.log('🚀 Agent Buddy C4C integratie initialiseren...');
     
-    // Initialize C4C integration
-    var c4cIntegration = c4c.cti.integration.getInstance();
-    
-    // Register callback for C4C messages
-    c4cIntegration.registerOutboundCallback(function(event) {
-        console.log('📨 C4C callback triggered:', event);
-    });
-    
-    addLog('🚀 Agent Buddy C4C integratie geïnitialiseerd');
+    try {
+        // Initialize C4C integration
+        var c4cIntegration = c4c.cti.integration.getInstance();
+        
+        // Register callback for C4C messages
+        c4cIntegration.registerOutboundCallback(function(event) {
+            console.log('📨 C4C callback triggered:', event);
+        });
+        
+        addLog('🚀 Agent Buddy C4C integratie geïnitialiseerd');
+    } catch (error) {
+        console.warn('⚠️ C4C integratie initialisatie gefaald:', error.message);
+        addLog('⚠️ C4C integratie niet beschikbaar - gebruik fallback mode');
+        
+        // Setup basic PostMessage listener as fallback
+        window.addEventListener('message', function(event) {
+            console.log('📨 Fallback message received:', event.data);
+        });
+    }
 }
 
 // Export functions for global access
