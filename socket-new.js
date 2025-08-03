@@ -17,13 +17,27 @@ function initializeWebSocket() {
         
         // Only use Render URL if we're on production (Netlify)
         if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            socketUrl = (window.getConfig && getConfig('SOCKET_URL')) || window.SOCKET_URL || 'https://agent-buddy-socketio.onrender.com';
+            // Safe check for config - if not available, use fallback
+            let configSocketUrl = null;
+            try {
+                if (window.CONFIG && window.getConfig) {
+                    configSocketUrl = getConfig('SOCKET_URL');
+                    console.log('🔧 Config gevonden, SOCKET_URL:', configSocketUrl);
+                } else {
+                    console.log('⚠️ Config niet beschikbaar, gebruik fallback URL');
+                }
+            } catch (error) {
+                console.log('⚠️ Config error:', error.message);
+            }
+            socketUrl = configSocketUrl || window.SOCKET_URL || 'https://agent-buddy-socketio.onrender.com';
         }
         
         console.log('🔗 Attempting to connect to Socket.io:', socketUrl);
         console.log('📍 Current hostname:', window.location.hostname);
         console.log('🌐 Protocol:', window.location.protocol);
         console.log('🔗 Full URL:', window.location.href);
+        console.log('📋 Config status:', window.CONFIG ? 'Available' : 'Not available');
+        console.log('🔧 getConfig status:', typeof window.getConfig);
         
         // Update initial status
         updateWSStatus('Verbinding maken...', 'status-connecting');
