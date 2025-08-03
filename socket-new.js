@@ -22,19 +22,30 @@ function initializeWebSocket() {
         
         console.log('🔗 Attempting to connect to Socket.io:', socketUrl);
         console.log('📍 Current hostname:', window.location.hostname);
+        console.log('🌐 Protocol:', window.location.protocol);
+        console.log('🔗 Full URL:', window.location.href);
         
         // Load Socket.io client library
         const script = document.createElement('script');
         script.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
         script.onload = function() {
+            console.log('📦 Socket.io library geladen');
+        };
+        script.onerror = function() {
+            console.error('❌ Socket.io library kon niet geladen worden');
+            addLog('❌ Socket.io library fout');
+        };
+        script.onload = function() {
             // Initialize Socket.io connection
             socket = io(socketUrl, {
-                transports: ['websocket', 'polling'],
-                timeout: 20000,
+                transports: ['polling', 'websocket'],
+                timeout: 30000,
                 forceNew: true,
                 reconnection: true,
-                reconnectionAttempts: 5,
-                reconnectionDelay: 1000
+                reconnectionAttempts: 10,
+                reconnectionDelay: 1000,
+                upgrade: true,
+                rememberUpgrade: false
             });
             
             socket.on('connect', function() {
