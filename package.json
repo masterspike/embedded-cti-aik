@@ -1,5 +1,23 @@
 {
+  "name": "embedded-cti-deploy",
+  "version": "1.0.0",
+  "description": "Embedded CTI deployment with Socket.io on Render.com",
+  "main": "socketio-server.js",
+  "scripts": {
+    "start": "node socketio-server.js",
+    "dev": "nodemon socketio-server.js"
+  },
   "dependencies": {
-    "ws": "^8.18.3"
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["cti", "websocket", "sap", "socket.io", "render"],
+  "author": "AIK",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

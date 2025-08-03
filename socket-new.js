@@ -13,11 +13,11 @@ function initializeWebSocket() {
         socketId = 'socket_' + Math.random().toString(36).substr(2, 9);
         
         // Try to connect to the first available Socket.io server
-        let socketUrl = 'http://localhost:8080'; // Default to localhost for development
+        let socketUrl = 'http://localhost:3001'; // Default to localhost for development
         
-        // Only use Railway URL if we're on production (Netlify)
+        // Only use Render URL if we're on production (Netlify)
         if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            socketUrl = window.SOCKET_URL || 'https://embedd-cti-railway-production.up.railway.app';
+            socketUrl = window.SOCKET_URL || 'https://your-render-app.onrender.com'; // We'll update this after deployment
         }
         
         console.log('🔗 Attempting to connect to Socket.io:', socketUrl);

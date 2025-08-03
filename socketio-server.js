@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
@@ -18,24 +19,28 @@ const io = socketIo(server, {
     maxHttpBufferSize: 1e8
 });
 
+// Serve static files
+app.use(express.static(path.join(__dirname)));
+
 // Health check endpoint
 app.get('/health', (req, res) => {
     res.json({
         status: 'healthy',
         timestamp: new Date().toISOString(),
         websocket: 'running',
-        port: process.env.PORT || 8080
+        port: process.env.PORT || 3000,
+        environment: process.env.NODE_ENV || 'development'
     });
 });
 
 // Default response
 app.get('/', (req, res) => {
-    res.send('Socket.io Server Running');
+    res.send('Socket.io Server Running on Render.com');
 });
 
-console.log('🚀 Socket.io Server Starting...');
-console.log('📡 Listening on port', process.env.PORT || 8080);
-console.log('🌐 Environment:', process.env.PORT ? 'Railway Production' : 'Local Development');
+console.log('🚀 Socket.io Server Starting on Render.com...');
+console.log('📡 Listening on port', process.env.PORT || 3000);
+console.log('🌐 Environment:', process.env.NODE_ENV || 'development');
 
 // Handle Socket.io connections
 io.on('connection', (socket) => {
@@ -43,7 +48,7 @@ io.on('connection', (socket) => {
     
     // Send welcome message
     socket.emit('CONNECTION_ESTABLISHED', {
-        message: 'Socket.io server connected successfully',
+        message: 'Socket.io server connected successfully on Render.com',
         socketId: socket.id,
         timestamp: new Date().toISOString()
     });
@@ -99,12 +104,12 @@ io.on('connection', (socket) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 3001;
 const HOST = process.env.HOST || '0.0.0.0';
 
 server.listen(PORT, HOST, () => {
     console.log(`🎯 Socket.io server is running on ${HOST}:${PORT}`);
-    console.log(`🔗 Connect your widget to: ${process.env.PORT ? 'wss://embedd-cti-railway-production.up.railway.app' : 'ws://localhost:8080'}`);
+    console.log(`🔗 Connect your widget to: ${process.env.RENDER_EXTERNAL_URL || 'http://localhost:3000'}`);
 });
 
 // Graceful shutdown
@@ -116,9 +121,9 @@ process.on('SIGINT', () => {
     });
 });
 
-// Handle SIGTERM for Railway
+// Handle SIGTERM for Render
 process.on('SIGTERM', () => {
-    console.log('\n🛑 Railway shutting down Socket.io server...');
+    console.log('\n🛑 Render shutting down Socket.io server...');
     server.close(() => {
         console.log('✅ Socket.io server closed');
         process.exit(0);
