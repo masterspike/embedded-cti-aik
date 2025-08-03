@@ -6,10 +6,11 @@ De Agent Buddy applicatie gebruikt environment variabelen voor configuratie. Dez
 
 ### 📋 Beschikbare Environment Variables
 
-#### SAP Service Cloud
+#### SAP Service Cloud (Basic Auth)
 ```bash
 SAP_ENDPOINT=https://your-sap-instance.service.cloud.sap/api/calls
-SAP_API_KEY=your-sap-api-key-here
+SAP_USERNAME=your-sap-username
+SAP_PASSWORD=your-sap-password
 SAP_API_VERSION=v1
 ```
 
@@ -36,9 +37,10 @@ LOG_LEVEL=info
 4. **Voeg de variabelen toe**:
 
 ```bash
-# SAP Configuration
+# SAP Configuration (Basic Auth)
 SAP_ENDPOINT=https://your-sap-instance.service.cloud.sap/api/calls
-SAP_API_KEY=your-sap-api-key-here
+SAP_USERNAME=your-sap-username
+SAP_PASSWORD=your-sap-password
 
 # Socket.io Configuration  
 SOCKET_URL=https://agent-buddy-socketio.onrender.com
@@ -55,7 +57,8 @@ Voor lokale development, voeg toe aan je `.env` file:
 ```bash
 # .env file
 SAP_ENDPOINT=https://your-sap-instance.service.cloud.sap/api/calls
-SAP_API_KEY=your-sap-api-key-here
+SAP_USERNAME=your-sap-username
+SAP_PASSWORD=your-sap-password
 SOCKET_URL=http://localhost:3001
 DEFAULT_PHONE=+31651616126
 DEBUG_MODE=true

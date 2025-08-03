@@ -4,7 +4,8 @@
 const CONFIG = {
     // SAP Service Cloud Configuration
     SAP_ENDPOINT: process.env.SAP_ENDPOINT || 'https://your-sap-instance.service.cloud.sap',
-    SAP_API_KEY: process.env.SAP_API_KEY || '',
+    SAP_USERNAME: process.env.SAP_USERNAME || '',
+    SAP_PASSWORD: process.env.SAP_PASSWORD || '',
     SAP_API_VERSION: process.env.SAP_API_VERSION || 'v1',
     
     // Socket.io Configuration

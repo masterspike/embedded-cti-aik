@@ -368,12 +368,13 @@ function handleChatMessage(chatData) {
     showToast('Chat message received from SAP Service Cloud');
 }
 
-// Test SAP connection
+// Test SAP connection with Basic Auth
 async function testSapConnection() {
-    const endpoint = document.getElementById('sapEndpoint').value;
-    const apiKey = document.getElementById('sapApiKey').value;
+    const endpoint = getConfig('SAP_ENDPOINT') || document.getElementById('sapEndpoint').value;
+    const username = getConfig('SAP_USERNAME') || document.getElementById('sapUsername').value;
+    const password = getConfig('SAP_PASSWORD') || document.getElementById('sapPassword').value;
     
-    addLog('🔗 SAP verbinding testen...');
+    addLog('🔗 SAP verbinding testen met Basic Auth...');
     
     if (!endpoint || endpoint === 'https://your-sap-instance.service.cloud.sap') {
         document.getElementById('sapStatus').textContent = 'Fout';
@@ -383,11 +384,22 @@ async function testSapConnection() {
         return;
     }
     
+    if (!username || !password) {
+        document.getElementById('sapStatus').textContent = 'Fout';
+        document.getElementById('lastSapAction').textContent = 'Credentials niet geconfigureerd';
+        addLog('❌ SAP credentials niet geconfigureerd');
+        showToast('SAP credentials niet geconfigureerd!');
+        return;
+    }
+    
+    // Create Basic Auth header
+    const credentials = btoa(`${username}:${password}`);
+    
     try {
         const response = await fetch(endpoint, {
             method: 'GET',
             headers: {
-                'Authorization': apiKey ? `Bearer ${apiKey}` : '',
+                'Authorization': `Basic ${credentials}`,
                 'Accept': 'application/json'
             }
         });
@@ -437,23 +449,32 @@ function sendSAPPayloadToParent(sapPayload) {
     return false;
 }
 
-// Send SAP payload to SAP Service Cloud via HTTP
+// Send SAP payload to SAP Service Cloud via HTTP with Basic Auth
 async function sendSAPPayloadToSAP(sapPayload) {
     // Try environment variable first, then fallback to UI input
     const sapEndpoint = getConfig('SAP_ENDPOINT') || document.getElementById('sapEndpoint')?.value;
-    const sapApiKey = getConfig('SAP_API_KEY') || document.getElementById('sapApiKey')?.value;
+    const sapUsername = getConfig('SAP_USERNAME') || document.getElementById('sapUsername')?.value;
+    const sapPassword = getConfig('SAP_PASSWORD') || document.getElementById('sapPassword')?.value;
     
     if (!sapEndpoint || sapEndpoint === 'https://your-sap-instance.service.cloud.sap') {
         addLog('⚠️ SAP endpoint niet geconfigureerd - gebruik environment variabele SAP_ENDPOINT');
         return false;
     }
     
+    if (!sapUsername || !sapPassword) {
+        addLog('⚠️ SAP credentials niet geconfigureerd - gebruik environment variabelen SAP_USERNAME en SAP_PASSWORD');
+        return false;
+    }
+    
+    // Create Basic Auth header
+    const credentials = btoa(`${sapUsername}:${sapPassword}`);
+    
     try {
         const response = await fetch(sapEndpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': sapApiKey ? `Bearer ${sapApiKey}` : '',
+                'Authorization': `Basic ${credentials}`,
                 'Accept': 'application/json'
             },
             body: JSON.stringify(sapPayload)

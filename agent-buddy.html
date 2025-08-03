@@ -397,15 +397,20 @@
                             </div>
                         </div>
                         
-                        <div class="form-group">
-                            <label for="sapEndpoint">SAP Endpoint URL:</label>
-                            <input type="text" id="sapEndpoint" value="https://your-sap-instance.service.cloud.sap" placeholder="SAP Service Cloud endpoint">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="sapApiKey">API Key:</label>
-                            <input type="password" id="sapApiKey" placeholder="SAP API Key">
-                        </div>
+                                <div class="form-group">
+            <label for="sapEndpoint">SAP Endpoint URL:</label>
+            <input type="text" id="sapEndpoint" value="https://your-sap-instance.service.cloud.sap" placeholder="SAP Service Cloud endpoint">
+        </div>
+        
+        <div class="form-group">
+            <label for="sapUsername">Username:</label>
+            <input type="text" id="sapUsername" placeholder="SAP Username">
+        </div>
+        
+        <div class="form-group">
+            <label for="sapPassword">Password:</label>
+            <input type="password" id="sapPassword" placeholder="SAP Password">
+        </div>
                         
                         <button class="btn btn-accept" onclick="testSapConnection()">
                             🔗 Test Verbinding
