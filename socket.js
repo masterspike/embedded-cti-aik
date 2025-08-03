@@ -22,6 +22,9 @@ function initializeWebSocket() {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             wsUrl = 'ws://localhost:3001'; // Use localhost for development
         }
+        
+        console.log('🔗 Attempting to connect to WebSocket:', wsUrl);
+        console.log('📍 Current hostname:', window.location.hostname);
         socket = new WebSocket(wsUrl);
         
         socket.onopen = function() {
@@ -67,6 +70,7 @@ function initializeWebSocket() {
             isConnected = false;
             updateWSStatus('Fout', 'status-disconnected');
             addLog('❌ WebSocket fout: ' + error);
+            console.error('❌ WebSocket error details:', error);
         };
         
     } catch (error) {
