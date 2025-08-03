@@ -61,7 +61,7 @@ function initializeWebSocket() {
                 reconnection: true,
                 reconnectionAttempts: 10,
                 reconnectionDelay: 1000,
-                withCredentials: true
+                withCredentials: false
             });
             
             socket.on('connect', function() {

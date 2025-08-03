@@ -7,48 +7,32 @@ const app = express();
 
 // Add CORS headers for all routes
 app.use((req, res, next) => {
-    // Allow specific origins
-    const allowedOrigins = [
-        'https://glowing-frangollo-44ac94.netlify.app',
-        'https://glowing-frangollo-44ac94.netlify.app/',
-        'http://localhost:3000',
-        'http://localhost:8080',
-        'http://127.0.0.1:3000',
-        'http://127.0.0.1:8080'
-    ];
-    
-    const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
-        res.header('Access-Control-Allow-Origin', origin);
-    } else {
-        res.header('Access-Control-Allow-Origin', '*');
-    }
-    
+    // Allow all origins for now
+    res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
-    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
+    res.header('Access-Control-Allow-Credentials', 'false');
+    res.header('Access-Control-Max-Age', '86400');
     
+    console.log('🌐 CORS headers set for:', req.headers.origin);
+    
+    // Handle preflight requests
     if (req.method === 'OPTIONS') {
-        res.sendStatus(200);
-    } else {
-        next();
+        console.log('🛡️ Handling preflight request');
+        res.status(200).end();
+        return;
     }
+    
+    next();
 });
 
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: [
-            "https://glowing-frangollo-44ac94.netlify.app",
-            "https://glowing-frangollo-44ac94.netlify.app/",
-            "http://localhost:3000",
-            "http://localhost:8080",
-            "http://127.0.0.1:3000",
-            "http://127.0.0.1:8080"
-        ],
+        origin: "*", // Allow all origins for now
         methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
-        credentials: true,
-        allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"]
+        credentials: false,
+        allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]
     },
     transports: ['polling'],
     allowEIO3: true,
