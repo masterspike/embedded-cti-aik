@@ -104,6 +104,11 @@ function handleIncomingCall(callData) {
         window.sendCallNotificationToSAP(callData.phoneNumber, callData.callId);
     }
     
+    // Send to C4C using official SAP integration
+    if (window.sendAgentBuddyIncomingCallToC4C) {
+        window.sendAgentBuddyIncomingCallToC4C(callData);
+    }
+    
     // Also send via direct HTTP to SAP
     const sapNotifyPayload = {
         "Type": "CALL",
@@ -185,6 +190,11 @@ function acceptCall() {
         window.sendCallAcceptToSAP(currentCall.phoneNumber, currentCall.callId);
     }
     
+    // Send to C4C using official SAP integration
+    if (window.sendAgentBuddyCallAcceptToC4C) {
+        window.sendAgentBuddyCallAcceptToC4C(currentCall);
+    }
+    
     // Send via Socket.io
     if (window.sendWebSocketMessage) {
         window.sendWebSocketMessage({
@@ -247,6 +257,11 @@ function declineCall() {
     // Send to SAP Service Cloud parent window
     if (window.sendCallDeclineToSAP) {
         window.sendCallDeclineToSAP(currentCall.phoneNumber, currentCall.callId);
+    }
+    
+    // Send to C4C using official SAP integration
+    if (window.sendAgentBuddyCallDeclineToC4C) {
+        window.sendAgentBuddyCallDeclineToC4C(currentCall);
     }
     
     // Send via Socket.io
@@ -367,6 +382,11 @@ function identifyCustomer(phoneNumber) {
     // Send customer identification to SAP Service Cloud
     if (window.sendCustomerIdentificationToSAP) {
         window.sendCustomerIdentificationToSAP(phoneNumber, customerData);
+    }
+    
+    // Send customer identification to C4C using official SAP integration
+    if (window.sendAgentBuddyCustomerIdentificationToC4C) {
+        window.sendAgentBuddyCustomerIdentificationToC4C(phoneNumber, customerData);
     }
     
     addLog('✅ Klant geïdentificeerd: ' + customerData.name);
