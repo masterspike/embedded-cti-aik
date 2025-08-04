@@ -388,14 +388,16 @@ function endCall() {
 
 // Send SAP end call notification
 function sendSAPEndCallNotification(callData) {
+    const endTime = new Date();
     const sapPayload = {
         "Type": "CALL",
         "EventType": "INBOUND",
         "Action": "END", 
         "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31 651616126',
         "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
-        "Timestamp": new Date().toISOString(),
-        "CallDuration": Math.floor((Date.now() - (currentCall.startTime || Date.now())) / 1000)
+        "Timestamp": endTime.toISOString(),
+        "CallDuration": Math.floor((Date.now() - (currentCall.startTime || Date.now())) / 1000),
+        "interactionEndedOn": endTime.toISOString()
     };
     
     // Send via PostMessage to parent window

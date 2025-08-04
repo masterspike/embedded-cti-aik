@@ -583,6 +583,7 @@ function initializeAgentBuddyAikIntegration() {
 function sendAgentBuddyCallEndToAik(callData) {
     try {
         var aikIntegration = aik.cti.integration.getInstance();
+        var endTime = new Date();
         
         var parameters = {
             "Type": "CALL",
@@ -590,8 +591,9 @@ function sendAgentBuddyCallEndToAik(callData) {
             "Action": "END",
             "ANI": callData.phoneNumber,
             "ExternalReferenceID": callData.callId,
-            "Timestamp": new Date().toISOString(),
+            "Timestamp": endTime.toISOString(),
             "CallDuration": Math.floor((Date.now() - (callData.startTime || Date.now())) / 1000),
+            "interactionEndedOn": endTime.toISOString(),
             "Source": "agent-buddy"
         };
         
@@ -603,14 +605,16 @@ function sendAgentBuddyCallEndToAik(callData) {
         
         // Fallback: direct PostMessage
         if (window.parent && window.parent !== window) {
+            var endTime = new Date();
             var fallbackPayload = {
                 "Type": "CALL",
                 "EventType": "INBOUND",
                 "Action": "END",
                 "ANI": callData.phoneNumber,
                 "ExternalReferenceID": callData.callId,
-                "Timestamp": new Date().toISOString(),
+                "Timestamp": endTime.toISOString(),
                 "CallDuration": Math.floor((Date.now() - (callData.startTime || Date.now())) / 1000),
+                "interactionEndedOn": endTime.toISOString(),
                 "source": "agent-buddy",
                 "widgetId": "crm-agent-cti-plugin"
             };

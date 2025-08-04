@@ -98,6 +98,26 @@ function sendCallDeclineToSAP(phoneNumber, callId) {
 }
 
 /**
+ * Send call end to SAP Service Cloud
+ */
+function sendCallEndToSAP(phoneNumber, callId) {
+    const endTime = new Date();
+    const sapPayload = {
+        "Type": "CALL",
+        "EventType": "INBOUND",
+        "Action": "END",
+        "ANI": phoneNumber,
+        "ExternalReferenceID": callId,
+        "Timestamp": endTime.toISOString(),
+        "interactionEndedOn": endTime.toISOString(),
+        "AgentAction": "ENDED",
+        "Reason": "Call terminated by agent"
+    };
+    
+    return sendToSAPServiceCloud(sapPayload);
+}
+
+/**
  * Send customer identification to SAP Service Cloud
  */
 function sendCustomerIdentificationToSAP(phoneNumber, customerData) {
@@ -267,12 +287,9 @@ function handleWidgetConfigFromSAP(config) {
     }
 }
 
-// ============================================================================
-// UTILITY FUNCTIONS
-// ============================================================================
 
 /**
- * Get agent ID from SAP Service Cloud or generate one
+ * Get active agent ID from SSCV2
  */
 function getAgentId() {
     // Try to get from SAP Service Cloud context
@@ -288,7 +305,7 @@ function getAgentId() {
 }
 
 /**
- * Get session ID from SAP Service Cloud or generate one
+ * Get session ID from SSCV2 or generate one
  */
 function getSessionId() {
     // Try to get from SAP Service Cloud context
@@ -347,6 +364,7 @@ window.sendToSAPServiceCloud = sendToSAPServiceCloud;
 window.sendCallNotificationToSAP = sendCallNotificationToSAP;
 window.sendCallAcceptToSAP = sendCallAcceptToSAP;
 window.sendCallDeclineToSAP = sendCallDeclineToSAP;
+window.sendCallEndToSAP = sendCallEndToSAP;
 window.sendCustomerIdentificationToSAP = sendCustomerIdentificationToSAP;
 window.initializeSAPServiceCloudIntegration = initializeSAPServiceCloudIntegration;
 
