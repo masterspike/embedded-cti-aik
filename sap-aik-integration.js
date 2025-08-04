@@ -93,6 +93,16 @@ aik.cti.integration.prototype.sendCallEndToAik = function(parameters) {
 };
 
 /**
+ * Send timer stop to Aik
+ * @param parameters - Timer stop parameters
+ */
+aik.cti.integration.prototype.sendTimerStopToAik = function(parameters) {
+    var payload = this._formJSONPayload(parameters);
+    this._doCall(payload);
+    addLog('⏱️ Timer stop verzonden naar Aik: ' + parameters.TimerId);
+};
+
+/**
  * Post message to parent window (Aik)
  * @param sPayload - Payload to send
  * @private
@@ -599,6 +609,10 @@ function sendAgentBuddyCallEndToAik(callData) {
         
         aikIntegration.sendCallEndToAik(parameters);
         addLog('📞 Call end verzonden naar Aik: ' + callData.phoneNumber);
+        
+        // Also send timer stop command
+        sendTimerStopToAik();
+        
     } catch (error) {
         console.warn('⚠️ Aik integratie niet beschikbaar:', error.message);
         addLog('⚠️ Aik integratie niet beschikbaar - gebruik fallback');
@@ -620,7 +634,55 @@ function sendAgentBuddyCallEndToAik(callData) {
             };
             window.parent.postMessage(fallbackPayload, "*");
             addLog('📞 Call end verzonden via fallback: ' + callData.phoneNumber);
+            
+            // Also send timer stop via fallback
+            sendTimerStopToAikFallback();
         }
+    }
+}
+
+/**
+ * Send timer stop command to Aik
+ */
+function sendTimerStopToAik() {
+    try {
+        var aikIntegration = aik.cti.integration.getInstance();
+        var timerStopTime = new Date();
+        
+        var parameters = {
+            "Type": "TIMER",
+            "EventType": "CONTROL",
+            "Action": "STOP",
+            "TimerId": "crm-cti-caller-status",
+            "Timestamp": timerStopTime.toISOString(),
+            "Source": "agent-buddy"
+        };
+        
+        aikIntegration.sendTimerStopToAik(parameters);
+        addLog('⏱️ Timer stop verzonden naar Aik');
+    } catch (error) {
+        console.warn('⚠️ Aik timer stop niet beschikbaar:', error.message);
+        sendTimerStopToAikFallback();
+    }
+}
+
+/**
+ * Send timer stop command to Aik via fallback
+ */
+function sendTimerStopToAikFallback() {
+    if (window.parent && window.parent !== window) {
+        var timerStopTime = new Date();
+        var fallbackPayload = {
+            "Type": "TIMER",
+            "EventType": "CONTROL",
+            "Action": "STOP",
+            "TimerId": "crm-cti-caller-status",
+            "Timestamp": timerStopTime.toISOString(),
+            "source": "agent-buddy",
+            "widgetId": "crm-agent-cti-plugin"
+        };
+        window.parent.postMessage(fallbackPayload, "*");
+        addLog('⏱️ Timer stop verzonden via fallback');
     }
 }
 

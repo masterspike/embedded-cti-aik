@@ -114,7 +114,32 @@ function sendCallEndToSAP(phoneNumber, callId) {
         "Reason": "Call terminated by agent"
     };
     
-    return sendToSAPServiceCloud(sapPayload);
+    // Send call end payload
+    const result = sendToSAPServiceCloud(sapPayload);
+    
+    // Also send timer stop command
+    sendTimerStopToSAP();
+    
+    return result;
+}
+
+/**
+ * Send timer stop command to SAP Service Cloud
+ */
+function sendTimerStopToSAP() {
+    const timerStopPayload = {
+        "Type": "TIMER",
+        "EventType": "CONTROL",
+        "Action": "STOP",
+        "TimerId": "crm-cti-caller-status",
+        "Timestamp": new Date().toISOString(),
+        "source": "agent-buddy",
+        "widgetId": "crm-agent-cti-plugin",
+        "agentId": getAgentId(),
+        "sessionId": getSessionId()
+    };
+    
+    return sendToSAPServiceCloud(timerStopPayload);
 }
 
 /**

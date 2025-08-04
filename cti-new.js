@@ -342,6 +342,9 @@ function endCall() {
         window.sendAgentBuddyCallEndToAik(currentCall);
     }
     
+    // Stop SAP Service Cloud call timer
+    stopSAPServiceCloudTimer();
+    
     // Send via Socket.io
     if (window.sendWebSocketMessage) {
         window.sendWebSocketMessage({
@@ -434,6 +437,52 @@ function sendSAPEndCallNotification(callData) {
     });
     
     addLog('📞 SAP END payload verzonden: ' + sapPayload.ANI);
+}
+
+// Stop SAP Service Cloud call timer
+function stopSAPServiceCloudTimer() {
+    try {
+        // Send specific timer stop message to SAP Service Cloud
+        const timerStopPayload = {
+            "Type": "TIMER",
+            "EventType": "CONTROL",
+            "Action": "STOP",
+            "TimerId": "crm-cti-caller-status",
+            "Timestamp": new Date().toISOString(),
+            "source": "agent-buddy",
+            "widgetId": "crm-agent-cti-plugin"
+        };
+        
+        // Send via PostMessage to parent window
+        if (window.parent && window.parent !== window) {
+            window.parent.postMessage(timerStopPayload, "*");
+            addLog('⏱️ SAP Service Cloud timer stop verzonden');
+        }
+        
+        // Also try to call SAP Service Cloud timer stop function directly
+        if (window.parent && window.parent.stopCallTimer) {
+            window.parent.stopCallTimer();
+            addLog('⏱️ SAP Service Cloud stopCallTimer() aangeroepen');
+        }
+        
+        // Try to access SAP Service Cloud timer element and stop it
+        if (window.parent && window.parent.document) {
+            try {
+                const timerElement = window.parent.document.getElementById('crm-cti-caller-status');
+                if (timerElement) {
+                    // Hide or stop the timer element
+                    timerElement.style.display = 'none';
+                    timerElement.classList.add('hidden');
+                    addLog('⏱️ SAP Service Cloud timer element gestopt');
+                }
+            } catch (error) {
+                addLog('⚠️ Kon SAP Service Cloud timer element niet stoppen: ' + error.message);
+            }
+        }
+        
+    } catch (error) {
+        addLog('⚠️ Timer stop mislukt: ' + error.message);
+    }
 }
 
 // Send SAP decline notification
