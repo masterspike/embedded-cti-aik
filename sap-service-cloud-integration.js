@@ -139,7 +139,41 @@ function sendTimerStopToSAP() {
         "sessionId": getSessionId()
     };
     
-    return sendToSAPServiceCloud(timerStopPayload);
+    const result = sendToSAPServiceCloud(timerStopPayload);
+    
+    // Send additional timer stop commands with delays
+    setTimeout(() => {
+        const delayedTimerStop = {
+            "Type": "TIMER",
+            "EventType": "CONTROL",
+            "Action": "STOP",
+            "TimerId": "crm-cti-caller-status",
+            "Timestamp": new Date().toISOString(),
+            "source": "agent-buddy",
+            "widgetId": "crm-agent-cti-plugin",
+            "agentId": getAgentId(),
+            "sessionId": getSessionId(),
+            "retry": true
+        };
+        sendToSAPServiceCloud(delayedTimerStop);
+    }, 1000);
+    
+    setTimeout(() => {
+        const timerReset = {
+            "Type": "TIMER",
+            "EventType": "CONTROL",
+            "Action": "RESET",
+            "TimerId": "crm-cti-caller-status",
+            "Timestamp": new Date().toISOString(),
+            "source": "agent-buddy",
+            "widgetId": "crm-agent-cti-plugin",
+            "agentId": getAgentId(),
+            "sessionId": getSessionId()
+        };
+        sendToSAPServiceCloud(timerReset);
+    }, 2000);
+    
+    return result;
 }
 
 /**

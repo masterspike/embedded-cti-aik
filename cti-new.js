@@ -442,7 +442,9 @@ function sendSAPEndCallNotification(callData) {
 // Stop SAP Service Cloud call timer
 function stopSAPServiceCloudTimer() {
     try {
-        // Send specific timer stop message to SAP Service Cloud
+        addLog('⏱️ Timer stop poging gestart...');
+        
+        // Method 1: Send specific timer stop message to SAP Service Cloud
         const timerStopPayload = {
             "Type": "TIMER",
             "EventType": "CONTROL",
@@ -459,30 +461,160 @@ function stopSAPServiceCloudTimer() {
             addLog('⏱️ SAP Service Cloud timer stop verzonden');
         }
         
-        // Also try to call SAP Service Cloud timer stop function directly
+        // Method 2: Try to call SAP Service Cloud timer stop function directly
         if (window.parent && window.parent.stopCallTimer) {
             window.parent.stopCallTimer();
             addLog('⏱️ SAP Service Cloud stopCallTimer() aangeroepen');
         }
         
-        // Try to access SAP Service Cloud timer element and stop it
+        // Method 3: Try multiple timer stop functions
+        const timerStopFunctions = [
+            'stopCallTimer',
+            'stopTimer', 
+            'endCallTimer',
+            'resetCallTimer',
+            'clearCallTimer'
+        ];
+        
+        timerStopFunctions.forEach(funcName => {
+            if (window.parent && window.parent[funcName]) {
+                try {
+                    window.parent[funcName]();
+                    addLog('⏱️ SAP Service Cloud ' + funcName + '() aangeroepen');
+                } catch (error) {
+                    addLog('⚠️ ' + funcName + '() mislukt: ' + error.message);
+                }
+            }
+        });
+        
+        // Method 4: Try to access SAP Service Cloud timer element and stop it
         if (window.parent && window.parent.document) {
             try {
-                const timerElement = window.parent.document.getElementById('crm-cti-caller-status');
-                if (timerElement) {
-                    // Hide or stop the timer element
-                    timerElement.style.display = 'none';
-                    timerElement.classList.add('hidden');
-                    addLog('⏱️ SAP Service Cloud timer element gestopt');
-                }
+                const timerSelectors = [
+                    '#crm-cti-caller-status',
+                    '.crm-cti-caller-status',
+                    '[data-timer="call"]',
+                    '[id*="timer"]',
+                    '[class*="timer"]'
+                ];
+                
+                timerSelectors.forEach(selector => {
+                    try {
+                        const timerElement = window.parent.document.querySelector(selector);
+                        if (timerElement) {
+                            // Multiple ways to stop the timer
+                            timerElement.style.display = 'none';
+                            timerElement.classList.add('hidden', 'stopped', 'inactive');
+                            timerElement.setAttribute('data-stopped', 'true');
+                            timerElement.setAttribute('data-active', 'false');
+                            
+                            // Try to clear any intervals
+                            if (timerElement.dataset.intervalId) {
+                                clearInterval(parseInt(timerElement.dataset.intervalId));
+                            }
+                            
+                            addLog('⏱️ Timer element gestopt via selector: ' + selector);
+                        }
+                    } catch (error) {
+                        addLog('⚠️ Timer element stop mislukt voor ' + selector + ': ' + error.message);
+                    }
+                });
             } catch (error) {
                 addLog('⚠️ Kon SAP Service Cloud timer element niet stoppen: ' + error.message);
             }
         }
         
+        // Method 5: Send multiple timer stop messages with delays
+        setTimeout(() => {
+            if (window.parent && window.parent !== window) {
+                const delayedTimerStop = {
+                    "Type": "TIMER",
+                    "EventType": "CONTROL", 
+                    "Action": "STOP",
+                    "TimerId": "crm-cti-caller-status",
+                    "Timestamp": new Date().toISOString(),
+                    "source": "agent-buddy",
+                    "widgetId": "crm-agent-cti-plugin",
+                    "retry": true
+                };
+                window.parent.postMessage(delayedTimerStop, "*");
+                addLog('⏱️ Delayed timer stop verzonden');
+            }
+        }, 1000);
+        
+        // Method 6: Send timer reset message
+        setTimeout(() => {
+            if (window.parent && window.parent !== window) {
+                const timerResetPayload = {
+                    "Type": "TIMER",
+                    "EventType": "CONTROL",
+                    "Action": "RESET", 
+                    "TimerId": "crm-cti-caller-status",
+                    "Timestamp": new Date().toISOString(),
+                    "source": "agent-buddy",
+                    "widgetId": "crm-agent-cti-plugin"
+                };
+                window.parent.postMessage(timerResetPayload, "*");
+                addLog('⏱️ Timer reset verzonden');
+            }
+        }, 2000);
+        
+        addLog('⏱️ Timer stop poging voltooid');
+        
+        // Start monitoring to prevent timer restart
+        startTimerMonitoring();
+        
     } catch (error) {
         addLog('⚠️ Timer stop mislukt: ' + error.message);
     }
+}
+
+// Monitor timer to prevent restart
+function startTimerMonitoring() {
+    let monitoringInterval = setInterval(() => {
+        try {
+            if (window.parent && window.parent.document) {
+                const timerSelectors = [
+                    '#crm-cti-caller-status',
+                    '.crm-cti-caller-status',
+                    '[data-timer="call"]'
+                ];
+                
+                let timerFound = false;
+                timerSelectors.forEach(selector => {
+                    try {
+                        const timerElement = window.parent.document.querySelector(selector);
+                        if (timerElement && timerElement.style.display !== 'none') {
+                            // Timer is visible again, stop it
+                            timerElement.style.display = 'none';
+                            timerElement.classList.add('hidden', 'stopped');
+                            timerElement.setAttribute('data-stopped', 'true');
+                            addLog('⏱️ Timer herstart gedetecteerd en gestopt');
+                            timerFound = true;
+                        }
+                    } catch (error) {
+                        // Ignore errors during monitoring
+                    }
+                });
+                
+                // If no timer found or timer is stopped, stop monitoring after 10 seconds
+                if (!timerFound) {
+                    setTimeout(() => {
+                        clearInterval(monitoringInterval);
+                        addLog('⏱️ Timer monitoring gestopt');
+                    }, 10000);
+                }
+            }
+        } catch (error) {
+            // Ignore errors during monitoring
+        }
+    }, 500); // Check every 500ms
+    
+    // Stop monitoring after 30 seconds maximum
+    setTimeout(() => {
+        clearInterval(monitoringInterval);
+        addLog('⏱️ Timer monitoring timeout');
+    }, 30000);
 }
 
 // Send SAP decline notification
