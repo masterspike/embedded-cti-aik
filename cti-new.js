@@ -79,6 +79,7 @@ function handleIncomingCall(callData) {
     const incomingNumber = document.getElementById('incomingNumber');
     const callTime = document.getElementById('callTime');
     const callStatus = document.getElementById('callStatus');
+    const agentId = document.getElementById('agentId');
     
     if (incomingNumber) {
         incomingNumber.textContent = callData.phoneNumber || 'Onbekend';
@@ -88,6 +89,13 @@ function handleIncomingCall(callData) {
     }
     if (callStatus) {
         callStatus.textContent = 'Wachtend';
+    }
+    if (agentId) {
+        // Get agent ID from SAP Service Cloud or generate one
+        const currentAgentId = window.getAgentId ? window.getAgentId() : 
+                             (window.parent && window.parent.getAgentId ? window.parent.getAgentId() : 
+                             'AGENT-' + Math.random().toString(36).substr(2, 9));
+        agentId.textContent = currentAgentId;
     }
     
     // Show call notification
@@ -181,10 +189,19 @@ function acceptCall() {
     
     addLog('✅ Call geaccepteerd: ' + currentCall.phoneNumber);
     
-    // Update call status
+    // Update call status and agent ID
     const callStatus = document.getElementById('callStatus');
+    const agentId = document.getElementById('agentId');
+    
     if (callStatus) {
         callStatus.textContent = 'Geaccepteerd';
+    }
+    if (agentId) {
+        // Get agent ID from SAP Service Cloud or generate one
+        const currentAgentId = window.getAgentId ? window.getAgentId() : 
+                             (window.parent && window.parent.getAgentId ? window.parent.getAgentId() : 
+                             'AGENT-' + Math.random().toString(36).substr(2, 9));
+        agentId.textContent = currentAgentId;
     }
     
     // Identify customer in SAP
