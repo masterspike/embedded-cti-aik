@@ -47,14 +47,22 @@ function initializeSAPIntegration() {
 function resetCallButtons() {
     const acceptBtn = document.getElementById('acceptButton');
     const declineBtn = document.getElementById('declineButton');
+    const endCallBtn = document.getElementById('endCallButton');
     
     if (acceptBtn) {
         acceptBtn.disabled = false;
         acceptBtn.classList.remove('sap-button-disabled');
+        acceptBtn.style.display = 'inline-flex';
     }
     if (declineBtn) {
         declineBtn.disabled = false;
         declineBtn.classList.remove('sap-button-disabled');
+        declineBtn.style.display = 'inline-flex';
+    }
+    if (endCallBtn) {
+        endCallBtn.disabled = true;
+        endCallBtn.classList.add('sap-button-disabled');
+        endCallBtn.style.display = 'none';
     }
     
     addLog('🔄 Call knoppen gereset voor nieuwe call');
@@ -204,31 +212,34 @@ function acceptCall() {
         });
     }
     
-    // Disable buttons
+    // Disable accept/decline buttons and show end call button
     const acceptBtn = document.getElementById('acceptButton');
     const declineBtn = document.getElementById('declineButton');
+    const endCallBtn = document.getElementById('endCallButton');
+    
     if (acceptBtn) {
         acceptBtn.disabled = true;
         acceptBtn.classList.add('sap-button-disabled');
+        acceptBtn.style.display = 'none';
     }
     if (declineBtn) {
         declineBtn.disabled = true;
         declineBtn.classList.add('sap-button-disabled');
+        declineBtn.style.display = 'none';
+    }
+    if (endCallBtn) {
+        endCallBtn.disabled = false;
+        endCallBtn.classList.remove('sap-button-disabled');
+        endCallBtn.style.display = 'inline-flex';
     }
     
-    // Hide call notification after delay
-    setTimeout(() => {
-        const callNotification = document.getElementById('callNotification');
-        const noCallMessage = document.getElementById('noCallMessage');
-        
-        if (callNotification) {
-            callNotification.classList.add('sap-hidden');
-        }
-        if (noCallMessage) {
-            noCallMessage.classList.remove('sap-hidden');
-        }
-        currentCall = null;
-    }, 3000);
+    // Update call status to show call is active
+    if (callStatus) {
+        callStatus.textContent = 'Actief';
+    }
+    
+    // Set call start time for duration calculation
+    currentCall.startTime = Date.now();
     
     showToast('✅ Call geaccepteerd en naar SAP verzonden!');
 }
@@ -236,6 +247,7 @@ function acceptCall() {
 // Make functions globally available
 window.acceptCall = acceptCall;
 window.declineCall = declineCall;
+window.endCall = endCall;
 window.testSapConnection = testSapConnection;
 window.simulateIncomingCall = simulateIncomingCall;
 
@@ -303,6 +315,123 @@ function declineCall() {
     }, 3000);
     
     showToast('❌ Call afgewezen');
+}
+
+// End call session
+function endCall() {
+    if (!currentCall) return;
+    
+    addLog('📞 Call beëindigd: ' + currentCall.phoneNumber);
+    
+    // Update call status
+    const callStatus = document.getElementById('callStatus');
+    if (callStatus) {
+        callStatus.textContent = 'Beëindigd';
+    }
+    
+    // Send SAP end call notification
+    sendSAPEndCallNotification(currentCall);
+    
+    // Send to SAP Service Cloud parent window
+    if (window.sendCallEndToSAP) {
+        window.sendCallEndToSAP(currentCall.phoneNumber, currentCall.callId);
+    }
+    
+    // Send to Aik using official SAP integration
+    if (window.sendAgentBuddyCallEndToAik) {
+        window.sendAgentBuddyCallEndToAik(currentCall);
+    }
+    
+    // Send via Socket.io
+    if (window.sendWebSocketMessage) {
+        window.sendWebSocketMessage({
+            type: 'CALL_ENDED',
+            phoneNumber: currentCall.phoneNumber,
+            callId: currentCall.callId
+        });
+    }
+    
+    // Disable all call buttons
+    const acceptBtn = document.getElementById('acceptButton');
+    const declineBtn = document.getElementById('declineButton');
+    const endCallBtn = document.getElementById('endCallButton');
+    
+    if (acceptBtn) {
+        acceptBtn.disabled = true;
+        acceptBtn.classList.add('sap-button-disabled');
+    }
+    if (declineBtn) {
+        declineBtn.disabled = true;
+        declineBtn.classList.add('sap-button-disabled');
+    }
+    if (endCallBtn) {
+        endCallBtn.disabled = true;
+        endCallBtn.classList.add('sap-button-disabled');
+    }
+    
+    // Hide call notification after delay
+    setTimeout(() => {
+        const callNotification = document.getElementById('callNotification');
+        const noCallMessage = document.getElementById('noCallMessage');
+        
+        if (callNotification) {
+            callNotification.classList.add('sap-hidden');
+        }
+        if (noCallMessage) {
+            noCallMessage.classList.remove('sap-hidden');
+        }
+        currentCall = null;
+    }, 3000);
+    
+    showToast('📞 Call beëindigd');
+}
+
+// Send SAP end call notification
+function sendSAPEndCallNotification(callData) {
+    const sapPayload = {
+        "Type": "CALL",
+        "EventType": "INBOUND",
+        "Action": "END", 
+        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31 651616126',
+        "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
+        "Timestamp": new Date().toISOString(),
+        "CallDuration": Math.floor((Date.now() - (currentCall.startTime || Date.now())) / 1000)
+    };
+    
+    // Send via PostMessage to parent window
+    sendDirectPostMessage(sapPayload);
+    
+    // Send via Socket.io if available
+    if (window.socket && window.socket.connected) {
+        const socketMessage = {
+            type: 'SAP_INTEGRATION',
+            data: sapPayload
+        };
+        window.socket.emit('message', socketMessage);
+        addLog('📡 SAP END payload verzonden via Socket.io');
+    }
+    
+    // Send via HTTP to SAP
+    sendSAPPayloadToSAP(sapPayload).then(success => {
+        if (success) {
+            addLog('✅ SAP END verzonden voor call: ' + sapPayload.ANI);
+            
+            // Update SAP status
+            const sapStatus = document.getElementById('sapStatus');
+            const lastSapAction = document.getElementById('lastSapAction');
+            
+            if (sapStatus) {
+                sapStatus.textContent = 'Call beëindigd';
+            }
+            if (lastSapAction) {
+                lastSapAction.textContent = 'Call beëindigd';
+            }
+        } else {
+            addLog('❌ SAP END mislukt voor call: ' + sapPayload.ANI);
+        }
+    });
+    
+    addLog('📞 SAP END payload verzonden: ' + sapPayload.ANI);
 }
 
 // Send SAP decline notification

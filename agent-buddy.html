@@ -44,6 +44,12 @@
             --sapButton_Reject_Hover_Background: #fef0f0;
             --sapButton_Reject_Hover_BorderColor: #bb0000;
             --sapButton_Reject_Hover_TextColor: #bb0000;
+            --sapButton_End_Background: #ffffff;
+            --sapButton_End_BorderColor: #e9730c;
+            --sapButton_End_TextColor: #e9730c;
+            --sapButton_End_Hover_Background: #fff8f0;
+            --sapButton_End_Hover_BorderColor: #e9730c;
+            --sapButton_End_Hover_TextColor: #e9730c;
             --sapPositiveColor: #107c3e;
             --sapNegativeColor: #bb0000;
             --sapCriticalColor: #e9730c;
@@ -269,6 +275,18 @@
             color: var(--sapButton_Reject_Hover_TextColor);
         }
 
+        .sap-button-end {
+            background: var(--sapButton_End_Background);
+            border-color: var(--sapButton_End_BorderColor);
+            color: var(--sapButton_End_TextColor);
+        }
+
+        .sap-button-end:hover {
+            background: var(--sapButton_End_Hover_Background);
+            border-color: var(--sapButton_End_Hover_BorderColor);
+            color: var(--sapButton_End_Hover_TextColor);
+        }
+
         .sap-button-emphasized {
             background: var(--sapBrandColor);
             border-color: var(--sapBrandColor);
@@ -475,6 +493,10 @@
                 <button class="sap-button sap-button-reject" id="declineButton" onclick="declineCall()">
                     <span class="sap-icon">❌</span>
                     <span>Afwijzen</span>
+                </button>
+                <button class="sap-button sap-button-end" id="endCallButton" onclick="endCall()" style="display: none;">
+                    <span class="sap-icon">📞</span>
+                    <span>Call Beëindigen</span>
                 </button>
             </div>
         </div>

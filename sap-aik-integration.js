@@ -83,6 +83,16 @@ aik.cti.integration.prototype.sendCustomerIdentificationToAik = function(paramet
 };
 
 /**
+ * Send call end to Aik
+ * @param parameters - Call end parameters
+ */
+aik.cti.integration.prototype.sendCallEndToAik = function(parameters) {
+    var payload = this._formJSONPayload(parameters);
+    this._doCall(payload);
+    addLog('📞 Call end verzonden naar Aik: ' + parameters.ANI);
+};
+
+/**
  * Post message to parent window (Aik)
  * @param sPayload - Payload to send
  * @private
@@ -566,10 +576,55 @@ function initializeAgentBuddyAikIntegration() {
     }
 }
 
+/**
+ * Send call end to Aik with Agent Buddy format
+ * @param callData - Call data object
+ */
+function sendAgentBuddyCallEndToAik(callData) {
+    try {
+        var aikIntegration = aik.cti.integration.getInstance();
+        
+        var parameters = {
+            "Type": "CALL",
+            "EventType": "INBOUND",
+            "Action": "END",
+            "ANI": callData.phoneNumber,
+            "ExternalReferenceID": callData.callId,
+            "Timestamp": new Date().toISOString(),
+            "CallDuration": Math.floor((Date.now() - (callData.startTime || Date.now())) / 1000),
+            "Source": "agent-buddy"
+        };
+        
+        aikIntegration.sendCallEndToAik(parameters);
+        addLog('📞 Call end verzonden naar Aik: ' + callData.phoneNumber);
+    } catch (error) {
+        console.warn('⚠️ Aik integratie niet beschikbaar:', error.message);
+        addLog('⚠️ Aik integratie niet beschikbaar - gebruik fallback');
+        
+        // Fallback: direct PostMessage
+        if (window.parent && window.parent !== window) {
+            var fallbackPayload = {
+                "Type": "CALL",
+                "EventType": "INBOUND",
+                "Action": "END",
+                "ANI": callData.phoneNumber,
+                "ExternalReferenceID": callData.callId,
+                "Timestamp": new Date().toISOString(),
+                "CallDuration": Math.floor((Date.now() - (callData.startTime || Date.now())) / 1000),
+                "source": "agent-buddy",
+                "widgetId": "crm-agent-cti-plugin"
+            };
+            window.parent.postMessage(fallbackPayload, "*");
+            addLog('📞 Call end verzonden via fallback: ' + callData.phoneNumber);
+        }
+    }
+}
+
 // Export functions for global access
 window.sendAgentBuddyIncomingCallToAik = sendAgentBuddyIncomingCallToAik;
 window.sendAgentBuddyCallAcceptToAik = sendAgentBuddyCallAcceptToAik;
 window.sendAgentBuddyCallDeclineToAik = sendAgentBuddyCallDeclineToAik;
+window.sendAgentBuddyCallEndToAik = sendAgentBuddyCallEndToAik;
 window.sendAgentBuddyCustomerIdentificationToAik = sendAgentBuddyCustomerIdentificationToAik;
 window.initializeAgentBuddyAikIntegration = initializeAgentBuddyAikIntegration;
 
