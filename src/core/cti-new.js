@@ -112,20 +112,20 @@ function handleIncomingCall(callData) {
     addLog('📞 Incoming call: ' + callData.phoneNumber);
     showToast('🔔 Nieuwe incoming call!');
     
-    // Send SAP NOTIFY for incoming call
+    // Send SAP NOTIFY for incoming call (NO customer identification yet)
     sendSAPIncomingNotification(callData);
     
-    // Send to SAP Service Cloud parent window
+    // Send to SAP Service Cloud parent window (notification only)
     if (window.sendCallNotificationToSAP) {
         window.sendCallNotificationToSAP(callData.phoneNumber, callData.callId);
     }
     
-    // Send to Aik using official SAP integration
+    // Send to Aik using official SAP integration (notification only)
     if (window.sendAgentBuddyIncomingCallToAik) {
         window.sendAgentBuddyIncomingCallToAik(callData);
     }
     
-    // Also send via direct HTTP to SAP
+    // Also send via direct HTTP to SAP (notification only)
     const sapNotifyPayload = {
         "Type": "CALL",
         "EventType": "INBOUND",
@@ -135,17 +135,17 @@ function handleIncomingCall(callData) {
         "Timestamp": new Date().toISOString()
     };
     
-    // Send NOTIFY to SAP via HTTP
+    // Send NOTIFY to SAP via HTTP (notification only, no customer lookup)
     sendSAPPayloadToSAP(sapNotifyPayload).then(success => {
         if (success) {
-            addLog('✅ SAP NOTIFY verzonden voor incoming call');
+            addLog('✅ SAP NOTIFY verzonden voor incoming call (geen customer lookup)');
             
             // Update SAP status
             const sapStatus = document.getElementById('sapStatus');
             const lastSapAction = document.getElementById('lastSapAction');
             
             if (sapStatus) {
-                sapStatus.textContent = 'Actief';
+                sapStatus.textContent = 'Notificatie ontvangen';
             }
             if (lastSapAction) {
                 lastSapAction.textContent = 'Call notificatie';
@@ -204,7 +204,8 @@ function acceptCall() {
         agentId.textContent = currentAgentId;
     }
     
-    // Identify customer in SAP
+    // Identify customer in SAP Service Cloud (ONLY when call is accepted)
+    addLog('🔍 Customer identificatie starten voor: ' + currentCall.phoneNumber);
     identifyCustomer(currentCall.phoneNumber);
     
     // Send to SAP Service Cloud
@@ -681,9 +682,9 @@ function sendSAPDeclineNotification(callData) {
     addLog('❌ SAP DECLINE payload verzonden: ' + sapPayload.ANI);
 }
 
-// Identify customer by phone number
+// Identify customer by phone number (ONLY called when call is accepted)
 function identifyCustomer(phoneNumber) {
-    addLog('🔍 Klant identificeren voor: ' + phoneNumber);
+    addLog('🔍 Customer identificatie starten in SAP Service Cloud voor: ' + phoneNumber);
     
     // Simulate customer lookup (replace with actual SAP API call)
     customerData = {

@@ -177,7 +177,7 @@ function sendTimerStopToSAP() {
 }
 
 /**
- * Send customer identification to SAP Service Cloud
+ * Send customer identification to SAP Service Cloud (ONLY when call is accepted)
  */
 function sendCustomerIdentificationToSAP(phoneNumber, customerData) {
     const sapPayload = {
