@@ -17,8 +17,16 @@ app.use((req, res, next) => {
     ];
     
     const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin) || !origin) {
-        res.header('Access-Control-Allow-Origin', origin || '*');
+    if (allowedOrigins.includes(origin)) {
+        res.header('Access-Control-Allow-Origin', origin);
+    } else if (!origin) {
+        // For requests without origin (like server-to-server)
+        res.header('Access-Control-Allow-Origin', '*');
+    } else {
+        // Origin not allowed
+        console.log('❌ CORS blocked origin:', origin);
+        res.status(403).json({ error: 'CORS not allowed' });
+        return;
     }
     
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
@@ -41,13 +49,25 @@ app.use((req, res, next) => {
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: [
-            "https://glowing-frangollo-44ac94.netlify.app",
-            "http://localhost:3000",
-            "http://localhost:3001",
-            "http://127.0.0.1:3000",
-            "http://127.0.0.1:3001"
-        ],
+        origin: function (origin, callback) {
+            const allowedOrigins = [
+                "https://glowing-frangollo-44ac94.netlify.app",
+                "http://localhost:3000",
+                "http://localhost:3001",
+                "http://127.0.0.1:3000",
+                "http://127.0.0.1:3001"
+            ];
+            
+            // Allow requests with no origin (like mobile apps or curl requests)
+            if (!origin) return callback(null, true);
+            
+            if (allowedOrigins.indexOf(origin) !== -1) {
+                callback(null, true);
+            } else {
+                console.log('❌ Socket.io CORS blocked origin:', origin);
+                callback(new Error('Not allowed by CORS'));
+            }
+        },
         methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
         credentials: true,
         allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"]
