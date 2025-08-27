@@ -1,0 +1,1274 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>AGENT_BUDDY_SSCV2_INTEGRATION_DOCUMENTATION</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+<h1 id="agent-buddy---sscv2-integration-documentation">Agent Buddy -
+SSCV2 Integration Documentation</h1>
+<h2 id="table-of-contents">📋 Table of Contents</h2>
+<ol type="1">
+<li><a href="#overview">Overview</a></li>
+<li><a href="#architecture">Architecture</a></li>
+<li><a href="#features">Features</a></li>
+<li><a href="#installation--deployment">Installation &amp;
+Deployment</a></li>
+<li><a href="#configuration">Configuration</a></li>
+<li><a href="#call-flow">Call Flow</a></li>
+<li><a href="#sap-integration">SAP Integration</a></li>
+<li><a href="#api-reference">API Reference</a></li>
+<li><a href="#troubleshooting">Troubleshooting</a></li>
+<li><a href="#development-guide">Development Guide</a></li>
+</ol>
+<hr />
+<h2 id="overview">🎯 Overview</h2>
+<h3 id="what-is-agent-buddy">What is Agent Buddy?</h3>
+<p>Agent Buddy is a comprehensive CTI (Computer Telephony Integration)
+widget designed for seamless integration with SAP Service Cloud (SSCV2).
+It provides real-time call management capabilities for agents, including
+call acceptance, rejection, session termination, and customer
+identification.</p>
+<h3 id="key-benefits">Key Benefits</h3>
+<ul>
+<li><strong>Real-time Call Management</strong>: Accept, decline, and end
+calls with instant feedback</li>
+<li><strong>SAP Service Cloud Integration</strong>: Native integration
+with SSCV2 using official SAP patterns</li>
+<li><strong>Customer Identification</strong>: Automatic customer lookup
+and display</li>
+<li><strong>Timer Management</strong>: Automatic call timer control with
+restart prevention</li>
+<li><strong>Multi-Platform Support</strong>: Works in embedded iframe
+and standalone modes</li>
+<li><strong>Robust Error Handling</strong>: Comprehensive fallback
+mechanisms and error recovery</li>
+</ul>
+<h3 id="technology-stack">Technology Stack</h3>
+<ul>
+<li><strong>Frontend</strong>: HTML5, CSS3, JavaScript (ES6+)</li>
+<li><strong>Real-time Communication</strong>: Socket.io</li>
+<li><strong>SAP Integration</strong>: SAP Service Cloud API, PostMessage
+API</li>
+<li><strong>Deployment</strong>: Netlify (Frontend), Render.com
+(Backend)</li>
+<li><strong>Styling</strong>: SAP Fiori 3 Design System</li>
+</ul>
+<hr />
+<h2 id="architecture">🏗️ Architecture</h2>
+<h3 id="system-components">System Components</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────┐
+│                    Agent Buddy Widget                      │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐       │
+│  │   Call UI   │  │ SAP Config  │  │ Socket.io   │       │
+│  │             │  │             │  │  Client     │       │
+│  └─────────────┘  └─────────────┘  └─────────────┘       │
+├─────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐       │
+│  │   CTI New   │  │ SAP Service │  │ SAP Aik     │       │
+│  │             │  │   Cloud     │  │ Integration │       │
+│  └─────────────┘  └─────────────┘  └─────────────┘       │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                   Socket.io Server                         │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐       │
+│  │   Express   │  │   Socket.io │  │   Health    │       │
+│  │   Server    │  │   Events    │  │   Endpoint  │       │
+│  └─────────────┘  └─────────────┘  └─────────────┘       │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│                SAP Service Cloud (SSCV2)                   │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐       │
+│  │   Call API  │  │ Customer    │  │ Timer       │       │
+│  │             │  │   Data      │  │ Management  │       │
+│  └─────────────┘  └─────────────┘  └─────────────┘       │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="file-structure">File Structure</h3>
+<pre><code>embedded-cti-deploy/
+├── agent-buddy.html              # Main widget interface
+├── app-new.js                    # Main application logic
+├── cti-new.js                    # CTI and call management
+├── socket-new.js                 # Socket.io client
+├── config.js                     # Configuration management
+├── sap-service-cloud-integration.js  # SSCV2 integration
+├── sap-aik-integration.js        # Official SAP integration
+├── postmessage-integration.js    # PostMessage handling
+├── socketio-server.js            # Socket.io server
+├── netlify.toml                  # Netlify configuration
+├── package.json                  # Dependencies
+└── README.md                     # Project documentation</code></pre>
+<hr />
+<h2 id="features">✨ Features</h2>
+<h3 id="call-management">Call Management</h3>
+<h4 id="incoming-call-handling">1. Incoming Call Handling</h4>
+<ul>
+<li><strong>Real-time Notification</strong>: Instant call notification
+with phone number display</li>
+<li><strong>Call Status Tracking</strong>: Visual status updates
+(Waiting, Accepted, Declined, Ended)</li>
+<li><strong>Agent ID Display</strong>: Automatic agent identification
+and display</li>
+<li><strong>Call Duration Tracking</strong>: Accurate call timing with
+start/end timestamps</li>
+</ul>
+<h4 id="call-actions">2. Call Actions</h4>
+<ul>
+<li><strong>Accept Call</strong>: Accept incoming calls with SAP
+integration</li>
+<li><strong>Decline Call</strong>: Reject calls with proper SAP
+notification</li>
+<li><strong>End Call</strong>: Terminate active calls with session
+cleanup</li>
+<li><strong>Button State Management</strong>: Dynamic button
+enabling/disabling</li>
+</ul>
+<h4 id="timer-management">3. Timer Management</h4>
+<ul>
+<li><strong>Automatic Timer Control</strong>: Start/stop call
+timers</li>
+<li><strong>Restart Prevention</strong>: Monitor and prevent timer
+restarts</li>
+<li><strong>Multiple Stop Methods</strong>: 6 different methods to
+ensure timer stops</li>
+<li><strong>Timer Monitoring</strong>: Continuous monitoring for 30
+seconds</li>
+</ul>
+<h3 id="sap-integration">SAP Integration</h3>
+<h4 id="sap-service-cloud-sscv2">1. SAP Service Cloud (SSCV2)</h4>
+<ul>
+<li><strong>Direct API Calls</strong>: HTTP requests to SAP
+endpoints</li>
+<li><strong>PostMessage Communication</strong>: Iframe communication
+with parent</li>
+<li><strong>Basic Authentication</strong>: Secure API access</li>
+<li><strong>Payload Management</strong>: Structured SAP-compliant
+payloads</li>
+</ul>
+<h4 id="aik-integration-official-sap-pattern">2. Aik Integration
+(Official SAP Pattern)</h4>
+<ul>
+<li><strong>Singleton Pattern</strong>: Consistent state management</li>
+<li><strong>JSON/XML Payloads</strong>: Flexible payload formats</li>
+<li><strong>Fallback Mechanisms</strong>: Robust error handling</li>
+<li><strong>Event Broadcasting</strong>: Real-time event
+distribution</li>
+</ul>
+<h4 id="customer-identification">3. Customer Identification</h4>
+<ul>
+<li><strong>Automatic Lookup</strong>: Customer data retrieval by phone
+number</li>
+<li><strong>Customer Display</strong>: Name, ID, email, company
+information</li>
+<li><strong>SAP Integration</strong>: Customer data sent to SAP Service
+Cloud</li>
+<li><strong>Data Validation</strong>: Input validation and error
+handling</li>
+</ul>
+<h3 id="uiux-features">UI/UX Features</h3>
+<h4 id="sap-fiori-3-design">1. SAP Fiori 3 Design</h4>
+<ul>
+<li><strong>Modern Interface</strong>: SAP Fiori 3 design system</li>
+<li><strong>Responsive Layout</strong>: Works on all screen sizes</li>
+<li><strong>Accessibility</strong>: WCAG compliant design</li>
+<li><strong>Consistent Styling</strong>: SAP brand colors and
+typography</li>
+</ul>
+<h4 id="real-time-updates">2. Real-time Updates</h4>
+<ul>
+<li><strong>Live Status</strong>: Real-time connection status</li>
+<li><strong>Activity Log</strong>: Detailed activity logging</li>
+<li><strong>Toast Notifications</strong>: User-friendly
+notifications</li>
+<li><strong>Progress Indicators</strong>: Visual feedback for
+actions</li>
+</ul>
+<h4 id="configuration-panel">3. Configuration Panel</h4>
+<ul>
+<li><strong>Environment Variables</strong>: Easy configuration
+management</li>
+<li><strong>SAP Credentials</strong>: Secure credential management</li>
+<li><strong>Socket.io Settings</strong>: Real-time connection
+configuration</li>
+<li><strong>Debug Mode</strong>: Development and troubleshooting
+tools</li>
+</ul>
+<hr />
+<h2 id="installation-deployment">🚀 Installation &amp; Deployment</h2>
+<h3 id="prerequisites">Prerequisites</h3>
+<ul>
+<li><strong>Node.js</strong>: Version 16 or higher</li>
+<li><strong>Git</strong>: For version control</li>
+<li><strong>Netlify Account</strong>: For frontend deployment</li>
+<li><strong>Render.com Account</strong>: For backend deployment</li>
+<li><strong>SAP Service Cloud Access</strong>: For production
+integration</li>
+</ul>
+<h3 id="frontend-deployment-netlify">Frontend Deployment (Netlify)</h3>
+<h4 id="repository-setup">1. Repository Setup</h4>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/masterspike/embedded-cti-aik.git</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> embedded-cti-deploy</span></code></pre></div>
+<h4 id="environment-configuration">2. Environment Configuration</h4>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set environment variables in Netlify</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="va">SOCKET_URL</span><span class="op">=</span>https://agent-buddy-socketio.onrender.com</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="va">SAP_ENDPOINT</span><span class="op">=</span>https://your-sap-instance.service.cloud.sap/api/calls</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="va">SAP_USERNAME</span><span class="op">=</span>your-sap-username</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="va">SAP_PASSWORD</span><span class="op">=</span>your-sap-password</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="va">DEFAULT_PHONE</span><span class="op">=</span>+31 <span class="ex">651616126</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="va">DEBUG_MODE</span><span class="op">=</span>true</span></code></pre></div>
+<h4 id="deploy-to-netlify">3. Deploy to Netlify</h4>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install Netlify CLI</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install <span class="at">-g</span> netlify-cli</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Deploy to production</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">netlify</span> deploy <span class="at">--prod</span></span></code></pre></div>
+<h3 id="backend-deployment-render.com">Backend Deployment
+(Render.com)</h3>
+<h4 id="create-render-service">1. Create Render Service</h4>
+<ul>
+<li><strong>Service Type</strong>: Web Service</li>
+<li><strong>Build Command</strong>: <code>npm install</code></li>
+<li><strong>Start Command</strong>:
+<code>node socketio-server.js</code></li>
+<li><strong>Environment</strong>: Node.js</li>
+</ul>
+<h4 id="environment-variables">2. Environment Variables</h4>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="va">PORT</span><span class="op">=</span>10000</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="va">NODE_ENV</span><span class="op">=</span>production</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="va">CORS_ORIGIN</span><span class="op">=</span>https://your-netlify-app.netlify.app</span></code></pre></div>
+<h4 id="deploy-to-render">3. Deploy to Render</h4>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Connect to Render</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add render https://git.render.com/your-service</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Deploy</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push render main</span></code></pre></div>
+<h3 id="local-development">Local Development</h3>
+<h4 id="start-local-server">1. Start Local Server</h4>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install dependencies</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Start Socket.io server</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> socketio-server.js</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Open in browser</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> http://localhost:3000/agent-buddy.html</span></code></pre></div>
+<h4 id="development-configuration">2. Development Configuration</h4>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// config.js - Development settings</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="at">CONFIG</span> <span class="op">=</span> {</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">SOCKET_URL</span><span class="op">:</span> <span class="st">&#39;http://localhost:3000&#39;</span><span class="op">,</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">SAP_ENDPOINT</span><span class="op">:</span> <span class="st">&#39;https://test-sap-instance.service.cloud.sap/api/calls&#39;</span><span class="op">,</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">SAP_USERNAME</span><span class="op">:</span> <span class="st">&#39;test-user&#39;</span><span class="op">,</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">SAP_PASSWORD</span><span class="op">:</span> <span class="st">&#39;test-password&#39;</span><span class="op">,</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">DEFAULT_PHONE</span><span class="op">:</span> <span class="st">&#39;+31 651616126&#39;</span><span class="op">,</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">DEBUG_MODE</span><span class="op">:</span> <span class="kw">true</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div>
+<hr />
+<h2 id="configuration">⚙️ Configuration</h2>
+<h3 id="environment-variables-1">Environment Variables</h3>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 40%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SOCKET_URL</code></td>
+<td>Socket.io server URL</td>
+<td><code>https://agent-buddy-socketio.onrender.com</code></td>
+</tr>
+<tr>
+<td><code>SAP_ENDPOINT</code></td>
+<td>SAP Service Cloud API endpoint</td>
+<td><code>https://my1000354.de1.test.crm.cloud.sap/api/calls</code></td>
+</tr>
+<tr>
+<td><code>SAP_USERNAME</code></td>
+<td>SAP Service Cloud username</td>
+<td><code>your-sap-username</code></td>
+</tr>
+<tr>
+<td><code>SAP_PASSWORD</code></td>
+<td>SAP Service Cloud password</td>
+<td><code>your-sap-password</code></td>
+</tr>
+<tr>
+<td><code>DEFAULT_PHONE</code></td>
+<td>Default phone number for testing</td>
+<td><code>+31 651616126</code></td>
+</tr>
+<tr>
+<td><code>DEBUG_MODE</code></td>
+<td>Enable debug logging</td>
+<td><code>true</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="sap-integration-settings">SAP Integration Settings</h3>
+<h4 id="sap-service-cloud-configuration">1. SAP Service Cloud
+Configuration</h4>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// SAP Service Cloud integration settings</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> sapConfig <span class="op">=</span> {</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">endpoint</span><span class="op">:</span> <span class="st">&#39;https://my1000354.de1.test.crm.cloud.sap/&#39;</span><span class="op">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">username</span><span class="op">:</span> <span class="st">&#39;your-sap-username&#39;</span><span class="op">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">password</span><span class="op">:</span> <span class="st">&#39;your-sap-password&#39;</span><span class="op">,</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">timeout</span><span class="op">:</span> <span class="dv">10000</span><span class="op">,</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">retryAttempts</span><span class="op">:</span> <span class="dv">3</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div>
+<h4 id="aik-integration-settings">2. Aik Integration Settings</h4>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Aik integration settings</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> aikConfig <span class="op">=</span> {</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">widgetId</span><span class="op">:</span> <span class="st">&#39;crm-agent-cti-plugin&#39;</span><span class="op">,</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">source</span><span class="op">:</span> <span class="st">&#39;agent-buddy&#39;</span><span class="op">,</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">version</span><span class="op">:</span> <span class="st">&#39;1.0.0&#39;</span><span class="op">,</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">timeout</span><span class="op">:</span> <span class="dv">5000</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div>
+<h4 id="socket.io-configuration">3. Socket.io Configuration</h4>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Socket.io client settings</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> socketConfig <span class="op">=</span> {</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">url</span><span class="op">:</span> <span class="st">&#39;https://agent-buddy-socketio.onrender.com&#39;</span><span class="op">,</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">options</span><span class="op">:</span> {</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">transports</span><span class="op">:</span> [<span class="st">&#39;websocket&#39;</span><span class="op">,</span> <span class="st">&#39;polling&#39;</span>]<span class="op">,</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">timeout</span><span class="op">:</span> <span class="dv">20000</span><span class="op">,</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">reconnection</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">reconnectionAttempts</span><span class="op">:</span> <span class="dv">5</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div>
+<h3 id="widget-embedding">Widget Embedding</h3>
+<h4 id="iframe-integration">1. Iframe Integration</h4>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- Embed Agent Buddy in SAP Service Cloud --&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">iframe</span><span class="ot"> </span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="ot">    src</span><span class="op">=</span><span class="st">&quot;https://glowing-frangollo-44ac94.netlify.app/agent-buddy.html&quot;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="ot">    width</span><span class="op">=</span><span class="st">&quot;100%&quot;</span><span class="ot"> </span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="ot">    height</span><span class="op">=</span><span class="st">&quot;600px&quot;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="ot">    frameborder</span><span class="op">=</span><span class="st">&quot;0&quot;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="ot">    allow</span><span class="op">=</span><span class="st">&quot;microphone; camera&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">iframe</span><span class="dt">&gt;</span></span></code></pre></div>
+<h4 id="postmessage-communication">2. PostMessage Communication</h4>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Parent window message handling</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="fu">addEventListener</span>(<span class="st">&#39;message&#39;</span><span class="op">,</span> <span class="kw">function</span>(<span class="bu">event</span>) {</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="bu">event</span><span class="op">.</span><span class="at">data</span><span class="op">.</span><span class="at">source</span> <span class="op">===</span> <span class="st">&#39;agent-buddy&#39;</span>) {</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">handleAgentBuddyMessage</span>(<span class="bu">event</span><span class="op">.</span><span class="at">data</span>)<span class="op">;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<hr />
+<h2 id="call-flow">📞 Call Flow</h2>
+<h3 id="complete-call-lifecycle">Complete Call Lifecycle</h3>
+<pre><code>1. Incoming Call
+   ├── Call Notification Display
+   ├── SAP NOTIFY Payload
+   ├── Timer Start
+   └── Agent ID Assignment
+
+2. Call Acceptance
+   ├── Accept Button Click
+   ├── SAP ACCEPT Payload
+   ├── Customer Identification
+   ├── Timer Continue
+   └── End Call Button Show
+
+3. Call Management
+   ├── Real-time Status Updates
+   ├── Customer Data Display
+   ├── Call Duration Tracking
+   └── SAP Integration Updates
+
+4. Call Termination
+   ├── End Call Button Click
+   ├── SAP END Payload
+   ├── Timer Stop (6 methods)
+   ├── Session Cleanup
+   └── UI Reset</code></pre>
+<h3 id="detailed-call-flow">Detailed Call Flow</h3>
+<h4 id="incoming-call-detection">1. Incoming Call Detection</h4>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 1. Socket.io receives incoming call</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">on</span>(<span class="st">&#39;incoming_call&#39;</span><span class="op">,</span> <span class="kw">function</span>(callData) {</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">handleIncomingCall</span>(callData)<span class="op">;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">// 2. Update UI with call information</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">handleIncomingCall</span>(callData) {</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Update call notification</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;incomingNumber&#39;</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> callData<span class="op">.</span><span class="at">phoneNumber</span><span class="op">;</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;callTime&#39;</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toLocaleTimeString</span>()<span class="op">;</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;callStatus&#39;</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">&#39;Wachtend&#39;</span><span class="op">;</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Get and display agent ID</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> agentId <span class="op">=</span> <span class="fu">getAgentId</span>()<span class="op">;</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;agentId&#39;</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> agentId<span class="op">;</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Show call notification</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;callNotification&#39;</span>)<span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">remove</span>(<span class="st">&#39;sap-hidden&#39;</span>)<span class="op">;</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="call-acceptance-process">2. Call Acceptance Process</h4>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 1. User clicks accept button</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">acceptCall</span>() {</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Update call status</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;callStatus&#39;</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="st">&#39;Geaccepteerd&#39;</span><span class="op">;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Send SAP ACCEPT payload</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> sapPayload <span class="op">=</span> {</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Type&quot;</span><span class="op">:</span> <span class="st">&quot;CALL&quot;</span><span class="op">,</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;EventType&quot;</span><span class="op">:</span> <span class="st">&quot;INBOUND&quot;</span><span class="op">,</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Action&quot;</span><span class="op">:</span> <span class="st">&quot;ACCEPT&quot;</span><span class="op">,</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;ANI&quot;</span><span class="op">:</span> currentCall<span class="op">.</span><span class="at">phoneNumber</span><span class="op">,</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;ExternalReferenceID&quot;</span><span class="op">:</span> currentCall<span class="op">.</span><span class="at">callId</span><span class="op">,</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Timestamp&quot;</span><span class="op">:</span> <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>()</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Send to multiple SAP endpoints</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sendToSAPServiceCloud</span>(sapPayload)<span class="op">;</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sendAgentBuddyCallAcceptToAik</span>(currentCall)<span class="op">;</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Identify customer</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">identifyCustomer</span>(currentCall<span class="op">.</span><span class="at">phoneNumber</span>)<span class="op">;</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Show end call button</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>    <span class="fu">showEndCallButton</span>()<span class="op">;</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="customer-identification-1">3. Customer Identification</h4>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">identifyCustomer</span>(phoneNumber) {</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Simulate customer lookup</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> customerData <span class="op">=</span> {</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">name</span><span class="op">:</span> <span class="st">&#39;Indy Vidueel&#39;</span><span class="op">,</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">id</span><span class="op">:</span> <span class="st">&#39;NSR&#39;</span> <span class="op">+</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">floor</span>(<span class="bu">Math</span><span class="op">.</span><span class="fu">random</span>() <span class="op">*</span> <span class="dv">10000</span>)<span class="op">,</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">email</span><span class="op">:</span> <span class="st">&#39;indy.vidueel@ns.nl&#39;</span><span class="op">,</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">company</span><span class="op">:</span> <span class="st">&#39;Indy BV&#39;</span><span class="op">,</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">phoneNumber</span><span class="op">:</span> phoneNumber</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Update customer display</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;customerName&#39;</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> customerData<span class="op">.</span><span class="at">name</span><span class="op">;</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;customerId&#39;</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> customerData<span class="op">.</span><span class="at">id</span><span class="op">;</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;customerEmail&#39;</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> customerData<span class="op">.</span><span class="at">email</span><span class="op">;</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;customerCompany&#39;</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> customerData<span class="op">.</span><span class="at">company</span><span class="op">;</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Send to SAP</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sendAgentBuddyCustomerIdentificationToAik</span>(phoneNumber<span class="op">,</span> customerData)<span class="op">;</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="call-termination">4. Call Termination</h4>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">endCall</span>() {</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Send SAP </span><span class="re">END</span><span class="co"> payload</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> endTime <span class="op">=</span> <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> sapPayload <span class="op">=</span> {</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Type&quot;</span><span class="op">:</span> <span class="st">&quot;CALL&quot;</span><span class="op">,</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;EventType&quot;</span><span class="op">:</span> <span class="st">&quot;INBOUND&quot;</span><span class="op">,</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Action&quot;</span><span class="op">:</span> <span class="st">&quot;END&quot;</span><span class="op">,</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;ANI&quot;</span><span class="op">:</span> currentCall<span class="op">.</span><span class="at">phoneNumber</span><span class="op">,</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;ExternalReferenceID&quot;</span><span class="op">:</span> currentCall<span class="op">.</span><span class="at">callId</span><span class="op">,</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Timestamp&quot;</span><span class="op">:</span> endTime<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;CallDuration&quot;</span><span class="op">:</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">floor</span>((<span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>() <span class="op">-</span> currentCall<span class="op">.</span><span class="at">startTime</span>) <span class="op">/</span> <span class="dv">1000</span>)<span class="op">,</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;interactionEndedOn&quot;</span><span class="op">:</span> endTime<span class="op">.</span><span class="fu">toISOString</span>()</span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Send to SAP</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sendSAPEndCallNotification</span>(currentCall)<span class="op">;</span></span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Stop timer with multiple methods</span></span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stopSAPServiceCloudTimer</span>()<span class="op">;</span></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Reset UI</span></span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">resetCallButtons</span>()<span class="op">;</span></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">hideCallNotification</span>()<span class="op">;</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<hr />
+<h2 id="sap-integration-1">🏢 SAP Integration</h2>
+<h3 id="sap-service-cloud-integration">SAP Service Cloud
+Integration</h3>
+<h4 id="direct-http-api-calls">1. Direct HTTP API Calls</h4>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">sendSAPPayloadToSAP</span>(sapPayload) {</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> {</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="fu">getConfig</span>(<span class="st">&#39;SAP_ENDPOINT&#39;</span>)<span class="op">,</span> {</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>            <span class="dt">method</span><span class="op">:</span> <span class="st">&#39;POST&#39;</span><span class="op">,</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>            <span class="dt">headers</span><span class="op">:</span> {</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">&#39;Content-Type&#39;</span><span class="op">:</span> <span class="st">&#39;application/json&#39;</span><span class="op">,</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">&#39;Authorization&#39;</span><span class="op">:</span> <span class="st">&#39;Basic &#39;</span> <span class="op">+</span> <span class="fu">btoa</span>(<span class="fu">getConfig</span>(<span class="st">&#39;SAP_USERNAME&#39;</span>) <span class="op">+</span> <span class="st">&#39;:&#39;</span> <span class="op">+</span> <span class="fu">getConfig</span>(<span class="st">&#39;SAP_PASSWORD&#39;</span>))</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>            }<span class="op">,</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">body</span><span class="op">:</span> <span class="bu">JSON</span><span class="op">.</span><span class="fu">stringify</span>(sapPayload)</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>        })<span class="op">;</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> response<span class="op">.</span><span class="at">ok</span><span class="op">;</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">catch</span> (error) {</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>        <span class="bu">console</span><span class="op">.</span><span class="fu">error</span>(<span class="st">&#39;SAP API call failed:&#39;</span><span class="op">,</span> error)<span class="op">;</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="postmessage-communication-1">2. PostMessage Communication</h4>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendToSAPServiceCloud</span>(sapPayload) {</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> enhancedPayload <span class="op">=</span> {</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>        <span class="op">...</span>sapPayload<span class="op">,</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>        <span class="dt">source</span><span class="op">:</span> <span class="st">&#39;agent-buddy&#39;</span><span class="op">,</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">widgetId</span><span class="op">:</span> <span class="st">&#39;crm-agent-cti-plugin&#39;</span><span class="op">,</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">timestamp</span><span class="op">:</span> <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>()<span class="op">,</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">version</span><span class="op">:</span> <span class="st">&#39;1.0.0&#39;</span><span class="op">,</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">agentId</span><span class="op">:</span> <span class="fu">getAgentId</span>()<span class="op">,</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">sessionId</span><span class="op">:</span> <span class="fu">getSessionId</span>()</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="bu">window</span><span class="op">.</span><span class="at">parent</span> <span class="op">&amp;&amp;</span> <span class="bu">window</span><span class="op">.</span><span class="at">parent</span> <span class="op">!==</span> <span class="bu">window</span>) {</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>        <span class="bu">window</span><span class="op">.</span><span class="at">parent</span><span class="op">.</span><span class="fu">postMessage</span>(enhancedPayload<span class="op">,</span> <span class="st">&quot;*&quot;</span>)<span class="op">;</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="aik-integration-official-sap-pattern-1">Aik Integration
+(Official SAP Pattern)</h3>
+<h4 id="singleton-pattern-implementation">1. Singleton Pattern
+Implementation</h4>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>aik<span class="op">.</span><span class="at">cti</span><span class="op">.</span><span class="at">integration</span> <span class="op">=</span> <span class="kw">function</span>() {</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">init</span>()<span class="op">;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>aik<span class="op">.</span><span class="at">cti</span><span class="op">.</span><span class="at">integration</span><span class="op">.</span><span class="at">_privateInstance</span> <span class="op">=</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>aik<span class="op">.</span><span class="at">cti</span><span class="op">.</span><span class="at">integration</span><span class="op">.</span><span class="at">getInstance</span> <span class="op">=</span> <span class="kw">function</span>() {</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>aik<span class="op">.</span><span class="at">cti</span><span class="op">.</span><span class="at">integration</span><span class="op">.</span><span class="at">_privateInstance</span>) {</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>        aik<span class="op">.</span><span class="at">cti</span><span class="op">.</span><span class="at">integration</span><span class="op">.</span><span class="at">_privateInstance</span> <span class="op">=</span> <span class="kw">new</span> aik<span class="op">.</span><span class="at">cti</span><span class="op">.</span><span class="fu">integration</span>()<span class="op">;</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> aik<span class="op">.</span><span class="at">cti</span><span class="op">.</span><span class="at">integration</span><span class="op">.</span><span class="at">_privateInstance</span><span class="op">;</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div>
+<h4 id="core-integration-methods">2. Core Integration Methods</h4>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Send incoming call to Aik</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>aik<span class="op">.</span><span class="at">cti</span><span class="op">.</span><span class="at">integration</span><span class="op">.</span><span class="at">prototype</span><span class="op">.</span><span class="at">sendIncomingCalltoAik</span> <span class="op">=</span> <span class="kw">function</span>(parameters) {</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> payload <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="fu">_formJSONPayload</span>(parameters)<span class="op">;</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">_doCall</span>(payload)<span class="op">;</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Send call accept to Aik</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>aik<span class="op">.</span><span class="at">cti</span><span class="op">.</span><span class="at">integration</span><span class="op">.</span><span class="at">prototype</span><span class="op">.</span><span class="at">sendCallAcceptToAik</span> <span class="op">=</span> <span class="kw">function</span>(parameters) {</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> payload <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="fu">_formJSONPayload</span>(parameters)<span class="op">;</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">_doCall</span>(payload)<span class="op">;</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co">// Send call end to Aik</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>aik<span class="op">.</span><span class="at">cti</span><span class="op">.</span><span class="at">integration</span><span class="op">.</span><span class="at">prototype</span><span class="op">.</span><span class="at">sendCallEndToAik</span> <span class="op">=</span> <span class="kw">function</span>(parameters) {</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> payload <span class="op">=</span> <span class="kw">this</span><span class="op">.</span><span class="fu">_formJSONPayload</span>(parameters)<span class="op">;</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">this</span><span class="op">.</span><span class="fu">_doCall</span>(payload)<span class="op">;</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span></code></pre></div>
+<h3 id="timer-management-1">Timer Management</h3>
+<h4 id="timer-stop-implementation">1. Timer Stop Implementation</h4>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">stopSAPServiceCloudTimer</span>() {</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Method 1: PostMessage timer stop</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> timerStopPayload <span class="op">=</span> {</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Type&quot;</span><span class="op">:</span> <span class="st">&quot;TIMER&quot;</span><span class="op">,</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;EventType&quot;</span><span class="op">:</span> <span class="st">&quot;CONTROL&quot;</span><span class="op">,</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Action&quot;</span><span class="op">:</span> <span class="st">&quot;STOP&quot;</span><span class="op">,</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;TimerId&quot;</span><span class="op">:</span> <span class="st">&quot;crm-cti-caller-status&quot;</span><span class="op">,</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Timestamp&quot;</span><span class="op">:</span> <span class="kw">new</span> <span class="bu">Date</span>()<span class="op">.</span><span class="fu">toISOString</span>()</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">window</span><span class="op">.</span><span class="at">parent</span><span class="op">.</span><span class="fu">postMessage</span>(timerStopPayload<span class="op">,</span> <span class="st">&quot;*&quot;</span>)<span class="op">;</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Method 2: Direct function calls</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> timerStopFunctions <span class="op">=</span> [</span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;stopCallTimer&#39;</span><span class="op">,</span> <span class="st">&#39;stopTimer&#39;</span><span class="op">,</span> <span class="st">&#39;endCallTimer&#39;</span><span class="op">,</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;resetCallTimer&#39;</span><span class="op">,</span> <span class="st">&#39;clearCallTimer&#39;</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">;</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>    timerStopFunctions<span class="op">.</span><span class="fu">forEach</span>(funcName <span class="kw">=&gt;</span> {</span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="bu">window</span><span class="op">.</span><span class="at">parent</span> <span class="op">&amp;&amp;</span> <span class="bu">window</span><span class="op">.</span><span class="at">parent</span>[funcName]) {</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>            <span class="bu">window</span><span class="op">.</span><span class="at">parent</span>[funcName]()<span class="op">;</span></span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Method 3: Element manipulation</span></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> timerSelectors <span class="op">=</span> [</span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;#crm-cti-caller-status&#39;</span><span class="op">,</span></span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;.crm-cti-caller-status&#39;</span><span class="op">,</span></span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;[data-timer=&quot;call&quot;]&#39;</span></span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">;</span></span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a>    timerSelectors<span class="op">.</span><span class="fu">forEach</span>(selector <span class="kw">=&gt;</span> {</span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> timerElement <span class="op">=</span> <span class="bu">window</span><span class="op">.</span><span class="at">parent</span><span class="op">.</span><span class="at">document</span><span class="op">.</span><span class="fu">querySelector</span>(selector)<span class="op">;</span></span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (timerElement) {</span>
+<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a>            timerElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">display</span> <span class="op">=</span> <span class="st">&#39;none&#39;</span><span class="op">;</span></span>
+<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a>            timerElement<span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&#39;hidden&#39;</span><span class="op">,</span> <span class="st">&#39;stopped&#39;</span>)<span class="op">;</span></span>
+<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="timer-monitoring">2. Timer Monitoring</h4>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">startTimerMonitoring</span>() {</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> monitoringInterval <span class="op">=</span> <span class="pp">setInterval</span>(() <span class="kw">=&gt;</span> {</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> timerSelectors <span class="op">=</span> [</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;#crm-cti-caller-status&#39;</span><span class="op">,</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;.crm-cti-caller-status&#39;</span><span class="op">,</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">&#39;[data-timer=&quot;call&quot;]&#39;</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>        ]<span class="op">;</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>        timerSelectors<span class="op">.</span><span class="fu">forEach</span>(selector <span class="kw">=&gt;</span> {</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>            <span class="kw">const</span> timerElement <span class="op">=</span> <span class="bu">window</span><span class="op">.</span><span class="at">parent</span><span class="op">.</span><span class="at">document</span><span class="op">.</span><span class="fu">querySelector</span>(selector)<span class="op">;</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> (timerElement <span class="op">&amp;&amp;</span> timerElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">display</span> <span class="op">!==</span> <span class="st">&#39;none&#39;</span>) {</span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Timer is visible again, stop it</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>                timerElement<span class="op">.</span><span class="at">style</span><span class="op">.</span><span class="at">display</span> <span class="op">=</span> <span class="st">&#39;none&#39;</span><span class="op">;</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>                timerElement<span class="op">.</span><span class="at">classList</span><span class="op">.</span><span class="fu">add</span>(<span class="st">&#39;hidden&#39;</span><span class="op">,</span> <span class="st">&#39;stopped&#39;</span>)<span class="op">;</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>                <span class="fu">addLog</span>(<span class="st">&#39;⏱️ Timer herstart gedetecteerd en gestopt&#39;</span>)<span class="op">;</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>        })<span class="op">;</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span> <span class="dv">500</span>)<span class="op">;</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Stop monitoring after 30 seconds</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>    <span class="pp">setTimeout</span>(() <span class="kw">=&gt;</span> {</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>        <span class="pp">clearInterval</span>(monitoringInterval)<span class="op">;</span></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span> <span class="dv">30000</span>)<span class="op">;</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<hr />
+<h2 id="api-reference">📚 API Reference</h2>
+<h3 id="core-functions">Core Functions</h3>
+<h4 id="call-management-1">1. Call Management</h4>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Handle incoming call</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">handleIncomingCall</span>(callData)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Accept call</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">acceptCall</span>()</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Decline call</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">declineCall</span>()</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co">// End call</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">endCall</span>()</span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="co">// Reset call buttons</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">resetCallButtons</span>()</span></code></pre></div>
+<h4 id="sap-integration-2">2. SAP Integration</h4>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Send SAP notification</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendSAPIncomingNotification</span>(callData)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Send SAP accept</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendSAPAcceptNotification</span>(callData)</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Send SAP decline</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendSAPDeclineNotification</span>(callData)</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co">// Send SAP end call</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendSAPEndCallNotification</span>(callData)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co">// Identify customer</span></span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">identifyCustomer</span>(phoneNumber)</span></code></pre></div>
+<h4 id="timer-management-2">3. Timer Management</h4>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Stop SAP Service Cloud timer</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">stopSAPServiceCloudTimer</span>()</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Start timer monitoring</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">startTimerMonitoring</span>()</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Send timer stop to SAP</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendTimerStopToSAP</span>()</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co">// Send timer stop to Aik</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendTimerStopToAik</span>()</span></code></pre></div>
+<h3 id="configuration-functions">Configuration Functions</h3>
+<h4 id="configuration-management">1. Configuration Management</h4>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Get configuration value</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">getConfig</span>(key)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Set configuration value</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">setConfig</span>(key<span class="op">,</span> value)</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Get agent ID</span></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">getAgentId</span>()</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co">// Get session ID</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">getSessionId</span>()</span></code></pre></div>
+<h4 id="logging-functions">2. Logging Functions</h4>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Add log entry</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">addLog</span>(message)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Show toast notification</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">showToast</span>(message)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Update activity display</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">updateActivityDisplay</span>(activity)</span></code></pre></div>
+<h3 id="socket.io-events">Socket.io Events</h3>
+<h4 id="client-events-sent">1. Client Events (Sent)</h4>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Connect to server</span></span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">connect</span>()</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Send message</span></span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">emit</span>(<span class="st">&#39;message&#39;</span><span class="op">,</span> data)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Join room</span></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">emit</span>(<span class="st">&#39;join&#39;</span><span class="op">,</span> roomId)</span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a><span class="co">// Leave room</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">emit</span>(<span class="st">&#39;leave&#39;</span><span class="op">,</span> roomId)</span></code></pre></div>
+<h4 id="server-events-received">2. Server Events (Received)</h4>
+<div class="sourceCode" id="cb32"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Connection established</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">on</span>(<span class="st">&#39;connect&#39;</span><span class="op">,</span> <span class="kw">function</span>() {})</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Connection error</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">on</span>(<span class="st">&#39;connect_error&#39;</span><span class="op">,</span> <span class="kw">function</span>(error) {})</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Incoming call</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">on</span>(<span class="st">&#39;incoming_call&#39;</span><span class="op">,</span> <span class="kw">function</span>(callData) {})</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="co">// Call accepted</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">on</span>(<span class="st">&#39;CALL_ACCEPTED&#39;</span><span class="op">,</span> <span class="kw">function</span>(data) {})</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="co">// Call declined</span></span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">on</span>(<span class="st">&#39;CALL_DECLINED&#39;</span><span class="op">,</span> <span class="kw">function</span>(data) {})</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a><span class="co">// Call ended</span></span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">on</span>(<span class="st">&#39;CALL_ENDED&#39;</span><span class="op">,</span> <span class="kw">function</span>(data) {})</span></code></pre></div>
+<h3 id="sap-payload-formats">SAP Payload Formats</h3>
+<h4 id="notify-payload">1. NOTIFY Payload</h4>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Type&quot;</span><span class="op">:</span> <span class="st">&quot;CALL&quot;</span><span class="op">,</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EventType&quot;</span><span class="op">:</span> <span class="st">&quot;INBOUND&quot;</span><span class="op">,</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Action&quot;</span><span class="op">:</span> <span class="st">&quot;NOTIFY&quot;</span><span class="op">,</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;ANI&quot;</span><span class="op">:</span> <span class="st">&quot;+31 651616126&quot;</span><span class="op">,</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;ExternalReferenceID&quot;</span><span class="op">:</span> <span class="st">&quot;ED4E4730D1C711EAAA5EBC019352B05E&quot;</span><span class="op">,</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Timestamp&quot;</span><span class="op">:</span> <span class="st">&quot;2024-01-15T10:30:45.123Z&quot;</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="accept-payload">2. ACCEPT Payload</h4>
+<div class="sourceCode" id="cb34"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Type&quot;</span><span class="op">:</span> <span class="st">&quot;CALL&quot;</span><span class="op">,</span></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EventType&quot;</span><span class="op">:</span> <span class="st">&quot;INBOUND&quot;</span><span class="op">,</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Action&quot;</span><span class="op">:</span> <span class="st">&quot;ACCEPT&quot;</span><span class="op">,</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;ANI&quot;</span><span class="op">:</span> <span class="st">&quot;+31 651616126&quot;</span><span class="op">,</span></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;ExternalReferenceID&quot;</span><span class="op">:</span> <span class="st">&quot;ED4E4730D1C711EAAA5EBC019352B05E&quot;</span><span class="op">,</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Timestamp&quot;</span><span class="op">:</span> <span class="st">&quot;2024-01-15T10:30:45.123Z&quot;</span></span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="end-payload">3. END Payload</h4>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Type&quot;</span><span class="op">:</span> <span class="st">&quot;CALL&quot;</span><span class="op">,</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EventType&quot;</span><span class="op">:</span> <span class="st">&quot;INBOUND&quot;</span><span class="op">,</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Action&quot;</span><span class="op">:</span> <span class="st">&quot;END&quot;</span><span class="op">,</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;ANI&quot;</span><span class="op">:</span> <span class="st">&quot;+31 651616126&quot;</span><span class="op">,</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;ExternalReferenceID&quot;</span><span class="op">:</span> <span class="st">&quot;ED4E4730D1C711EAAA5EBC019352B05E&quot;</span><span class="op">,</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Timestamp&quot;</span><span class="op">:</span> <span class="st">&quot;2024-01-15T10:30:45.123Z&quot;</span><span class="op">,</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;CallDuration&quot;</span><span class="op">:</span> <span class="dv">120</span><span class="op">,</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;interactionEndedOn&quot;</span><span class="op">:</span> <span class="st">&quot;2024-01-15T10:30:45.123Z&quot;</span></span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="timer-stop-payload">4. TIMER STOP Payload</h4>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Type&quot;</span><span class="op">:</span> <span class="st">&quot;TIMER&quot;</span><span class="op">,</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;EventType&quot;</span><span class="op">:</span> <span class="st">&quot;CONTROL&quot;</span><span class="op">,</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Action&quot;</span><span class="op">:</span> <span class="st">&quot;STOP&quot;</span><span class="op">,</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;TimerId&quot;</span><span class="op">:</span> <span class="st">&quot;crm-cti-caller-status&quot;</span><span class="op">,</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;Timestamp&quot;</span><span class="op">:</span> <span class="st">&quot;2024-01-15T10:30:45.123Z&quot;</span><span class="op">,</span></span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;source&quot;</span><span class="op">:</span> <span class="st">&quot;agent-buddy&quot;</span><span class="op">,</span></span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;widgetId&quot;</span><span class="op">:</span> <span class="st">&quot;crm-agent-cti-plugin&quot;</span></span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<hr />
+<h2 id="troubleshooting">🔧 Troubleshooting</h2>
+<h3 id="common-issues">Common Issues</h3>
+<h4 id="socket.io-connection-issues">1. Socket.io Connection Issues</h4>
+<p><strong>Problem</strong>: WebSocket connection fails</p>
+<pre><code>Error: WebSocket connection to &#39;wss://agent-buddy-socketio.onrender.com/&#39; failed</code></pre>
+<p><strong>Solution</strong>:</p>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Check server status</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">fetch</span>(<span class="st">&#39;https://agent-buddy-socketio.onrender.com/health&#39;</span>)</span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">then</span>(response <span class="kw">=&gt;</span> <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;Server status:&#39;</span><span class="op">,</span> response<span class="op">.</span><span class="at">status</span>))<span class="op">;</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="co">// Verify CORS settings</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> socket <span class="op">=</span> <span class="fu">io</span>(<span class="st">&#39;https://agent-buddy-socketio.onrender.com&#39;</span><span class="op">,</span> {</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">withCredentials</span><span class="op">:</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">transports</span><span class="op">:</span> [<span class="st">&#39;websocket&#39;</span><span class="op">,</span> <span class="st">&#39;polling&#39;</span>]</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<h4 id="sap-integration-issues">2. SAP Integration Issues</h4>
+<p><strong>Problem</strong>: SAP API calls fail</p>
+<pre><code>Error: Access to fetch at &#39;https://my1000354.de1.test.crm.cloud.sap/&#39; 
+from origin &#39;https://glowing-frangollo-44ac94.netlify.app&#39; 
+has been blocked by CORS policy</code></pre>
+<p><strong>Solution</strong>:</p>
+<div class="sourceCode" id="cb40"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Use PostMessage fallback</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendSAPPayloadToSAP</span>(sapPayload) {</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Mock response for CORS issues</span></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">Promise</span><span class="op">.</span><span class="fu">resolve</span>(<span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Ensure proper authentication</span></span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> authHeader <span class="op">=</span> <span class="st">&#39;Basic &#39;</span> <span class="op">+</span> <span class="fu">btoa</span>(username <span class="op">+</span> <span class="st">&#39;:&#39;</span> <span class="op">+</span> password)<span class="op">;</span></span></code></pre></div>
+<h4 id="timer-not-stopping">3. Timer Not Stopping</h4>
+<p><strong>Problem</strong>: Timer restarts after stop</p>
+<pre><code>Timer stops but starts again immediately</code></pre>
+<p><strong>Solution</strong>:</p>
+<div class="sourceCode" id="cb42"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Use multiple stop methods</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopSAPServiceCloudTimer</span>()<span class="op">;</span></span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Monitor timer for restarts</span></span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="fu">startTimerMonitoring</span>()<span class="op">;</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Send delayed stop commands</span></span>
+<span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a><span class="pp">setTimeout</span>(() <span class="kw">=&gt;</span> {</span>
+<span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sendTimerStopToSAP</span>()<span class="op">;</span></span>
+<span id="cb42-10"><a href="#cb42-10" aria-hidden="true" tabindex="-1"></a>}<span class="op">,</span> <span class="dv">1000</span>)<span class="op">;</span></span></code></pre></div>
+<h4 id="agent-id-not-displaying">4. Agent ID Not Displaying</h4>
+<p><strong>Problem</strong>: Agent ID field remains empty</p>
+<pre><code>Agent ID: -</code></pre>
+<p><strong>Solution</strong>:</p>
+<div class="sourceCode" id="cb44"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Ensure agent ID is set</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">getAgentId</span>() {</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">window</span><span class="op">.</span><span class="at">agentId</span> <span class="op">||</span> </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>           (<span class="bu">window</span><span class="op">.</span><span class="at">parent</span> <span class="op">&amp;&amp;</span> <span class="bu">window</span><span class="op">.</span><span class="at">parent</span><span class="op">.</span><span class="at">getAgentId</span> <span class="op">?</span> <span class="bu">window</span><span class="op">.</span><span class="at">parent</span><span class="op">.</span><span class="fu">getAgentId</span>() <span class="op">:</span> </span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>           <span class="st">&#39;AGENT-&#39;</span> <span class="op">+</span> <span class="bu">Math</span><span class="op">.</span><span class="fu">random</span>()<span class="op">.</span><span class="fu">toString</span>(<span class="dv">36</span>)<span class="op">.</span><span class="fu">substr</span>(<span class="dv">2</span><span class="op">,</span> <span class="dv">9</span>))<span class="op">;</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="co">// Update agent ID display</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;agentId&#39;</span>)<span class="op">.</span><span class="at">textContent</span> <span class="op">=</span> <span class="fu">getAgentId</span>()<span class="op">;</span></span></code></pre></div>
+<h3 id="debug-mode">Debug Mode</h3>
+<h4 id="enable-debug-logging">1. Enable Debug Logging</h4>
+<div class="sourceCode" id="cb45"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Set debug mode</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="at">CONFIG</span><span class="op">.</span><span class="at">DEBUG_MODE</span> <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a><span class="co">// View detailed logs</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;Debug mode enabled&#39;</span>)<span class="op">;</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="fu">addLog</span>(<span class="st">&#39;🔍 Debug mode active&#39;</span>)<span class="op">;</span></span></code></pre></div>
+<h4 id="network-monitoring">2. Network Monitoring</h4>
+<div class="sourceCode" id="cb46"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Monitor network requests</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> originalFetch <span class="op">=</span> <span class="bu">window</span><span class="op">.</span><span class="at">fetch</span><span class="op">;</span></span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="at">fetch</span> <span class="op">=</span> <span class="kw">function</span>(<span class="op">...</span>args) {</span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;Fetch request:&#39;</span><span class="op">,</span> args)<span class="op">;</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> originalFetch<span class="op">.</span><span class="fu">apply</span>(<span class="kw">this</span><span class="op">,</span> args)<span class="op">;</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a><span class="co">// Monitor PostMessage</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="fu">addEventListener</span>(<span class="st">&#39;message&#39;</span><span class="op">,</span> <span class="kw">function</span>(<span class="bu">event</span>) {</span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;PostMessage received:&#39;</span><span class="op">,</span> <span class="bu">event</span><span class="op">.</span><span class="at">data</span>)<span class="op">;</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<h4 id="socket.io-debug">3. Socket.io Debug</h4>
+<div class="sourceCode" id="cb47"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Enable Socket.io debug</span></span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> socket <span class="op">=</span> <span class="fu">io</span>(<span class="st">&#39;https://agent-buddy-socketio.onrender.com&#39;</span><span class="op">,</span> {</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">debug</span><span class="op">:</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">logger</span><span class="op">:</span> <span class="bu">console</span></span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="co">// Monitor socket events</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">onAny</span>((eventName<span class="op">,</span> <span class="op">...</span>args) <span class="kw">=&gt;</span> {</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&#39;Socket event:&#39;</span><span class="op">,</span> eventName<span class="op">,</span> args)<span class="op">;</span></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<h3 id="performance-optimization">Performance Optimization</h3>
+<h4 id="connection-pooling">1. Connection Pooling</h4>
+<div class="sourceCode" id="cb48"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Reuse connections</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> connectionPool <span class="op">=</span> <span class="kw">new</span> <span class="bu">Map</span>()<span class="op">;</span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">getConnection</span>(endpoint) {</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>connectionPool<span class="op">.</span><span class="fu">has</span>(endpoint)) {</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>        connectionPool<span class="op">.</span><span class="fu">set</span>(endpoint<span class="op">,</span> <span class="kw">new</span> <span class="bu">WebSocket</span>(endpoint))<span class="op">;</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> connectionPool<span class="op">.</span><span class="fu">get</span>(endpoint)<span class="op">;</span></span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="caching">2. Caching</h4>
+<div class="sourceCode" id="cb49"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Cache customer data</span></span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> customerCache <span class="op">=</span> <span class="kw">new</span> <span class="bu">Map</span>()<span class="op">;</span></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">getCustomerData</span>(phoneNumber) {</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (customerCache<span class="op">.</span><span class="fu">has</span>(phoneNumber)) {</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> customerCache<span class="op">.</span><span class="fu">get</span>(phoneNumber)<span class="op">;</span></span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> customerData <span class="op">=</span> <span class="fu">fetchCustomerData</span>(phoneNumber)<span class="op">;</span></span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>    customerCache<span class="op">.</span><span class="fu">set</span>(phoneNumber<span class="op">,</span> customerData)<span class="op">;</span></span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> customerData<span class="op">;</span></span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="debouncing">3. Debouncing</h4>
+<div class="sourceCode" id="cb50"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Debounce timer updates</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">debounce</span>(func<span class="op">,</span> wait) {</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> timeout<span class="op">;</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">function</span> <span class="fu">executedFunction</span>(<span class="op">...</span>args) {</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> later <span class="op">=</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>            <span class="pp">clearTimeout</span>(timeout)<span class="op">;</span></span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">func</span>(<span class="op">...</span>args)<span class="op">;</span></span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>        }<span class="op">;</span></span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>        <span class="pp">clearTimeout</span>(timeout)<span class="op">;</span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>        timeout <span class="op">=</span> <span class="pp">setTimeout</span>(later<span class="op">,</span> wait)<span class="op">;</span></span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> debouncedTimerUpdate <span class="op">=</span> <span class="fu">debounce</span>(updateTimer<span class="op">,</span> <span class="dv">100</span>)<span class="op">;</span></span></code></pre></div>
+<hr />
+<h2 id="development-guide">🛠️ Development Guide</h2>
+<h3 id="setting-up-development-environment">Setting Up Development
+Environment</h3>
+<h4 id="clone-repository">1. Clone Repository</h4>
+<div class="sourceCode" id="cb51"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/masterspike/embedded-cti-aik.git</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> embedded-cti-deploy</span></code></pre></div>
+<h4 id="install-dependencies">2. Install Dependencies</h4>
+<div class="sourceCode" id="cb52"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="ex">npm</span> install</span></code></pre></div>
+<h4 id="start-development-server">3. Start Development Server</h4>
+<div class="sourceCode" id="cb53"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start Socket.io server</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="ex">node</span> socketio-server.js</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Open in browser</span></span>
+<span id="cb53-5"><a href="#cb53-5" aria-hidden="true" tabindex="-1"></a><span class="ex">open</span> http://localhost:3000/agent-buddy.html</span></code></pre></div>
+<h3 id="code-structure">Code Structure</h3>
+<h4 id="main-application-app-new.js">1. Main Application
+(<code>app-new.js</code>)</h4>
+<div class="sourceCode" id="cb54"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Application initialization</span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">initializeApp</span>() {</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">initializeCTI</span>()<span class="op">;</span></span>
+<span id="cb54-4"><a href="#cb54-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">initializeSAPIntegration</span>()<span class="op">;</span></span>
+<span id="cb54-5"><a href="#cb54-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">setupSocketConnection</span>()<span class="op">;</span></span>
+<span id="cb54-6"><a href="#cb54-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb54-7"><a href="#cb54-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-8"><a href="#cb54-8" aria-hidden="true" tabindex="-1"></a><span class="co">// Event handlers</span></span>
+<span id="cb54-9"><a href="#cb54-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">simulateIncomingCall</span>() {</span>
+<span id="cb54-10"><a href="#cb54-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Simulate incoming call for testing</span></span>
+<span id="cb54-11"><a href="#cb54-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb54-12"><a href="#cb54-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb54-13"><a href="#cb54-13" aria-hidden="true" tabindex="-1"></a><span class="co">// Utility functions</span></span>
+<span id="cb54-14"><a href="#cb54-14" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">addLog</span>(message) {</span>
+<span id="cb54-15"><a href="#cb54-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Add log entry to activity display</span></span>
+<span id="cb54-16"><a href="#cb54-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="cti-management-cti-new.js">2. CTI Management
+(<code>cti-new.js</code>)</h4>
+<div class="sourceCode" id="cb55"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Call handling</span></span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">handleIncomingCall</span>(callData) {</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Process incoming call</span></span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">acceptCall</span>() {</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Accept call logic</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-10"><a href="#cb55-10" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">declineCall</span>() {</span>
+<span id="cb55-11"><a href="#cb55-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Decline call logic</span></span>
+<span id="cb55-12"><a href="#cb55-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb55-13"><a href="#cb55-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">endCall</span>() {</span>
+<span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// End call logic</span></span>
+<span id="cb55-16"><a href="#cb55-16" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb55-17"><a href="#cb55-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-18"><a href="#cb55-18" aria-hidden="true" tabindex="-1"></a><span class="co">// SAP integration</span></span>
+<span id="cb55-19"><a href="#cb55-19" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendSAPIncomingNotification</span>(callData) {</span>
+<span id="cb55-20"><a href="#cb55-20" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Send SAP notification</span></span>
+<span id="cb55-21"><a href="#cb55-21" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb55-22"><a href="#cb55-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-23"><a href="#cb55-23" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">identifyCustomer</span>(phoneNumber) {</span>
+<span id="cb55-24"><a href="#cb55-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Customer identification</span></span>
+<span id="cb55-25"><a href="#cb55-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="socket.io-client-socket-new.js">3. Socket.io Client
+(<code>socket-new.js</code>)</h4>
+<div class="sourceCode" id="cb56"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Socket connection</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">initializeSocketConnection</span>() {</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Initialize Socket.io connection</span></span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Event handlers</span></span>
+<span id="cb56-7"><a href="#cb56-7" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">on</span>(<span class="st">&#39;connect&#39;</span><span class="op">,</span> <span class="kw">function</span>() {</span>
+<span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Handle connection</span></span>
+<span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb56-10"><a href="#cb56-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-11"><a href="#cb56-11" aria-hidden="true" tabindex="-1"></a>socket<span class="op">.</span><span class="fu">on</span>(<span class="st">&#39;incoming_call&#39;</span><span class="op">,</span> <span class="kw">function</span>(callData) {</span>
+<span id="cb56-12"><a href="#cb56-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Handle incoming call</span></span>
+<span id="cb56-13"><a href="#cb56-13" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<h4 id="sap-integration-sap-service-cloud-integration.js">4. SAP
+Integration (<code>sap-service-cloud-integration.js</code>)</h4>
+<div class="sourceCode" id="cb57"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="co">// SAP Service Cloud integration</span></span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendToSAPServiceCloud</span>(sapPayload) {</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Send payload to SAP</span></span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendCallNotificationToSAP</span>(phoneNumber<span class="op">,</span> callId) {</span>
+<span id="cb57-7"><a href="#cb57-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Send call notification</span></span>
+<span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-10"><a href="#cb57-10" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendCallAcceptToSAP</span>(phoneNumber<span class="op">,</span> callId) {</span>
+<span id="cb57-11"><a href="#cb57-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Send call accept</span></span>
+<span id="cb57-12"><a href="#cb57-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb57-13"><a href="#cb57-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb57-14"><a href="#cb57-14" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">sendCallEndToSAP</span>(phoneNumber<span class="op">,</span> callId) {</span>
+<span id="cb57-15"><a href="#cb57-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Send call end</span></span>
+<span id="cb57-16"><a href="#cb57-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="testing">Testing</h3>
+<h4 id="unit-testing">1. Unit Testing</h4>
+<div class="sourceCode" id="cb58"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Test call handling</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="st">&#39;Call Management&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">test</span>(<span class="st">&#39;should handle incoming call&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> callData <span class="op">=</span> {</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>            <span class="dt">phoneNumber</span><span class="op">:</span> <span class="st">&#39;+31 651616126&#39;</span><span class="op">,</span></span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>            <span class="dt">callId</span><span class="op">:</span> <span class="st">&#39;test-call-id&#39;</span></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>        }<span class="op">;</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">handleIncomingCall</span>(callData)<span class="op">;</span></span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">expect</span>(<span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;incomingNumber&#39;</span>)<span class="op">.</span><span class="at">textContent</span>)</span>
+<span id="cb58-12"><a href="#cb58-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">toBe</span>(<span class="st">&#39;+31 651616126&#39;</span>)<span class="op">;</span></span>
+<span id="cb58-13"><a href="#cb58-13" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb58-14"><a href="#cb58-14" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<h4 id="integration-testing">2. Integration Testing</h4>
+<div class="sourceCode" id="cb59"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Test SAP integration</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="st">&#39;SAP Integration&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">test</span>(<span class="st">&#39;should send SAP payload&#39;</span><span class="op">,</span> <span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> sapPayload <span class="op">=</span> {</span>
+<span id="cb59-5"><a href="#cb59-5" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Type&quot;</span><span class="op">:</span> <span class="st">&quot;CALL&quot;</span><span class="op">,</span></span>
+<span id="cb59-6"><a href="#cb59-6" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;EventType&quot;</span><span class="op">:</span> <span class="st">&quot;INBOUND&quot;</span><span class="op">,</span></span>
+<span id="cb59-7"><a href="#cb59-7" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Action&quot;</span><span class="op">:</span> <span class="st">&quot;NOTIFY&quot;</span></span>
+<span id="cb59-8"><a href="#cb59-8" aria-hidden="true" tabindex="-1"></a>        }<span class="op">;</span></span>
+<span id="cb59-9"><a href="#cb59-9" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb59-10"><a href="#cb59-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">const</span> result <span class="op">=</span> <span class="cf">await</span> <span class="fu">sendSAPPayloadToSAP</span>(sapPayload)<span class="op">;</span></span>
+<span id="cb59-11"><a href="#cb59-11" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb59-12"><a href="#cb59-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">expect</span>(result)<span class="op">.</span><span class="fu">toBe</span>(<span class="kw">true</span>)<span class="op">;</span></span>
+<span id="cb59-13"><a href="#cb59-13" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb59-14"><a href="#cb59-14" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<h4 id="end-to-end-testing">3. End-to-End Testing</h4>
+<div class="sourceCode" id="cb60"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Test complete call flow</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="st">&#39;Complete Call Flow&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">test</span>(<span class="st">&#39;should handle complete call lifecycle&#39;</span><span class="op">,</span> <span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 1. Simulate incoming call</span></span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">simulateIncomingCall</span>()<span class="op">;</span></span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 2. Accept call</span></span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">acceptCall</span>()<span class="op">;</span></span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb60-10"><a href="#cb60-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 3. End call</span></span>
+<span id="cb60-11"><a href="#cb60-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">endCall</span>()<span class="op">;</span></span>
+<span id="cb60-12"><a href="#cb60-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb60-13"><a href="#cb60-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 4. Verify UI state</span></span>
+<span id="cb60-14"><a href="#cb60-14" aria-hidden="true" tabindex="-1"></a>        <span class="fu">expect</span>(<span class="bu">document</span><span class="op">.</span><span class="fu">getElementById</span>(<span class="st">&#39;callStatus&#39;</span>)<span class="op">.</span><span class="at">textContent</span>)</span>
+<span id="cb60-15"><a href="#cb60-15" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">toBe</span>(<span class="st">&#39;Beëindigd&#39;</span>)<span class="op">;</span></span>
+<span id="cb60-16"><a href="#cb60-16" aria-hidden="true" tabindex="-1"></a>    })<span class="op">;</span></span>
+<span id="cb60-17"><a href="#cb60-17" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<h3 id="deployment-checklist">Deployment Checklist</h3>
+<h4 id="pre-deployment">1. Pre-Deployment</h4>
+<ul class="task-list">
+<li><label><input type="checkbox" />All tests passing</label></li>
+<li><label><input type="checkbox" />Environment variables
+configured</label></li>
+<li><label><input type="checkbox" />Socket.io server
+deployed</label></li>
+<li><label><input type="checkbox" />SAP credentials
+verified</label></li>
+<li><label><input type="checkbox" />CORS settings correct</label></li>
+</ul>
+<h4 id="deployment">2. Deployment</h4>
+<ul class="task-list">
+<li><label><input type="checkbox" />Frontend deployed to
+Netlify</label></li>
+<li><label><input type="checkbox" />Backend deployed to
+Render.com</label></li>
+<li><label><input type="checkbox" />Health checks passing</label></li>
+<li><label><input type="checkbox" />SSL certificates valid</label></li>
+<li><label><input type="checkbox" />Domain configured</label></li>
+</ul>
+<h4 id="post-deployment">3. Post-Deployment</h4>
+<ul class="task-list">
+<li><label><input type="checkbox" />Integration tests
+passing</label></li>
+<li><label><input type="checkbox" />Performance monitoring
+active</label></li>
+<li><label><input type="checkbox" />Error logging
+configured</label></li>
+<li><label><input type="checkbox" />Backup procedures in
+place</label></li>
+<li><label><input type="checkbox" />Documentation updated</label></li>
+</ul>
+<h3 id="performance-monitoring">Performance Monitoring</h3>
+<h4 id="key-metrics">1. Key Metrics</h4>
+<ul>
+<li><strong>Connection Time</strong>: Time to establish Socket.io
+connection</li>
+<li><strong>Call Response Time</strong>: Time to process incoming
+calls</li>
+<li><strong>SAP API Response Time</strong>: Time for SAP API calls</li>
+<li><strong>UI Responsiveness</strong>: Time for UI updates</li>
+</ul>
+<h4 id="monitoring-tools">2. Monitoring Tools</h4>
+<div class="sourceCode" id="cb61"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Performance monitoring</span></span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> performanceMetrics <span class="op">=</span> {</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">connectionTime</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">callResponseTime</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">sapApiResponseTime</span><span class="op">:</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uiUpdateTime</span><span class="op">:</span> <span class="dv">0</span></span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb61-8"><a href="#cb61-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb61-9"><a href="#cb61-9" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span> <span class="fu">measurePerformance</span>(metric<span class="op">,</span> startTime) {</span>
+<span id="cb61-10"><a href="#cb61-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> duration <span class="op">=</span> <span class="bu">Date</span><span class="op">.</span><span class="fu">now</span>() <span class="op">-</span> startTime<span class="op">;</span></span>
+<span id="cb61-11"><a href="#cb61-11" aria-hidden="true" tabindex="-1"></a>    performanceMetrics[metric] <span class="op">=</span> duration<span class="op">;</span></span>
+<span id="cb61-12"><a href="#cb61-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`</span><span class="sc">${</span>metric<span class="sc">}</span><span class="vs">: </span><span class="sc">${</span>duration<span class="sc">}</span><span class="vs">ms`</span>)<span class="op">;</span></span>
+<span id="cb61-13"><a href="#cb61-13" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="error-tracking">3. Error Tracking</h4>
+<div class="sourceCode" id="cb62"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Error tracking</span></span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="fu">addEventListener</span>(<span class="st">&#39;error&#39;</span><span class="op">,</span> <span class="kw">function</span>(<span class="bu">event</span>) {</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">error</span>(<span class="st">&#39;JavaScript error:&#39;</span><span class="op">,</span> <span class="bu">event</span><span class="op">.</span><span class="at">error</span>)<span class="op">;</span></span>
+<span id="cb62-4"><a href="#cb62-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addLog</span>(<span class="st">&#39;❌ Error: &#39;</span> <span class="op">+</span> <span class="bu">event</span><span class="op">.</span><span class="at">error</span><span class="op">.</span><span class="at">message</span>)<span class="op">;</span></span>
+<span id="cb62-5"><a href="#cb62-5" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb62-6"><a href="#cb62-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb62-7"><a href="#cb62-7" aria-hidden="true" tabindex="-1"></a><span class="bu">window</span><span class="op">.</span><span class="fu">addEventListener</span>(<span class="st">&#39;unhandledrejection&#39;</span><span class="op">,</span> <span class="kw">function</span>(<span class="bu">event</span>) {</span>
+<span id="cb62-8"><a href="#cb62-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">error</span>(<span class="st">&#39;Unhandled promise rejection:&#39;</span><span class="op">,</span> <span class="bu">event</span><span class="op">.</span><span class="at">reason</span>)<span class="op">;</span></span>
+<span id="cb62-9"><a href="#cb62-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">addLog</span>(<span class="st">&#39;❌ Promise rejection: &#39;</span> <span class="op">+</span> <span class="bu">event</span><span class="op">.</span><span class="at">reason</span>)<span class="op">;</span></span>
+<span id="cb62-10"><a href="#cb62-10" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<hr />
+<h2 id="conclusion">📄 Conclusion</h2>
+<p>Agent Buddy provides a comprehensive CTI solution for SAP Service
+Cloud integration with robust call management, real-time communication,
+and seamless user experience. The modular architecture ensures
+maintainability and extensibility for future enhancements.</p>
+<h3 id="key-achievements">Key Achievements</h3>
+<ul>
+<li>✅ <strong>Complete Call Lifecycle Management</strong></li>
+<li>✅ <strong>Robust SAP Service Cloud Integration</strong></li>
+<li>✅ <strong>Real-time Communication via Socket.io</strong></li>
+<li>✅ <strong>Comprehensive Timer Management</strong></li>
+<li>✅ <strong>Modern SAP Fiori 3 UI/UX</strong></li>
+<li>✅ <strong>Multi-platform Deployment</strong></li>
+<li>✅ <strong>Extensive Error Handling</strong></li>
+<li>✅ <strong>Comprehensive Documentation</strong></li>
+</ul>
+<h3 id="future-enhancements">Future Enhancements</h3>
+<ul>
+<li>🔮 <strong>Advanced Analytics Dashboard</strong></li>
+<li>🔮 <strong>Multi-language Support</strong></li>
+<li>🔮 <strong>Advanced Customer Data Integration</strong></li>
+<li>🔮 <strong>Call Recording Integration</strong></li>
+<li>🔮 <strong>Advanced Reporting Features</strong></li>
+<li>🔮 <strong>Mobile Responsive Design</strong></li>
+<li>🔮 <strong>Voice Recognition Integration</strong></li>
+<li>🔮 <strong>AI-powered Call Routing</strong></li>
+</ul>
+<hr />
+<p><strong>Document Version</strong>: 1.0.0<br />
+<strong>Last Updated</strong>: 04 augustus 2025<br />
+<strong>Author</strong>: Agent Buddy Development - Aik Leemreize <br />
+<strong>Contact</strong>: For support and questions, please refer to the
+project repository.</p>
+</body>
+</html>

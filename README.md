@@ -1,6 +1,6 @@
-# Agent Buddy - SAP C4C CTI Integration
+# Agent Buddy - SAP Service Cloud Integration
 
-Een embedded widget voor SAP Cloud for Customer (C4C) die real-time call handling en customer identification ondersteunt.
+Een embedded widget voor SAP Service Cloud (SSCV2) die real-time call handling en customer identification ondersteunt.
 
 ## 🚀 Live Demo
 
@@ -8,37 +8,31 @@ Een embedded widget voor SAP Cloud for Customer (C4C) die real-time call handlin
 
 ## 📁 Project Structuur
 
-### Core Files
-- `agent-buddy.html` - Main Agent Buddy widget interface
-- `app-new.js` - Main application logic
-- `cti-new.js` - CTI and SAP integration logic
-- `socket-new.js` - Socket.io client implementation
-- `config.js` - Environment configuration
-
-### SAP Integration
-- `sap-c4c-integration.js` - **Officiële SAP C4C integratie** (gebaseerd op SAP voorbeeld)
-- `sap-service-cloud-integration.js` - SAP Service Cloud communicatie
-- `postmessage-integration.js` - PostMessage API voor iframe communicatie
-
-### SAP UI5 Integration
-- `SocketView.controller.js` - SAP UI5 controller voor native integratie
-- `SocketView.view.xml` - SAP UI5 view definitie
-- `manifest.json` - SAP UI5 application descriptor
-
-### Server
-- `socketio-server.js` - Socket.io server voor Render.com deployment
-- `package.json` - Node.js dependencies
-
-### Documentation
-- `SAP_C4C_INTEGRATION.md` - **Complete C4C integratie documentatie**
-- `SAP_UI5_INTEGRATION.md` - SAP UI5 integratie guide
-- `NETLIFY_ENVIRONMENT_SETUP.md` - Netlify deployment guide
-- `ENVIRONMENT_VARIABLES.md` - Environment variables guide
-- `RENDER_DEPLOYMENT.md` - Render.com server deployment
-
-### Configuration
-- `netlify.toml` - Netlify deployment configuratie
-- `index.html` - Redirect naar agent-buddy.html
+```
+embedded-cti-deploy/
+├── src/
+│   ├── core/                          # Core application files
+│   │   ├── agent-buddy.html          # Main Agent Buddy widget interface
+│   │   ├── app-new.js                # Main application logic
+│   │   ├── cti-new.js                # CTI and SAP integration logic
+│   │   ├── socket-new.js             # Socket.io client implementation
+│   │   └── config.js                 # Environment configuration
+│   ├── sap-integration/              # SAP integration modules
+│   │   ├── sap-service-cloud-integration.js  # SAP Service Cloud communicatie
+│   │   ├── sap-aik-integration.js    # SAP AIK integratie
+│   │   └── postmessage-integration.js # PostMessage API voor iframe communicatie
+│   ├── server/                       # Server-side code
+│   │   └── socketio-server.js        # Socket.io server voor Render.com deployment
+│   ├── assets/                       # Static assets
+│   │   └── style.css                 # Styling
+│   └── docs/                         # Documentation
+│       ├── AGENT_BUDDY_SSCV2_INTEGRATION_DOCUMENTATION.md  # Complete Agent Buddy documentatie
+│       └── Agent_Buddy_SSCV2_Documentation.html           # Agent Buddy HTML documentatie
+├── package.json                      # Node.js dependencies
+├── netlify.toml                      # Netlify deployment configuratie
+├── index.html                        # Redirect naar agent-buddy.html
+└── README.md                         # Project documentatie
+```
 
 ## 🏗️ Architectuur
 
@@ -47,9 +41,9 @@ Agent Buddy Widget (Netlify)
     ↓ Socket.io
 Socket.io Server (Render.com)
     ↓ PostMessage
-SAP C4C Parent Window
+SAP Service Cloud Parent Window
     ↓ Event Bus
-SAP C4C UI Components
+SAP Service Cloud UI Components
 ```
 
 ## 🔧 Features
@@ -60,8 +54,8 @@ SAP C4C UI Components
 - Call status management
 - Button reset functionality
 
-### ✅ **SAP C4C Integration**
-- **Officiële SAP C4C integratie** gebaseerd op SAP voorbeeld
+### ✅ **SAP Service Cloud Integration**
+- SAP Service Cloud (SSCV2) integratie
 - PostMessage API voor iframe communicatie
 - JSON payload format
 - Bidirectional messaging
@@ -71,12 +65,6 @@ SAP C4C UI Components
 - Customer data display
 - SAP Service Cloud integration
 - Customer history loading
-
-### ✅ **SAP UI5 Integration**
-- Native SAP UI5 controller
-- SAP Fiori 3 styling
-- Event Bus integration
-- Customer screen updates
 
 ### ✅ **Production Ready**
 - Netlify frontend deployment
@@ -101,11 +89,11 @@ node socketio-server.js
 # Or use live demo: https://glowing-frangollo-44ac94.netlify.app
 ```
 
-### 3. SAP C4C Integration
+### 3. SAP Service Cloud Integration
 ```html
-<!-- Add to SAP C4C application -->
+<!-- Add to SAP Service Cloud application -->
 <iframe id="agent-buddy-frame" 
-        src="https://glowing-frangollo-44ac94.netlify.app/agent-buddy.html"
+        src="https://glowing-frangollo-44ac94.netlify.app/src/core/agent-buddy.html"
         width="100%" height="600px">
 </iframe>
 ```
@@ -114,52 +102,37 @@ node socketio-server.js
 
 ### 1. Incoming Call
 ```
-WebSocket → Agent Buddy → NOTIFY → SAP C4C
+WebSocket → Agent Buddy → NOTIFY → SAP Service Cloud
 ↓
-SAP C4C: Update UI, Show notification
+SAP Service Cloud: Update UI, Show notification
 ```
 
 ### 2. Call Accepted
 ```
-Agent Buddy → ACCEPT → SAP C4C
+Agent Buddy → ACCEPT → SAP Service Cloud
 ↓
-SAP C4C: Load customer, Show customer screen
+SAP Service Cloud: Load customer, Show customer screen
 ```
 
 ### 3. Call Declined
 ```
-Agent Buddy → DECLINE → SAP C4C
+Agent Buddy → DECLINE → SAP Service Cloud
 ↓
-SAP C4C: Update status, Show decline notification
+SAP Service Cloud: Update status, Show decline notification
 ```
 
 ## 🔗 Integrations
 
-### **SAP C4C (Cloud for Customer)**
-- Officiële SAP C4C CTI integratie
+### **SAP Service Cloud (SSCV2)**
+- SAP Service Cloud CTI integratie
 - PostMessage API communicatie
 - JSON payload format
 - Event-driven architecture
 
-### **SAP Service Cloud**
-- Direct HTTP API calls
-- Basic Authentication
-- Customer data integration
-- Call logging
-
-### **SAP UI5**
-- Native SAP UI5 controller
-- SAP Fiori 3 design system
-- Event Bus integration
-- Customer screen management
-
 ## 📚 Documentation
 
-- **[SAP C4C Integration](SAP_C4C_INTEGRATION.md)** - Complete C4C integratie guide
-- **[SAP UI5 Integration](SAP_UI5_INTEGRATION.md)** - UI5 integratie documentatie
-- **[Environment Setup](ENVIRONMENT_VARIABLES.md)** - Environment variables configuratie
-- **[Netlify Deployment](NETLIFY_ENVIRONMENT_SETUP.md)** - Frontend deployment guide
-- **[Render Deployment](RENDER_DEPLOYMENT.md)** - Backend deployment guide
+- **[Agent Buddy SSCV2 Integration](AGENT_BUDDY_SSCV2_INTEGRATION_DOCUMENTATION.md)** - Complete Agent Buddy documentatie
+- **[Agent Buddy HTML Documentation](Agent_Buddy_SSCV2_Documentation.html)** - Agent Buddy HTML documentatie
 
 ## 🛠️ Development
 
@@ -181,7 +154,7 @@ npm install
 # Start development server
 node socketio-server.js
 
-# Open http://localhost:3000/agent-buddy.html
+# Open http://localhost:3000/src/core/agent-buddy.html
 ```
 
 ## 🎯 Key Features
@@ -193,8 +166,8 @@ node socketio-server.js
 - SAP Fiori 3 styling
 - Socket.io integration
 
-### **SAP C4C Integration**
-- Officiële SAP integratie patterns
+### **SAP Service Cloud Integration**
+- SAP Service Cloud integratie patterns
 - Singleton pattern implementation
 - JSON/XML payload support
 - Error handling en validation
@@ -207,10 +180,10 @@ node socketio-server.js
 
 ## 📞 Support
 
-Voor vragen over de SAP C4C integratie, zie de [SAP C4C Integration Guide](SAP_C4C_INTEGRATION.md).
+Voor vragen over de Agent Buddy integratie, zie de [Agent Buddy SSCV2 Integration Documentation](AGENT_BUDDY_SSCV2_INTEGRATION_DOCUMENTATION.md).
 
 ---
 
-**Agent Buddy** - SAP C4C CTI Integration Widget 🚀
+**Agent Buddy** - SAP Service Cloud CTI Integration Widget 🚀
 
 

@@ -33,8 +33,32 @@ function addLog(message) {
     const logArea = document.getElementById('activityLog');
     if (logArea) {
         const timestamp = new Date().toLocaleTimeString();
-        logArea.innerHTML += `\n[${timestamp}] ${message}`;
+        
+        // Create new activity item with proper HTML structure
+        const activityItem = document.createElement('div');
+        activityItem.className = 'sap-activity-item';
+        activityItem.innerHTML = `
+            <span class="sap-activity-icon">📝</span>
+            <div class="sap-activity-content">
+                <div class="sap-activity-message">${message}</div>
+                <div class="sap-activity-time">${timestamp}</div>
+            </div>
+        `;
+        
+        // Add to log area
+        logArea.appendChild(activityItem);
+        
+        // Scroll to bottom
         logArea.scrollTop = logArea.scrollHeight;
+    }
+}
+
+// Clear log entries (alias for clearActivityLog)
+function clearLog() {
+    if (typeof window.clearActivityLog === 'function') {
+        window.clearActivityLog();
+    } else {
+        console.error('❌ clearActivityLog function not available');
     }
 }
 
@@ -105,5 +129,9 @@ function simulateIncomingCall() {
 // Export functions for global access
 window.initializeApplication = initializeApplication;
 window.addLog = addLog;
+window.clearLog = clearLog;
 window.showToast = showToast;
-window.simulateIncomingCall = simulateIncomingCall; 
+window.simulateIncomingCall = simulateIncomingCall;
+
+// Debug: Log that functions are loaded
+console.log('🔧 app-new.js loaded - clearLog function available:', typeof window.clearLog); 

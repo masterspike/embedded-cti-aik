@@ -657,9 +657,13 @@
                     <span class="sap-icon">📋</span>
                     <span>Activity Log</span>
                 </div>
-                <button class="sap-button" onclick="clearLog()">
+                <button class="sap-button" onclick="clearActivityLog()">
                     <span class="sap-icon">🗑️</span>
                     <span>Clear Log</span>
+                </button>
+                <button class="sap-button" onclick="testClearLog()" style="margin-left: 10px;">
+                    <span class="sap-icon">🧪</span>
+                    <span>Test Clear</span>
                 </button>
             </div>
             <div class="sap-card-content">
@@ -688,10 +692,80 @@
             SAP_USERNAME: window.getConfig && getConfig('SAP_USERNAME'),
             DEFAULT_PHONE: window.getConfig && getConfig('DEFAULT_PHONE')
         });
+        
+        // Clear activity log function
+        function clearActivityLog() {
+            console.log('🗑️ clearActivityLog function called');
+            const logArea = document.getElementById('activityLog');
+            if (logArea) {
+                console.log('🗑️ Found activityLog element, clearing...');
+                // Keep only the initial "Agent Buddy gestart" message
+                logArea.innerHTML = `
+                    <div class="sap-activity-item">
+                        <span class="sap-activity-icon">ℹ️</span>
+                        <div class="sap-activity-content">
+                            <div class="sap-activity-message">Agent Buddy gestart</div>
+                            <div class="sap-activity-time">Nu</div>
+                        </div>
+                    </div>
+                `;
+                
+                // Add clear confirmation if addLog is available
+                if (window.addLog) {
+                    window.addLog('🗑️ Activity log gewist');
+                } else {
+                    console.log('🗑️ Activity log gewist (addLog not available)');
+                }
+            } else {
+                console.error('❌ activityLog element not found');
+            }
+        }
+        
+        // Test function to debug clearLog
+        function testClearLog() {
+            console.log('🧪 Testing clearActivityLog function...');
+            console.log('clearActivityLog function type:', typeof clearActivityLog);
+            console.log('activityLog element:', document.getElementById('activityLog'));
+            clearActivityLog();
+        }
+        
+        // Make functions globally available
+        window.clearActivityLog = clearActivityLog;
+        window.testClearLog = testClearLog;
+        
+        // Debug: Log function availability
+        console.log('🔧 Functions loaded:');
+        console.log('- clearActivityLog:', typeof clearActivityLog);
+        console.log('- testClearLog:', typeof testClearLog);
+        console.log('- window.clearActivityLog:', typeof window.clearActivityLog);
+        console.log('- activityLog element:', document.getElementById('activityLog'));
+        
+        // Test if button click works
+        setTimeout(() => {
+            const clearButton = document.querySelector('button[onclick="clearActivityLog()"]');
+            if (clearButton) {
+                console.log('✅ Clear button found:', clearButton);
+            } else {
+                console.error('❌ Clear button not found');
+            }
+        }, 100);
+        
+        // Add global test function
+        window.testClearLogDirect = function() {
+            console.log('🧪 Direct test of clearActivityLog...');
+            if (typeof clearActivityLog === 'function') {
+                clearActivityLog();
+                console.log('✅ clearActivityLog executed successfully');
+            } else {
+                console.error('❌ clearActivityLog is not a function');
+            }
+        };
+        
+        console.log('💡 Test command: testClearLogDirect()');
     </script>
-    <script src="sap-aik-integration.js"></script>
-    <script src="sap-service-cloud-integration.js"></script>
-    <script src="postmessage-integration.js"></script>
+    <script src="../sap-integration/sap-aik-integration.js"></script>
+    <script src="../sap-integration/sap-service-cloud-integration.js"></script>
+    <script src="../sap-integration/postmessage-integration.js"></script>
     <script src="socket-new.js"></script>
     <script src="cti-new.js"></script>
     <script src="app-new.js"></script>

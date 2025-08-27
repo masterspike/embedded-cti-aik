@@ -2,10 +2,10 @@
   "name": "embedded-cti-deploy",
   "version": "1.0.0",
   "description": "Embedded CTI deployment with Socket.io on Render.com",
-  "main": "socketio-server.js",
+  "main": "src/server/socketio-server.js",
   "scripts": {
-    "start": "node socketio-server.js",
-    "dev": "nodemon socketio-server.js"
+    "start": "node src/server/socketio-server.js",
+    "dev": "nodemon src/server/socketio-server.js"
   },
   "dependencies": {
     "express": "^4.18.2",
