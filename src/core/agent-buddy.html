@@ -10,11 +10,10 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=72:wght@300;400;500;700&display=swap" rel="stylesheet">
     
-    <!-- SAP Icons -->
-    <link rel="stylesheet" href="https://sapui5.hana.ondemand.com/resources/sap/ui/core/themes/sap_fiori_3/icons.css">
+    <!-- Custom Fiori Icons (no external dependencies) -->
     
     <style>
-        /* SAP Fiori 3 Design System */
+        /* Custom Fiori 3 Design System (No External Dependencies) */
         :root {
             --sapBrandColor: #0070f3;
             --sapHighlightColor: #0070f3;
@@ -450,6 +449,116 @@
         .sap-margin-top { margin-top: 1rem; }
         .sap-margin-bottom { margin-bottom: 1rem; }
         .sap-padding { padding: 1rem; }
+
+        /* Custom Fiori Icons (No External Dependencies) */
+        .sap-icon {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            line-height: 1;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        /* Custom Icon Set */
+        .sap-icon-phone::before { content: "📞"; }
+        .sap-icon-accept::before { content: "✅"; }
+        .sap-icon-reject::before { content: "❌"; }
+        .sap-icon-end::before { content: "📞"; }
+        .sap-icon-settings::before { content: "⚙️"; }
+        .sap-icon-user::before { content: "👤"; }
+        .sap-icon-company::before { content: "🏢"; }
+        .sap-icon-activity::before { content: "📋"; }
+        .sap-icon-clear::before { content: "🗑️"; }
+        .sap-icon-test::before { content: "🧪"; }
+        .sap-icon-refresh::before { content: "🔄"; }
+        .sap-icon-simulate::before { content: "🎯"; }
+        .sap-icon-control::before { content: "🎛️"; }
+        .sap-icon-integration::before { content: "🔗"; }
+        .sap-icon-status::before { content: "📊"; }
+        .sap-icon-warning::before { content: "⚠️"; }
+        .sap-icon-success::before { content: "✅"; }
+        .sap-icon-error::before { content: "❌"; }
+        .sap-icon-info::before { content: "ℹ️"; }
+        .sap-icon-clock::before { content: "⏰"; }
+        .sap-icon-calendar::before { content: "📅"; }
+        .sap-icon-search::before { content: "🔍"; }
+        .sap-icon-edit::before { content: "✏️"; }
+        .sap-icon-save::before { content: "💾"; }
+        .sap-icon-delete::before { content: "🗑️"; }
+        .sap-icon-download::before { content: "⬇️"; }
+        .sap-icon-upload::before { content: "⬆️"; }
+        .sap-icon-print::before { content: "🖨️"; }
+        .sap-icon-email::before { content: "📧"; }
+        .sap-icon-message::before { content: "💬"; }
+        .sap-icon-notification::before { content: "🔔"; }
+        .sap-icon-help::before { content: "❓"; }
+        .sap-icon-home::before { content: "🏠"; }
+        .sap-icon-favorites::before { content: "⭐"; }
+        .sap-icon-history::before { content: "📚"; }
+        .sap-icon-settings::before { content: "⚙️"; }
+        .sap-icon-profile::before { content: "👤"; }
+        .sap-icon-logout::before { content: "🚪"; }
+        .sap-icon-login::before { content: "🔑"; }
+        .sap-icon-lock::before { content: "🔒"; }
+        .sap-icon-unlock::before { content: "🔓"; }
+        .sap-icon-eye::before { content: "👁️"; }
+        .sap-icon-eye-slash::before { content: "🙈"; }
+        .sap-icon-star::before { content: "⭐"; }
+        .sap-icon-heart::before { content: "❤️"; }
+        .sap-icon-thumbs-up::before { content: "👍"; }
+        .sap-icon-thumbs-down::before { content: "👎"; }
+        .sap-icon-check::before { content: "✅"; }
+        .sap-icon-times::before { content: "❌"; }
+        .sap-icon-plus::before { content: "➕"; }
+        .sap-icon-minus::before { content: "➖"; }
+        .sap-icon-arrow-up::before { content: "⬆️"; }
+        .sap-icon-arrow-down::before { content: "⬇️"; }
+        .sap-icon-arrow-left::before { content: "⬅️"; }
+        .sap-icon-arrow-right::before { content: "➡️"; }
+        .sap-icon-chevron-up::before { content: "🔺"; }
+        .sap-icon-chevron-down::before { content: "🔻"; }
+        .sap-icon-chevron-left::before { content: "◀️"; }
+        .sap-icon-chevron-right::before { content: "▶️"; }
+
+        /* Fiori Icon Usage Classes */
+        .sap-icon-phone { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-accept { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-reject { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-end { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-settings { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-user { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-company { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-activity { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-clear { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-test { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-refresh { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-simulate { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-control { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-integration { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+        .sap-icon-status { font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif; }
+
+        /* Enhanced Fiori Styling */
+        .sap-button .sap-icon {
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+
+        .sap-card-header .sap-icon {
+            margin-right: 0.5rem;
+            font-size: 1.25rem;
+        }
+
+        .sap-status-indicator .sap-icon {
+            margin-right: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .sap-activity-icon {
+            font-size: 1rem;
+            margin-right: 0.5rem;
+            opacity: 0.8;
+        }
 
     </style>
 </head>
