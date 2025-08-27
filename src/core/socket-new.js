@@ -60,13 +60,13 @@ function initializeWebSocket() {
         script.onload = function() {
             // Initialize Socket.io connection
             socket = io(socketUrl, {
-                transports: ['polling'],
+                transports: ['polling', 'websocket'],
                 timeout: 30000,
                 forceNew: true,
                 reconnection: true,
                 reconnectionAttempts: 10,
                 reconnectionDelay: 1000,
-                withCredentials: false
+                withCredentials: true
             });
             
             socket.on('connect', function() {

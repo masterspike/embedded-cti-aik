@@ -7,14 +7,26 @@ const app = express();
 
 // Add CORS headers for all routes
 app.use((req, res, next) => {
-    // Allow all origins for now
-    res.header('Access-Control-Allow-Origin', '*');
+    // Allow specific origins
+    const allowedOrigins = [
+        'https://glowing-frangollo-44ac94.netlify.app',
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'http://127.0.0.1:3000',
+        'http://127.0.0.1:3001'
+    ];
+    
+    const origin = req.headers.origin;
+    if (allowedOrigins.includes(origin) || !origin) {
+        res.header('Access-Control-Allow-Origin', origin || '*');
+    }
+    
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
-    res.header('Access-Control-Allow-Credentials', 'false');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+    res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Max-Age', '86400');
     
-    console.log('🌐 CORS headers set for:', req.headers.origin, 'Method:', req.method, 'URL:', req.url);
+    console.log('🌐 CORS headers set for:', origin, 'Method:', req.method, 'URL:', req.url);
     
     // Handle preflight requests
     if (req.method === 'OPTIONS') {
@@ -29,12 +41,18 @@ app.use((req, res, next) => {
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: "*", // Allow all origins for now
+        origin: [
+            "https://glowing-frangollo-44ac94.netlify.app",
+            "http://localhost:3000",
+            "http://localhost:3001",
+            "http://127.0.0.1:3000",
+            "http://127.0.0.1:3001"
+        ],
         methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
-        credentials: false,
-        allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept"]
+        credentials: true,
+        allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"]
     },
-    transports: ['polling'],
+    transports: ['polling', 'websocket'],
     allowEIO3: true,
     pingTimeout: 60000,
     pingInterval: 25000,
