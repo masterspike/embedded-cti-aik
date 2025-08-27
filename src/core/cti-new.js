@@ -767,6 +767,20 @@ function sendToSAPServiceCloud(callData) {
     addLog('✅ SAP ACCEPT payload verzonden: ' + sapPayload.ANI);
 }
 
+// Safe base64 encoding function that handles Unicode characters
+function safeBase64Encode(str) {
+    try {
+        // First try the standard btoa
+        return btoa(str);
+    } catch (error) {
+        // If btoa fails, use a Unicode-safe approach
+        const encoder = new TextEncoder();
+        const bytes = encoder.encode(str);
+        const binaryString = Array.from(bytes, byte => String.fromCharCode(byte)).join('');
+        return btoa(binaryString);
+    }
+}
+
 // Generate external reference ID for SAP
 function generateExternalReferenceId() {
     return 'ED' + Math.random().toString(36).substr(2, 15).toUpperCase() + 
@@ -892,8 +906,8 @@ async function testSapConnection() {
         return;
     }
     
-    // Create Basic Auth header
-    const credentials = btoa(`${username}:${password}`);
+    // Create Basic Auth header with safe base64 encoding
+    const credentials = safeBase64Encode(`${username}:${password}`);
     
     // Mock SAP connection test to avoid CORS issues
     addLog('🔄 Simulating SAP connection test (CORS bypass)');
@@ -957,8 +971,8 @@ async function sendSAPPayloadToSAP(sapPayload) {
         return false;
     }
     
-    // Create Basic Auth header
-    const credentials = btoa(`${sapUsername}:${sapPassword}`);
+    // Create Basic Auth header with safe base64 encoding
+    const credentials = safeBase64Encode(`${sapUsername}:${sapPassword}`);
     
     addLog('🏢 SAP payload verzenden naar: ' + sapEndpoint);
     addLog('📋 SAP payload: ' + JSON.stringify(sapPayload, null, 2));
@@ -998,4 +1012,5 @@ window.handleSAPMessage = handleSAPMessage;
 window.testSapConnection = testSapConnection;
 window.simulateIncomingCall = simulateIncomingCall;
 window.resetCallButtons = resetCallButtons;
-window.sendSAPPayloadToSAP = sendSAPPayloadToSAP; 
+window.sendSAPPayloadToSAP = sendSAPPayloadToSAP;
+window.safeBase64Encode = safeBase64Encode; 
