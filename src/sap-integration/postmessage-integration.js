@@ -128,7 +128,7 @@ function handleSAPMessage(sapMessage) {
 
 /**
  * SAP Service Cloud PostMessage Handler
- * Dit code draait in de SAP Service Cloud parent window
+ * Deze code draait in de SAP Service Cloud parent window
  */
 function setupSAPPostMessageHandler() {
     window.addEventListener('message', function(event) {
@@ -174,22 +174,14 @@ function handleCallEvent(callData) {
 function handleIncomingCall(callData) {
     console.log('📞 Incoming call van:', callData.ANI);
     
-    // 1. Identificeer customer via telefoonnummer
-    identifyCustomerByPhone(callData.ANI).then(customer => {
-        if (customer) {
-            // 2. Open customer window
-            openCustomerWindow(customer);
-            
-            // 3. Stuur bevestiging terug naar Agent Buddy
-            sendMessageToAgentBuddy({
-                type: 'CUSTOMER_LOADED',
-                customerId: customer.id,
-                phoneNumber: callData.ANI
-            });
-        } else {
-            console.warn('⚠️ Customer niet gevonden voor:', callData.ANI);
-        }
-    });
+    // NO customer identification here - only notification
+    // Customer identification will happen when call is accepted
+    
+    // Just log the incoming call
+    console.log('📢 Incoming call notification ontvangen voor:', callData.ANI);
+    
+    // Optionally show incoming call notification
+    showIncomingCallNotification(callData.ANI);
 }
 
 /**
@@ -197,6 +189,31 @@ function handleIncomingCall(callData) {
  */
 function handleCallAccepted(callData) {
     console.log('✅ Call geaccepteerd voor:', callData.ANI);
+    
+    // NOW identify customer via phone number (ONLY when call is accepted)
+    identifyCustomerByPhone(callData.ANI).then(customer => {
+        if (customer) {
+            // Open customer window
+            openCustomerWindow(customer);
+            
+            // Send confirmation back to Agent Buddy
+            sendMessageToAgentBuddy({
+                type: 'CUSTOMER_LOADED',
+                customerId: customer.id,
+                phoneNumber: callData.ANI
+            });
+            
+            console.log('✅ Customer geïdentificeerd en geladen:', customer.id);
+        } else {
+            console.warn('⚠️ Customer niet gevonden voor:', callData.ANI);
+            
+            // Send notification that no customer was found
+            sendMessageToAgentBuddy({
+                type: 'CUSTOMER_NOT_FOUND',
+                phoneNumber: callData.ANI
+            });
+        }
+    });
     
     // Update customer screen status
     updateCustomerScreenStatus(callData.ANI, 'ACCEPTED');
@@ -302,6 +319,14 @@ function logCallAction(callData, action) {
 function showCallDeclineNotification(phoneNumber) {
     // Show SAP notification
     console.log('🔔 Call decline notification voor:', phoneNumber);
+}
+
+/**
+ * Show incoming call notification
+ */
+function showIncomingCallNotification(phoneNumber) {
+    // Show SAP notification for incoming call (no customer lookup)
+    console.log('📞 Incoming call notification voor:', phoneNumber);
 }
 
 // ============================================================================
