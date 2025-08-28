@@ -7,21 +7,17 @@ const app = express();
 
 // Add CORS headers for all routes
 app.use((req, res, next) => {
-    // Allow specific origins
-    const allowedOrigins = [
-        'https://glowing-frangollo-44ac94.netlify.app',
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://127.0.0.1:3000',
-        'http://127.0.0.1:3001'
-    ];
-    
     const origin = req.headers.origin;
-    if (allowedOrigins.includes(origin)) {
+    
+    // Allow specific origin for production
+    if (origin === 'https://glowing-frangollo-44ac94.netlify.app') {
+        res.header('Access-Control-Allow-Origin', origin);
+    } else if (origin && (origin.includes('localhost') || origin.includes('127.0.0.1'))) {
+        // Allow localhost for development
         res.header('Access-Control-Allow-Origin', origin);
     } else if (!origin) {
         // For requests without origin (like server-to-server)
-        res.header('Access-Control-Allow-Origin', '*');
+        res.header('Access-Control-Allow-Origin', 'https://glowing-frangollo-44ac94.netlify.app');
     } else {
         // Origin not allowed
         console.log('❌ CORS blocked origin:', origin);
@@ -49,7 +45,7 @@ app.use((req, res, next) => {
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: "*",
+        origin: "https://glowing-frangollo-44ac94.netlify.app",
         methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
         credentials: false,
         allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"]
