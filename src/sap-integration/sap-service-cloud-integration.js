@@ -60,7 +60,37 @@ function sendCallNotificationToSAP(phoneNumber, callId) {
         "CallType": "INBOUND"
     };
     
-    return sendToSAPServiceCloud(sapPayload);
+    // Use direct PostMessage instead of sendToSAPServiceCloud to avoid confusion
+    if (window.parent && window.parent !== window) {
+        try {
+            // Enhanced payload with metadata for SAP Service Cloud
+            const enhancedPayload = {
+                ...sapPayload,
+                source: 'agent-buddy',
+                widgetId: 'crm-agent-cti-plugin',
+                timestamp: new Date().toISOString(),
+                version: '1.0.0',
+                agentId: getAgentId(),
+                sessionId: getSessionId()
+            };
+            
+            // Send to SAP Service Cloud parent window
+            window.parent.postMessage(enhancedPayload, "*");
+            
+            console.log('📤 SAP Service Cloud notification payload verzonden:', enhancedPayload);
+            addLog('📤 SAP Service Cloud: NOTIFY voor ' + enhancedPayload.ANI);
+            
+            return true;
+        } catch (error) {
+            console.error('❌ SAP Service Cloud PostMessage error:', error);
+            addLog('❌ Fout bij SAP Service Cloud communicatie: ' + error.message);
+            return false;
+        }
+    } else {
+        console.warn('⚠️ Geen SAP Service Cloud parent window gevonden');
+        addLog('⚠️ Agent Buddy niet embedded in SAP Service Cloud');
+        return false;
+    }
 }
 
 /**
