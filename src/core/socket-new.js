@@ -37,7 +37,7 @@ function initializeWebSocket() {
         
         // Load Socket.io client library
         const script = document.createElement('script');
-        script.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
+        script.src = 'https://cdn.socket.io/4.8.1/socket.io.min.js';
         script.onload = function() {
             console.log('📦 Socket.io library geladen');
             
@@ -60,11 +60,13 @@ function initializeWebSocket() {
     // Initialize Socket.io connection
     function initializeSocketConnection() {
         try {
-            console.log('🔗 Attempting Socket.io connection to:', socketUrl);
+            // Force the correct URL
+            const targetUrl = 'https://agent-buddy-socketio.onrender.com';
+            console.log('🔗 Attempting Socket.io connection to:', targetUrl);
             console.log('📡 Available transports:', ['polling', 'websocket']);
             
-            // Initialize Socket.io connection
-            socket = io(socketUrl, {
+            // Initialize Socket.io connection with explicit URL
+            socket = io(targetUrl, {
                 transports: ['polling', 'websocket'],
                 timeout: 60000,
                 forceNew: true,
