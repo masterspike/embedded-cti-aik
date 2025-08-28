@@ -185,6 +185,9 @@ function sendSAPIncomingNotification(callData) {
 
 // Accept call
 function acceptCall() {
+    console.log('🔍 DEBUG: acceptCall aangeroepen');
+    console.trace('🔍 DEBUG: Call stack voor acceptCall');
+    
     if (!currentCall) return;
     
     addLog('✅ Call geaccepteerd: ' + currentCall.phoneNumber);
@@ -727,6 +730,9 @@ function identifyCustomer(phoneNumber) {
 
 // Send call data to SAP Service Cloud
 function sendToSAPServiceCloud(callData) {
+    console.log('🔍 DEBUG: sendToSAPServiceCloud aangeroepen met callData:', callData);
+    console.trace('🔍 DEBUG: Call stack voor sendToSAPServiceCloud');
+    
     addLog('🏢 Call acceptatie verzenden naar SAP Service Cloud');
     
     // SAP Service Cloud expects this specific payload format for ACCEPT
