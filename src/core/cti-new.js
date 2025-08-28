@@ -212,7 +212,7 @@ function acceptCall() {
     identifyCustomer(currentCall.phoneNumber);
     
     // Send to SAP Service Cloud
-    sendToSAPServiceCloud(currentCall);
+    sendCallAcceptToSAP(currentCall);
     
     // Send to SAP Service Cloud parent window
     if (window.sendCallAcceptToSAP) {
@@ -728,10 +728,10 @@ function identifyCustomer(phoneNumber) {
     addLog('✅ Klant geïdentificeerd: ' + customerData.name);
 }
 
-// Send call data to SAP Service Cloud
-function sendToSAPServiceCloud(callData) {
-    console.log('🔍 DEBUG: sendToSAPServiceCloud aangeroepen met callData:', callData);
-    console.trace('🔍 DEBUG: Call stack voor sendToSAPServiceCloud');
+// Send call accept data to SAP Service Cloud
+function sendCallAcceptToSAP(callData) {
+    console.log('🔍 DEBUG: sendCallAcceptToSAP aangeroepen met callData:', callData);
+    console.trace('🔍 DEBUG: Call stack voor sendCallAcceptToSAP');
     
     addLog('🏢 Call acceptatie verzenden naar SAP Service Cloud');
     
@@ -1019,7 +1019,7 @@ window.handleIncomingCall = handleIncomingCall;
 window.acceptCall = acceptCall;
 window.declineCall = declineCall;
 window.identifyCustomer = identifyCustomer;
-window.sendToSAPServiceCloud = sendToSAPServiceCloud;
+window.sendCallAcceptToSAP = sendCallAcceptToSAP;
 window.showDeclinePopup = showDeclinePopup;
 window.handleSAPMessage = handleSAPMessage;
 window.testSapConnection = testSapConnection;
