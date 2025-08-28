@@ -3,7 +3,7 @@ services:
     name: agent-buddy-socketio
     env: node
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: node socketio-server.js
     envVars:
       - key: NODE_ENV
         value: production
