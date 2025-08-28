@@ -268,6 +268,9 @@ function sendMessageToAgentBuddy(message) {
  * Identificeer customer via telefoonnummer
  */
 async function identifyCustomerByPhone(phoneNumber) {
+    console.log('🔍 DEBUG: identifyCustomerByPhone aangeroepen voor:', phoneNumber);
+    console.trace('🔍 DEBUG: Call stack voor identifyCustomerByPhone');
+    
     try {
         // SAP Service Cloud API call
         const response = await fetch(`/sap/opu/odata/sap/ZAGENTBUDDY_SRV/Customers?$filter=PhoneNumber eq '${phoneNumber}'`);
