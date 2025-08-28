@@ -52,11 +52,13 @@ const io = socketIo(server, {
     },
     transports: ['polling', 'websocket'],
     allowEIO3: true,
+    allowEIO4: true,
     pingTimeout: 60000,
     pingInterval: 25000,
     upgradeTimeout: 30000,
     maxHttpBufferSize: 1e8,
-    connectTimeout: 45000
+    connectTimeout: 45000,
+    path: '/socket.io/'
 });
 
 // Serve static files
