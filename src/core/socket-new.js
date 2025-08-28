@@ -64,12 +64,15 @@ function initializeWebSocket() {
         };
         
         document.head.appendChild(script);
+    } catch (error) {
+        addLog('❌ Kon Socket.io niet initialiseren: ' + error.message);
     }
     
     // Initialize Socket.io connection
     function initializeSocketConnection() {
-        // Initialize Socket.io connection
-        socket = io(socketUrl, {
+        try {
+            // Initialize Socket.io connection
+            socket = io(socketUrl, {
                 transports: ['polling', 'websocket'],
                 timeout: 60000,
                 forceNew: true,
@@ -161,12 +164,9 @@ function initializeWebSocket() {
                     }
                 }, 5000);
             });
-            
-        };
-        document.head.appendChild(script);
-        
-    } catch (error) {
-        addLog('❌ Kon Socket.io niet initialiseren: ' + error.message);
+        } catch (error) {
+            addLog('❌ Kon Socket.io verbinding niet opzetten: ' + error.message);
+        }
     }
 }
 
@@ -393,4 +393,20 @@ function handleConnectionRetry() {
         addLog('🔄 Socket.io herverbinding...');
         initializeWebSocket();
     }
-} 
+}
+
+// Export functions globally
+window.initializeWebSocket = initializeWebSocket;
+window.initializeSocketConnection = initializeSocketConnection;
+window.sendWebSocketMessage = sendWebSocketMessage;
+window.sendCallSimulation = sendCallSimulation;
+window.sendSAPIntegration = sendSAPIntegration;
+window.sendTestMessage = sendTestMessage;
+window.updateWSStatus = updateWSStatus;
+window.getConnectionStatus = getConnectionStatus;
+window.getSocketId = getSocketId;
+window.disconnectWebSocket = disconnectWebSocket;
+window.reconnectWebSocket = reconnectWebSocket;
+window.testConnection = testConnection;
+window.broadcastMessage = broadcastMessage;
+window.handleConnectionRetry = handleConnectionRetry; 
