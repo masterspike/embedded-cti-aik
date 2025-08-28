@@ -684,6 +684,9 @@ function sendSAPDeclineNotification(callData) {
 
 // Identify customer by phone number (ONLY called when call is accepted)
 function identifyCustomer(phoneNumber) {
+    console.log('🔍 DEBUG: identifyCustomer aangeroepen voor:', phoneNumber);
+    console.trace('🔍 DEBUG: Call stack voor identifyCustomer');
+    
     addLog('🔍 Customer identificatie starten in SAP Service Cloud voor: ' + phoneNumber);
     
     // Simulate customer lookup (replace with actual SAP API call)
@@ -957,6 +960,9 @@ function sendDirectPostMessage(sapPayload) {
 
 // Send SAP payload to SAP Service Cloud via HTTP with Basic Auth
 async function sendSAPPayloadToSAP(sapPayload) {
+    console.log('🔍 DEBUG: sendSAPPayloadToSAP aangeroepen met payload:', sapPayload);
+    console.trace('🔍 DEBUG: Call stack voor sendSAPPayloadToSAP');
+    
     // Try environment variable first, then fallback to UI input
     const sapEndpoint = (window.getConfig && getConfig('SAP_ENDPOINT')) || document.getElementById('sapEndpoint')?.value;
     const sapUsername = (window.getConfig && getConfig('SAP_USERNAME')) || document.getElementById('sapUsername')?.value;

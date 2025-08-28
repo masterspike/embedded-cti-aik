@@ -180,6 +180,8 @@ function sendTimerStopToSAP() {
  * Send customer identification to SAP Service Cloud (ONLY when call is accepted)
  */
 function sendCustomerIdentificationToSAP(phoneNumber, customerData) {
+    console.log('🔍 DEBUG: sendCustomerIdentificationToSAP aangeroepen voor:', phoneNumber);
+    console.trace('🔍 DEBUG: Call stack voor sendCustomerIdentificationToSAP');
     const sapPayload = {
         "Type": "CUSTOMER",
         "EventType": "IDENTIFICATION",
