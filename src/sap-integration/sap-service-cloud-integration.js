@@ -400,7 +400,35 @@ function notifySAPServiceCloudReady() {
         "version": "1.0.0"
     };
     
-    sendToSAPServiceCloud(readyPayload);
+    // Use PostMessage directly instead of sendToSAPServiceCloud to avoid confusion
+    if (window.parent && window.parent !== window) {
+        try {
+            // Enhanced payload with metadata for SAP Service Cloud
+            const enhancedPayload = {
+                ...readyPayload,
+                source: 'agent-buddy',
+                widgetId: 'crm-agent-cti-plugin',
+                timestamp: new Date().toISOString(),
+                version: '1.0.0',
+                agentId: getAgentId(),
+                sessionId: getSessionId()
+            };
+            
+            // Send to SAP Service Cloud parent window
+            window.parent.postMessage(enhancedPayload, "*");
+            
+            console.log('📤 SAP Service Cloud ready payload verzonden:', enhancedPayload);
+            addLog('📤 SAP Service Cloud: READY notification verzonden');
+            
+        } catch (error) {
+            console.error('❌ SAP Service Cloud PostMessage error:', error);
+            addLog('❌ Fout bij SAP Service Cloud communicatie: ' + error.message);
+        }
+    } else {
+        console.warn('⚠️ Geen SAP Service Cloud parent window gevonden');
+        addLog('⚠️ Agent Buddy niet embedded in SAP Service Cloud');
+    }
+    
     addLog('✅ Agent Buddy ready notification verzonden naar SAP Service Cloud');
 }
 
