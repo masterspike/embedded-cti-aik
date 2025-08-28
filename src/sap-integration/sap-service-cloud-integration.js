@@ -11,6 +11,8 @@
  * Send enhanced payload to SAP Service Cloud parent window
  */
 function sendToSAPServiceCloud(sapPayload) {
+    console.log('🔍 DEBUG: sendToSAPServiceCloud aangeroepen met payload:', sapPayload);
+    console.trace('🔍 DEBUG: Call stack voor sendToSAPServiceCloud');
     if (window.parent && window.parent !== window) {
         try {
             // Enhanced payload with metadata for SAP Service Cloud
@@ -385,6 +387,9 @@ function getSessionId() {
  * Notify SAP Service Cloud that Agent Buddy is ready
  */
 function notifySAPServiceCloudReady() {
+    console.log('🔍 DEBUG: notifySAPServiceCloudReady aangeroepen');
+    console.trace('🔍 DEBUG: Call stack voor notifySAPServiceCloudReady');
+    
     const readyPayload = {
         "Type": "WIDGET",
         "EventType": "STATUS",
