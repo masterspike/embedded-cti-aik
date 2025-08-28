@@ -53,10 +53,11 @@ function initializeWebSocket() {
         script.onload = function() {
             console.log('📦 Socket.io library geladen');
             
-            // Wait a bit before initializing connection
+            // Wait longer for the library to fully initialize
             setTimeout(() => {
+                console.log('🔗 Starting Socket.io connection...');
                 initializeSocketConnection();
-            }, 1000);
+            }, 2000);
         };
         script.onerror = function() {
             console.error('❌ Socket.io library kon niet geladen worden');
@@ -71,6 +72,9 @@ function initializeWebSocket() {
     // Initialize Socket.io connection
     function initializeSocketConnection() {
         try {
+            console.log('🔗 Attempting Socket.io connection to:', socketUrl);
+            console.log('📡 Available transports:', ['polling', 'websocket']);
+            
             // Initialize Socket.io connection
             socket = io(socketUrl, {
                 transports: ['polling', 'websocket'],
@@ -81,7 +85,9 @@ function initializeWebSocket() {
                 reconnectionDelay: 2000,
                 withCredentials: false,
                 upgrade: true,
-                rememberUpgrade: true
+                rememberUpgrade: true,
+                path: '/socket.io/',
+                autoConnect: true
             });
             
             socket.on('connect', function() {
@@ -150,11 +156,15 @@ function initializeWebSocket() {
                 updateWSStatus('Fout', 'status-disconnected');
                 addLog('❌ Socket.io verbindingsfout: ' + error.message);
                 console.error('🔍 Detailed connect error:', error);
+                console.error('🔍 Error type:', error.type);
+                console.error('🔍 Error description:', error.description);
                 
                 // Log more details for debugging
                 console.log('🌐 Current URL:', socketUrl);
                 console.log('🔗 Socket state:', socket.connected);
-                console.log('📡 Transport:', socket.io.engine.transport.name);
+                if (socket.io && socket.io.engine && socket.io.engine.transport) {
+                    console.log('📡 Transport:', socket.io.engine.transport.name);
+                }
                 
                 // Attempt to reconnect after 5 seconds
                 setTimeout(() => {
