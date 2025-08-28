@@ -390,34 +390,26 @@ function notifySAPServiceCloudReady() {
     console.log('🔍 DEBUG: notifySAPServiceCloudReady aangeroepen');
     console.trace('🔍 DEBUG: Call stack voor notifySAPServiceCloudReady');
     
-    const readyPayload = {
-        "Type": "WIDGET",
-        "EventType": "STATUS",
-        "Action": "READY",
-        "WidgetId": "crm-agent-cti-plugin",
-        "Timestamp": new Date().toISOString(),
-        "source": "agent-buddy",
-        "version": "1.0.0"
-    };
-    
     // Use PostMessage directly instead of sendToSAPServiceCloud to avoid confusion
     if (window.parent && window.parent !== window) {
         try {
-            // Enhanced payload with metadata for SAP Service Cloud
-            const enhancedPayload = {
-                ...readyPayload,
-                source: 'agent-buddy',
-                widgetId: 'crm-agent-cti-plugin',
-                timestamp: new Date().toISOString(),
-                version: '1.0.0',
-                agentId: getAgentId(),
-                sessionId: getSessionId()
+            // Create a clean payload without any DOM elements
+            const readyPayload = {
+                "Type": "WIDGET",
+                "EventType": "STATUS",
+                "Action": "READY",
+                "WidgetId": "crm-agent-cti-plugin",
+                "Timestamp": new Date().toISOString(),
+                "source": "agent-buddy",
+                "version": "1.0.0",
+                "agentId": getAgentId(),
+                "sessionId": getSessionId()
             };
             
             // Send to SAP Service Cloud parent window
-            window.parent.postMessage(enhancedPayload, "*");
+            window.parent.postMessage(readyPayload, "*");
             
-            console.log('📤 SAP Service Cloud ready payload verzonden:', enhancedPayload);
+            console.log('📤 SAP Service Cloud ready payload verzonden:', readyPayload);
             addLog('📤 SAP Service Cloud: READY notification verzonden');
             
         } catch (error) {
