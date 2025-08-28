@@ -960,7 +960,7 @@ function sendDirectPostMessage(sapPayload) {
 
 // Send SAP payload to SAP Service Cloud via HTTP with Basic Auth
 async function sendSAPPayloadToSAP(sapPayload) {
-    console.log('🔍 DEBUG: sendSAPPayloadToSAP aangeroepen met payload:', sapPayload);
+    console.log('🔍 DEBUG: sendSAPPayloadToSAP aangeroepen met payload:', JSON.stringify(sapPayload, null, 2));
     console.trace('🔍 DEBUG: Call stack voor sendSAPPayloadToSAP');
     
     // Try environment variable first, then fallback to UI input

@@ -243,11 +243,15 @@ aik.cti.integration.prototype._handleAikMessage = function(message) {
  * @private
  */
 aik.cti.integration.prototype._handleIncomingCallFromAik = function(payload) {
+    console.log('🔍 DEBUG: _handleIncomingCallFromAik aangeroepen met payload:', payload);
+    console.trace('🔍 DEBUG: Call stack voor _handleIncomingCallFromAik');
+    
     console.log('📞 Incoming call van Aik:', payload);
     addLog('📞 Aik: Incoming call van ' + payload.ANI);
     
     // Trigger call handling in Agent Buddy
     if (window.handleIncomingCall) {
+        console.log('🔍 DEBUG: window.handleIncomingCall wordt aangeroepen');
         window.handleIncomingCall({
             phoneNumber: payload.ANI,
             callId: payload.ExternalReferenceID,
