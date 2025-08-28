@@ -16,7 +16,11 @@ function initializeApplication() {
     console.log('🚀 Agent Buddy applicatie initialiseren...');
     
     // Initialize WebSocket connection
-    initializeWebSocket();
+    if (typeof initializeWebSocket === 'function') {
+        initializeWebSocket();
+    } else {
+        console.warn('⚠️ initializeWebSocket function not available');
+    }
     
     // Initialize CTI module
     initializeCTI();
