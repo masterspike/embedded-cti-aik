@@ -52,21 +52,33 @@ function initializeWebSocket() {
         script.src = 'https://cdn.socket.io/4.7.2/socket.io.min.js';
         script.onload = function() {
             console.log('📦 Socket.io library geladen');
+            
+            // Wait a bit before initializing connection
+            setTimeout(() => {
+                initializeSocketConnection();
+            }, 1000);
         };
         script.onerror = function() {
             console.error('❌ Socket.io library kon niet geladen worden');
             addLog('❌ Socket.io library fout');
         };
-        script.onload = function() {
+        
+        document.head.appendChild(script);
+    }
+    
+    // Initialize Socket.io connection
+    function initializeSocketConnection() {
             // Initialize Socket.io connection
             socket = io(socketUrl, {
                 transports: ['polling', 'websocket'],
-                timeout: 30000,
+                timeout: 60000,
                 forceNew: true,
                 reconnection: true,
-                reconnectionAttempts: 10,
-                reconnectionDelay: 1000,
-                withCredentials: false
+                reconnectionAttempts: 5,
+                reconnectionDelay: 2000,
+                withCredentials: false,
+                upgrade: true,
+                rememberUpgrade: true
             });
             
             socket.on('connect', function() {
