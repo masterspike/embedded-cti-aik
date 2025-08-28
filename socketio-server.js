@@ -9,21 +9,33 @@ const app = express();
 app.use((req, res, next) => {
     const origin = req.headers.origin;
     
-    // Allow specific origin for production
+    // Always allow the production origin
     if (origin === 'https://glowing-frangollo-44ac94.netlify.app') {
         res.header('Access-Control-Allow-Origin', origin);
     } else if (origin && (origin.includes('localhost') || origin.includes('127.0.0.1'))) {
         // Allow localhost for development
         res.header('Access-Control-Allow-Origin', origin);
-    } else if (!origin) {
-        // For requests without origin (like server-to-server)
-        res.header('Access-Control-Allow-Origin', 'https://glowing-frangollo-44ac94.netlify.app');
     } else {
-        // Origin not allowed
-        console.log('❌ CORS blocked origin:', origin);
-        res.status(403).json({ error: 'CORS not allowed' });
+        // For all other requests, allow the production origin
+        res.header('Access-Control-Allow-Origin', 'https://glowing-frangollo-44ac94.netlify.app');
+    }
+    
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
+    res.header('Access-Control-Allow-Credentials', 'false');
+    res.header('Access-Control-Max-Age', '86400');
+    
+    console.log('🌐 CORS headers set for:', origin, 'Method:', req.method, 'URL:', req.url);
+    
+    // Handle preflight requests
+    if (req.method === 'OPTIONS') {
+        console.log('🛡️ Handling preflight request');
+        res.status(200).end();
         return;
     }
+    
+    next();
+});
     
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept, Origin');
