@@ -68,8 +68,8 @@ function initializeWebSocket() {
     
     // Initialize Socket.io connection
     function initializeSocketConnection() {
-            // Initialize Socket.io connection
-            socket = io(socketUrl, {
+        // Initialize Socket.io connection
+        socket = io(socketUrl, {
                 transports: ['polling', 'websocket'],
                 timeout: 60000,
                 forceNew: true,
