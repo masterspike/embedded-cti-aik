@@ -53,7 +53,9 @@ const io = socketIo(server, {
     upgradeTimeout: 30000,
     maxHttpBufferSize: 1e8,
     connectTimeout: 45000,
-    path: '/socket.io/'
+    path: '/socket.io/',
+    serveClient: false,
+    cookie: false
 });
 
 // Serve static files
@@ -213,12 +215,14 @@ io.on('connection', (socket) => {
 });
 
 // Start the server
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 10000;
 const HOST = process.env.HOST || '0.0.0.0';
 
 server.listen(PORT, HOST, () => {
     console.log(`🎯 Socket.io server is running on ${HOST}:${PORT}`);
     console.log(`🔗 Connect your widget to: ${process.env.RENDER_EXTERNAL_URL || 'http://localhost:3000'}`);
+    console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`📡 Socket.io path: /socket.io/`);
 });
 
 // Graceful shutdown

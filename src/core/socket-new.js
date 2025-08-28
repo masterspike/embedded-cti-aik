@@ -35,9 +35,9 @@ function initializeWebSocket() {
         // Update initial status
         updateWSStatus('Verbinding maken...', 'status-connecting');
         
-        // Load Socket.io client library
+        // Load Socket.io client library with cache busting
         const script = document.createElement('script');
-        script.src = 'https://cdn.socket.io/4.8.1/socket.io.min.js';
+        script.src = 'https://cdn.socket.io/4.8.1/socket.io.min.js?v=' + Date.now();
         script.onload = function() {
             console.log('📦 Socket.io library geladen');
             
