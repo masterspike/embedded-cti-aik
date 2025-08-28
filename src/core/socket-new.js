@@ -12,30 +12,18 @@ function initializeWebSocket() {
         // Generate unique socket ID
         socketId = 'socket_' + Math.random().toString(36).substr(2, 9);
         
-        // Try to connect to the first available Socket.io server
-        let socketUrl = 'http://localhost:3001'; // Default to localhost for development
+        // Force Socket.io URL to Render.com server
+        let socketUrl = 'https://agent-buddy-socketio.onrender.com';
         
-        // Only use Render URL if we're on production (Netlify)
-        if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
-            // Safe check for config - if not available, use fallback
-            let configSocketUrl = null;
-            try {
-                if (window.CONFIG && window.getConfig) {
-                    configSocketUrl = getConfig('SOCKET_URL');
-                    console.log('🔧 Config gevonden, SOCKET_URL:', configSocketUrl);
-                } else {
-                    console.log('⚠️ Config niet beschikbaar, gebruik fallback URL');
-                }
-            } catch (error) {
-                console.log('⚠️ Config error:', error.message);
-            }
-            
-            // Try multiple fallback URLs
-            socketUrl = configSocketUrl || window.SOCKET_URL || 'https://agent-buddy-socketio.onrender.com';
-            
-            // If Render.com fails, we can add more fallbacks here
-            console.log('🔗 Using Socket.io URL:', socketUrl);
+        // Only use localhost for development
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            socketUrl = 'http://localhost:3001';
+            console.log('🔧 Development mode - using localhost');
+        } else {
+            console.log('🌐 Production mode - using Render.com server');
         }
+        
+        console.log('🔗 Using Socket.io URL:', socketUrl);
         
         console.log('🔗 Attempting to connect to Socket.io:', socketUrl);
         console.log('📍 Current hostname:', window.location.hostname);
