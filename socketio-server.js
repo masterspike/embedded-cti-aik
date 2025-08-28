@@ -49,25 +49,7 @@ app.use((req, res, next) => {
 const server = http.createServer(app);
 const io = socketIo(server, {
     cors: {
-        origin: function (origin, callback) {
-            const allowedOrigins = [
-                "https://glowing-frangollo-44ac94.netlify.app",
-                "http://localhost:3000",
-                "http://localhost:3001",
-                "http://127.0.0.1:3000",
-                "http://127.0.0.1:3001"
-            ];
-            
-            // Allow requests with no origin (like mobile apps or curl requests)
-            if (!origin) return callback(null, true);
-            
-            if (allowedOrigins.indexOf(origin) !== -1) {
-                callback(null, true);
-            } else {
-                console.log('❌ Socket.io CORS blocked origin:', origin);
-                callback(new Error('Not allowed by CORS'));
-            }
-        },
+        origin: "*",
         methods: ["GET", "POST", "OPTIONS", "PUT", "DELETE"],
         credentials: false,
         allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With", "Accept", "Origin"]

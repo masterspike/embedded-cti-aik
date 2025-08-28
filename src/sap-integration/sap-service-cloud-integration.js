@@ -393,7 +393,7 @@ function notifySAPServiceCloudReady() {
     // Use PostMessage directly instead of sendToSAPServiceCloud to avoid confusion
     if (window.parent && window.parent !== window) {
         try {
-            // Create a clean payload without any DOM elements
+            // Create a minimal clean payload without any potential DOM elements
             const readyPayload = {
                 "Type": "WIDGET",
                 "EventType": "STATUS",
@@ -401,9 +401,7 @@ function notifySAPServiceCloudReady() {
                 "WidgetId": "crm-agent-cti-plugin",
                 "Timestamp": new Date().toISOString(),
                 "source": "agent-buddy",
-                "version": "1.0.0",
-                "agentId": getAgentId(),
-                "sessionId": getSessionId()
+                "version": "1.0.0"
             };
             
             // Send to SAP Service Cloud parent window
