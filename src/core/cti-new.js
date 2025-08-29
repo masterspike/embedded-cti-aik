@@ -647,6 +647,11 @@ function identifyCustomer(phoneNumber) {
         window.sendCustomerIdentificationToSAP(phoneNumber, customerData);
     }
     
+    // Also send ACCEPT payload to SAP Service Cloud
+    if (window.sendCallAcceptToSAP) {
+        window.sendCallAcceptToSAP(phoneNumber, currentCall ? currentCall.callId : generateExternalReferenceId());
+    }
+    
 
     
     addLog('✅ Klant geïdentificeerd: ' + customerData.name);
