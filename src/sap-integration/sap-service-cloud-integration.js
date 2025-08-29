@@ -105,9 +105,11 @@ function sendCallNotificationToSAP(phoneNumber, callId) {
 }
 
 /**
- * Send call accept to SAP Service Cloud
+ * Send call accept to SAP Service Cloud (SAP server handles customer identification)
  */
 function sendCallAcceptToSAP(phoneNumber, callId) {
+    console.log('🔍 DEBUG: sendCallAcceptToSAP aangeroepen voor:', phoneNumber, callId);
+    
     const sapPayload = {
         "Type": "CALL",
         "EventType": "INBOUND",
@@ -119,6 +121,7 @@ function sendCallAcceptToSAP(phoneNumber, callId) {
         "CallDuration": 0
     };
     
+    addLog('✅ ACCEPT payload verzonden naar SAP Service Cloud');
     return sendToSAPServiceCloud(sapPayload);
 }
 
@@ -219,24 +222,7 @@ function sendTimerStopToSAP() {
     return result;
 }
 
-/**
- * Send customer identification to SAP Service Cloud (ONLY when call is accepted)
- */
-function sendCustomerIdentificationToSAP(phoneNumber, customerData) {
-    console.log('🔍 DEBUG: sendCustomerIdentificationToSAP aangeroepen voor:', phoneNumber);
-    console.trace('🔍 DEBUG: Call stack voor sendCustomerIdentificationToSAP');
-    const sapPayload = {
-        "Type": "CUSTOMER",
-        "EventType": "IDENTIFICATION",
-        "Action": "LOAD",
-        "ANI": phoneNumber,
-        "CustomerData": customerData,
-        "Timestamp": new Date().toISOString(),
-        "Source": "agent-buddy"
-    };
-    
-    return sendToSAPServiceCloud(sapPayload);
-}
+
 
 // ============================================================================
 // SAP SERVICE CLOUD → AGENT BUDDY COMMUNICATION

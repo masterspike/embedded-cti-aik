@@ -146,11 +146,7 @@ function acceptCall() {
         agentId.textContent = currentAgentId;
     }
     
-    // Identify customer in SAP Service Cloud (ONLY when call is accepted)
-    addLog('🔍 Customer identificatie starten voor: ' + currentCall.phoneNumber);
-    identifyCustomer(currentCall.phoneNumber);
-    
-    // Send to SAP Service Cloud parent window
+    // Send ACCEPT to SAP Service Cloud (includes customer identification)
     if (window.sendCallAcceptToSAP) {
         window.sendCallAcceptToSAP(currentCall.phoneNumber, currentCall.callId);
     }
@@ -612,50 +608,7 @@ function sendSAPDeclineNotification(callData) {
     addLog('❌ SAP DECLINE payload verzonden: ' + sapPayload.ANI);
 }
 
-// Identify customer by phone number (ONLY called when call is accepted)
-function identifyCustomer(phoneNumber) {
-    console.log('🔍 DEBUG: identifyCustomer aangeroepen voor:', phoneNumber);
-    console.trace('🔍 DEBUG: Call stack voor identifyCustomer');
-    
-    addLog('🔍 Customer identificatie starten in SAP Service Cloud voor: ' + phoneNumber);
-    
-    // Simulate customer lookup (replace with actual SAP API call)
-    customerData = {
-        name: 'Indy Vidueel',
-        id: 'NSR' + Math.floor(Math.random() * 10000),
-        email: 'indy.vidueel@ns.nl',
-        company: 'Indy BV',
-        phoneNumber: phoneNumber
-    };
-    
-    // Update customer info display with null checks
-    const customerName = document.getElementById('customerName');
-    const customerId = document.getElementById('customerId');
-    const customerEmail = document.getElementById('customerEmail');
-    const customerCompany = document.getElementById('customerCompany');
-    
-    if (customerName) customerName.textContent = customerData.name;
-    if (customerId) customerId.textContent = customerData.id;
-    if (customerEmail) customerEmail.textContent = customerData.email;
-    if (customerCompany) customerCompany.textContent = customerData.company;
-    
-    // Note: customerInfo and noCustomerMessage elements don't exist in new HTML structure
-    // Customer info is now always visible in the SAP Fiori cards
-    
-    // Send customer identification to SAP Service Cloud
-    if (window.sendCustomerIdentificationToSAP) {
-        window.sendCustomerIdentificationToSAP(phoneNumber, customerData);
-    }
-    
-    // Also send ACCEPT payload to SAP Service Cloud
-    if (window.sendCallAcceptToSAP) {
-        window.sendCallAcceptToSAP(phoneNumber, currentCall ? currentCall.callId : generateExternalReferenceId());
-    }
-    
 
-    
-    addLog('✅ Klant geïdentificeerd: ' + customerData.name);
-}
 
 // Send call accept data to SAP Service Cloud
 function sendCallAcceptToSAP(callData) {
