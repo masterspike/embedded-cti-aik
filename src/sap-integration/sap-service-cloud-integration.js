@@ -15,6 +15,10 @@ function sendToSAPServiceCloud(sapPayload) {
     console.trace('🔍 DEBUG: Call stack voor sendToSAPServiceCloud');
     if (window.parent && window.parent !== window) {
         try {
+            // Get agent and session IDs safely as strings
+            const agentId = String(getAgentId() || 'AGENT-UNKNOWN');
+            const sessionId = String(getSessionId() || 'SESSION-UNKNOWN');
+            
             // Enhanced payload with metadata for SAP Service Cloud
             const enhancedPayload = {
                 ...sapPayload,
@@ -22,8 +26,8 @@ function sendToSAPServiceCloud(sapPayload) {
                 widgetId: 'crm-agent-cti-plugin',
                 timestamp: new Date().toISOString(),
                 version: '1.0.0',
-                agentId: getAgentId(),
-                sessionId: getSessionId()
+                agentId: agentId,
+                sessionId: sessionId
             };
             
             // Send to SAP Service Cloud parent window
@@ -66,6 +70,10 @@ function sendCallNotificationToSAP(phoneNumber, callId) {
     // Use direct PostMessage instead of sendToSAPServiceCloud to avoid confusion
     if (window.parent && window.parent !== window) {
         try {
+            // Get agent and session IDs safely as strings
+            const agentId = String(getAgentId() || 'AGENT-UNKNOWN');
+            const sessionId = String(getSessionId() || 'SESSION-UNKNOWN');
+            
             // Enhanced payload with metadata for SAP Service Cloud
             const enhancedPayload = {
                 ...sapPayload,
@@ -73,8 +81,8 @@ function sendCallNotificationToSAP(phoneNumber, callId) {
                 widgetId: 'crm-agent-cti-plugin',
                 timestamp: new Date().toISOString(),
                 version: '1.0.0',
-                agentId: getAgentId(),
-                sessionId: getSessionId()
+                agentId: agentId,
+                sessionId: sessionId
             };
             
             // Send to SAP Service Cloud parent window
