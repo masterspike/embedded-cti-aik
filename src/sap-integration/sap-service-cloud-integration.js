@@ -46,9 +46,12 @@ function sendToSAPServiceCloud(sapPayload) {
 }
 
 /**
- * Send call notification to SAP Service Cloud
+ * Send call notification to SAP Service Cloud (NOTIFY only, no customer identification)
  */
 function sendCallNotificationToSAP(phoneNumber, callId) {
+    console.log('🔍 DEBUG: sendCallNotificationToSAP aangeroepen voor:', phoneNumber, callId);
+    console.trace('🔍 DEBUG: Call stack voor sendCallNotificationToSAP');
+    
     const sapPayload = {
         "Type": "CALL",
         "EventType": "INBOUND",
