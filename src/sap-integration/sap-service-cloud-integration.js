@@ -400,7 +400,9 @@ function getAgentId() {
     if (window.parent && window.parent !== window) {
         try {
             // This would be set by SAP Service Cloud
-            return window.agentId || 'AGENT-' + Math.random().toString(36).substr(2, 9);
+            const agentId = window.agentId || 'AGENT-' + Math.random().toString(36).substr(2, 9);
+            // Ensure it's a string, not a DOM element
+            return String(agentId);
         } catch (error) {
             return 'AGENT-' + Math.random().toString(36).substr(2, 9);
         }

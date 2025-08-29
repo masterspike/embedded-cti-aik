@@ -395,18 +395,46 @@ function handleConnectionRetry() {
     }
 }
 
-// Export functions globally
-window.initializeWebSocket = initializeWebSocket;
-window.initializeSocketConnection = initializeSocketConnection;
-window.sendWebSocketMessage = sendWebSocketMessage;
-window.sendCallSimulation = sendCallSimulation;
-window.sendSAPIntegration = sendSAPIntegration;
-window.sendTestMessage = sendTestMessage;
-window.updateWSStatus = updateWSStatus;
-window.getConnectionStatus = getConnectionStatus;
-window.getSocketId = getSocketId;
-window.disconnectWebSocket = disconnectWebSocket;
-window.reconnectWebSocket = reconnectWebSocket;
-window.testConnection = testConnection;
-window.broadcastMessage = broadcastMessage;
-window.handleConnectionRetry = handleConnectionRetry; 
+// Export functions globally with safety checks
+if (typeof initializeWebSocket !== 'undefined') {
+    window.initializeWebSocket = initializeWebSocket;
+}
+if (typeof initializeSocketConnection !== 'undefined') {
+    window.initializeSocketConnection = initializeSocketConnection;
+}
+if (typeof sendWebSocketMessage !== 'undefined') {
+    window.sendWebSocketMessage = sendWebSocketMessage;
+}
+if (typeof sendCallSimulation !== 'undefined') {
+    window.sendCallSimulation = sendCallSimulation;
+}
+if (typeof sendSAPIntegration !== 'undefined') {
+    window.sendSAPIntegration = sendSAPIntegration;
+}
+if (typeof sendTestMessage !== 'undefined') {
+    window.sendTestMessage = sendTestMessage;
+}
+if (typeof updateWSStatus !== 'undefined') {
+    window.updateWSStatus = updateWSStatus;
+}
+if (typeof getConnectionStatus !== 'undefined') {
+    window.getConnectionStatus = getConnectionStatus;
+}
+if (typeof getSocketId !== 'undefined') {
+    window.getSocketId = getSocketId;
+}
+if (typeof disconnectWebSocket !== 'undefined') {
+    window.disconnectWebSocket = disconnectWebSocket;
+}
+if (typeof reconnectWebSocket !== 'undefined') {
+    window.reconnectWebSocket = reconnectWebSocket;
+}
+if (typeof testConnection !== 'undefined') {
+    window.testConnection = testConnection;
+}
+if (typeof broadcastMessage !== 'undefined') {
+    window.broadcastMessage = broadcastMessage;
+}
+if (typeof handleConnectionRetry !== 'undefined') {
+    window.handleConnectionRetry = handleConnectionRetry;
+} 

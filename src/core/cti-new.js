@@ -112,9 +112,6 @@ function handleIncomingCall(callData) {
     addLog('📞 Incoming call: ' + callData.phoneNumber);
     showToast('🔔 Nieuwe incoming call!');
     
-    // Send SAP NOTIFY for incoming call (NO customer identification yet)
-    sendSAPIncomingNotification(callData);
-    
     // Send to SAP Service Cloud parent window (notification only)
     if (window.sendCallNotificationToSAP) {
         window.sendCallNotificationToSAP(callData.phoneNumber, callData.callId);
@@ -126,29 +123,7 @@ function handleIncomingCall(callData) {
     }
 }
 
-// Send SAP notification for incoming call
-function sendSAPIncomingNotification(callData) {
-    const sapNotification = {
-        "Type": "CALL",
-        "EventType": "INBOUND",
-        "Action": "NOTIFY", 
-        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31 651616126',
-        "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
-        "Timestamp": new Date().toISOString()
-    };
-    
-    // Send via Socket.io if available
-    if (window.socket && window.socket.connected) {
-        const socketMessage = {
-            type: 'SAP_INTEGRATION',
-            data: sapNotification
-        };
-        window.socket.emit('message', socketMessage);
-        addLog('📡 SAP NOTIFY payload verzonden via Socket.io');
-    }
-    
-    addLog('📢 SAP NOTIFY verzonden voor incoming call: ' + sapNotification.ANI);
-}
+
 
 // Accept call
 function acceptCall() {
