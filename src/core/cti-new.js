@@ -150,9 +150,6 @@ function acceptCall() {
     addLog('🔍 Customer identificatie starten voor: ' + currentCall.phoneNumber);
     identifyCustomer(currentCall.phoneNumber);
     
-    // Send to SAP Service Cloud
-    sendCallAcceptToSAP(currentCall);
-    
     // Send to SAP Service Cloud parent window
     if (window.sendCallAcceptToSAP) {
         window.sendCallAcceptToSAP(currentCall.phoneNumber, currentCall.callId);
