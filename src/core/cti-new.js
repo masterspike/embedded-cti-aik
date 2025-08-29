@@ -124,36 +124,6 @@ function handleIncomingCall(callData) {
     if (window.sendAgentBuddyIncomingCallToAik) {
         window.sendAgentBuddyIncomingCallToAik(callData);
     }
-    
-    // Also send via direct HTTP to SAP (notification only)
-    const sapNotifyPayload = {
-        "Type": "CALL",
-        "EventType": "INBOUND",
-        "Action": "NOTIFY",
-        "ANI": callData.phoneNumber || (window.getConfig && getConfig('DEFAULT_PHONE')) || '+31 651616126',
-        "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
-        "Timestamp": new Date().toISOString()
-    };
-    
-    // Send NOTIFY to SAP via HTTP (notification only, no customer lookup)
-    sendSAPPayloadToSAP(sapNotifyPayload).then(success => {
-        if (success) {
-            addLog('✅ SAP NOTIFY verzonden voor incoming call (geen customer lookup)');
-            
-            // Update SAP status
-            const sapStatus = document.getElementById('sapStatus');
-            const lastSapAction = document.getElementById('lastSapAction');
-            
-            if (sapStatus) {
-                sapStatus.textContent = 'Notificatie ontvangen';
-            }
-            if (lastSapAction) {
-                lastSapAction.textContent = 'Call notificatie';
-            }
-        } else {
-            addLog('❌ SAP NOTIFY mislukt voor incoming call');
-        }
-    });
 }
 
 // Send SAP notification for incoming call
@@ -166,9 +136,6 @@ function sendSAPIncomingNotification(callData) {
         "ExternalReferenceID": callData.callId || generateExternalReferenceId(),
         "Timestamp": new Date().toISOString()
     };
-    
-    // Send via PostMessage to parent window
-    sendDirectPostMessage(sapNotification);
     
     // Send via Socket.io if available
     if (window.socket && window.socket.connected) {
