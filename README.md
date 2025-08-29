@@ -19,7 +19,7 @@ embedded-cti-deploy/
 │   │   └── config.js                 # Environment configuration
 │   ├── sap-integration/              # SAP integration modules
 │   │   ├── sap-service-cloud-integration.js  # SAP Service Cloud communicatie
-│   │   ├── sap-aik-integration.js    # SAP AIK integratie
+
 │   │   └── postmessage-integration.js # PostMessage API voor iframe communicatie
 │   ├── server/                       # Server-side code
 │   │   └── socketio-server.js        # Socket.io server voor Render.com deployment

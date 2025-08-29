@@ -117,10 +117,7 @@ function handleIncomingCall(callData) {
         window.sendCallNotificationToSAP(callData.phoneNumber, callData.callId);
     }
     
-    // Send to Aik using official SAP integration (notification only)
-    if (window.sendAgentBuddyIncomingCallToAik) {
-        window.sendAgentBuddyIncomingCallToAik(callData);
-    }
+
 }
 
 
@@ -161,10 +158,7 @@ function acceptCall() {
         window.sendCallAcceptToSAP(currentCall.phoneNumber, currentCall.callId);
     }
     
-    // Send to Aik using official SAP integration
-    if (window.sendAgentBuddyCallAcceptToAik) {
-        window.sendAgentBuddyCallAcceptToAik(currentCall);
-    }
+
     
     // Send via Socket.io
     if (window.sendWebSocketMessage) {
@@ -234,10 +228,7 @@ function declineCall() {
         window.sendCallDeclineToSAP(currentCall.phoneNumber, currentCall.callId);
     }
     
-    // Send to Aik using official SAP integration
-    if (window.sendAgentBuddyCallDeclineToAik) {
-        window.sendAgentBuddyCallDeclineToAik(currentCall);
-    }
+
     
     // Send via Socket.io
     if (window.sendWebSocketMessage) {
@@ -300,10 +291,7 @@ function endCall() {
         window.sendCallEndToSAP(currentCall.phoneNumber, currentCall.callId);
     }
     
-    // Send to Aik using official SAP integration
-    if (window.sendAgentBuddyCallEndToAik) {
-        window.sendAgentBuddyCallEndToAik(currentCall);
-    }
+
     
     // Stop SAP Service Cloud call timer
     stopSAPServiceCloudTimer();
@@ -662,10 +650,7 @@ function identifyCustomer(phoneNumber) {
         window.sendCustomerIdentificationToSAP(phoneNumber, customerData);
     }
     
-    // Send customer identification to Aik using official SAP integration
-    if (window.sendAgentBuddyCustomerIdentificationToAik) {
-        window.sendAgentBuddyCustomerIdentificationToAik(phoneNumber, customerData);
-    }
+
     
     addLog('✅ Klant geïdentificeerd: ' + customerData.name);
 }
